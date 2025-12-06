@@ -1,0 +1,3 @@
+/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/wallbox_control.dir
+/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/edit_cache.dir
+/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/rebuild_cache.dir

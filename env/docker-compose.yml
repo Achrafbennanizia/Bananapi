@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  arduino-cli:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: arduino-cli-env
+    container_name: arduino-cli-env
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0  # Adjust for macOS: /dev/cu.usbserial-*
+    volumes:
+      - ./workspace:/workspace
+    working_dir: /workspace
+    stdin_open: true
+    tty: true
+    command: bash
