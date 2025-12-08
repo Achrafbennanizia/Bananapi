@@ -1,12 +1,13 @@
 # ISO 15118 Wallbox Control System
 
-A complete implementation of an EV charging wallbox control system based on the ISO 15118 standard, featuring UDP-based communication between a wallbox controller and an ISO stack simulator.
+A professional-grade EV charging wallbox control system implementing ISO 15118 standards with **SOLID principles** and **Design Patterns**. Features clean architecture, dependency injection, and comprehensive testing support.
 
 ## 📋 Table of Contents
 
 - [Overview](#overview)
 - [Features](#features)
-- [System Architecture](#system-architecture)
+- [Architecture](#architecture)
+- [System Design](#system-design)
 - [Project Structure](#project-structure)
 - [Requirements](#requirements)
 - [Installation](#installation)
@@ -21,24 +22,39 @@ A complete implementation of an EV charging wallbox control system based on the 
 
 ## 🎯 Overview
 
-This project implements a professional-grade wallbox charging controller compatible with ISO 15118 standards for electric vehicle (EV) charging. The system consists of two main components that communicate via UDP:
+This project implements a **production-ready** wallbox charging controller for electric vehicles (EV) following ISO 15118 standards. Built with modern C++17, the system employs SOLID principles and proven design patterns for maximum maintainability, testability, and extensibility.
 
-1. **Wallbox Controller** - Manages the physical charging hardware (relays, contactors, GPIO)
-2. **ISO 15118 Stack Simulator** - Simulates the ISO 15118 communication protocol
+### System Components
 
-The implementation is designed for embedded systems (particularly Banana Pi/Raspberry Pi) but includes cross-platform support for development and testing on macOS, Linux, and Windows.
+1. **Wallbox Controller** - Manages physical charging hardware using Strategy pattern for platform independence
+2. **ISO 15118 Stack Simulator** - Implements ISO protocol with State pattern for charging state management
+3. **Communication Layer** - UDP-based messaging with interface segregation for flexibility
+
+### Key Differentiators
+
+- ✨ **Clean Architecture** - SOLID principles throughout
+- 🎯 **Design Patterns** - Strategy, Observer, Command, State, Factory patterns
+- 🧪 **Testable** - Dependency injection enables comprehensive unit testing
+- 🔌 **Platform Independent** - GPIO abstraction supports multiple platforms
+- 📦 **Modular** - Clear separation of concerns with interface-based design
 
 ## ✨ Features
 
 ### Core Functionality
 
 - ✅ **ISO 15118 Protocol Implementation** - Full support for charging state management
-- ✅ **UDP Communication** - Low-latency bidirectional messaging between components
-- ✅ **Interactive Terminal Interface** - Real-time control and monitoring
-- ✅ **Watchdog Safety System** - 2-second timeout protection
+- ✅ **SOLID Architecture** - Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion
+- ✅ **Design Patterns** - Strategy, Observer, Command, State, Factory, Singleton, Dependency Injection
+- ✅ **UDP Communication** - Low-latency bidirectional messaging with interface abstraction
+- ✅ **Interactive Terminal Interface** - Command pattern for extensible commands
+- ✅ **Watchdog Safety System** - 2-second timeout protection with Observer pattern
 - ✅ **State Change Optimization** - Efficient logging (only reports changes)
-- ✅ **GPIO Hardware Control** - Relay/contactor management with HAL abstraction
+- ✅ **GPIO Hardware Control** - Strategy pattern for platform-independent hardware access
 - ✅ **Non-blocking I/O** - Concurrent network and terminal input handling
+- ✅ **Dependency Injection** - Constructor injection for testability and flexibility
+- ✅ **Exception Handling** - Comprehensive error handling with custom exceptions
+- ✅ **Configuration Management** - JSON-based configuration (future enhancement)
+- ✅ **Unit Test Support** - Mock implementations for all interfaces
 
 ### Charging States
 
@@ -59,7 +75,78 @@ The implementation is designed for embedded systems (particularly Banana Pi/Rasp
 - Enable/disable safety checks
 - Graceful shutdown handling (SIGINT)
 
-## 🏗️ System Architecture
+## 🏗️ Architecture & Design
+
+### Clean Architecture Principles
+
+This project follows **SOLID principles** and implements proven **design patterns** for maintainability and extensibility:
+
+#### SOLID Principles
+
+1. **Single Responsibility** - Each class has one reason to change
+
+   - `IGpioController` - Only GPIO operations
+   - `INetworkCommunicator` - Only network communication
+   - `WallboxController` - Only coordination logic
+
+2. **Open/Closed** - Open for extension, closed for modification
+
+   - New GPIO implementations can be added without changing existing code
+   - Network protocols can be swapped via interface
+
+3. **Liskov Substitution** - Derived classes are substitutable
+
+   - `StubGpioController` can replace `IGpioController`
+   - `UdpCommunicator` can replace `INetworkCommunicator`
+
+4. **Interface Segregation** - Focused, minimal interfaces
+
+   - Clients don't depend on unused methods
+   - Clear separation of concerns
+
+5. **Dependency Inversion** - Depend on abstractions
+   - High-level modules depend on interfaces, not implementations
+   - Enables testing and flexibility
+
+#### Design Patterns Implemented
+
+| Pattern                  | Purpose                                | Location               |
+| ------------------------ | -------------------------------------- | ---------------------- |
+| **Strategy**             | Platform-specific GPIO implementations | `IGpioController`      |
+| **Observer**             | State change notifications             | `ChargingStateMachine` |
+| **Command**              | Encapsulate terminal commands          | `CommandProcessor`     |
+| **State**                | Manage charging states                 | `IChargingState`       |
+| **Factory**              | Create appropriate GPIO controller     | `GpioFactory`          |
+| **Dependency Injection** | Inject dependencies via constructor    | `WallboxController`    |
+| **Singleton**            | Global logger instance                 | `Logger`               |
+
+### Class Diagram
+
+```
+┌────────────────────────────────────────────────────────────────────┐
+│                      Application Layer                              │
+│  ┌──────────────┐         ┌───────────────────────────┐            │
+│  │   main()     │────────►│  WallboxController        │            │
+│  └──────────────┘         │  - orchestrates system    │            │
+│                           └─────────┬─────────────────┘            │
+└─────────────────────────────────────┼────────────────────────────┘
+                                      │
+                ┌─────────────────────┼──────────────────────┐
+                │                     │                       │
+    ┌───────────▼──────────┐  ┌──────▼───────────┐  ┌───────▼────────┐
+    │ IGpioController      │  │ INetworkComm.    │  │ChargingState   │
+    │ (Interface)          │  │ (Interface)      │  │Machine         │
+    └───────────┬──────────┘  └──────┬───────────┘  └────────────────┘
+                │                    │
+      ┌─────────┴────────┐  ┌────────┴─────────┐
+      │                  │  │                  │
+┌─────▼──────┐  ┌───────▼──────┐  ┌──────▼────────┐
+│StubGpio    │  │RaspberryPi   │  │Udp            │
+│Controller  │  │GpioController│  │Communicator   │
+└────────────┘  └──────────────┘  └───────────────┘
+```
+
+### System Architecture
 
 ```
 ┌─────────────────────────────────┐         ┌─────────────────────────────────┐
@@ -78,14 +165,12 @@ The implementation is designed for embedded systems (particularly Banana Pi/Rasp
 │                                 │         │                                 │
 │  ┌──────────────────────┐      │         │  ┌──────────────────────┐      │
 │  │  GPIO Control        │      │         │  │  State Machine       │      │
-│  │  - Relay (Pin 5)     │      │         │  │  - Charging States   │      │
-│  │  - Main Contactor    │      │         │  │  - Main Contactor    │      │
+│  │  Strategy Pattern    │      │         │  │  State Pattern       │      │
 │  └──────────────────────┘      │         │  └──────────────────────┘      │
 │                                 │         │                                 │
 │  ┌──────────────────────┐      │         │  ┌──────────────────────┐      │
-│  │  Terminal Interface  │      │         │  │  Terminal Interface  │      │
-│  │  - enable/disable    │      │         │  │  - on/off/charge     │      │
-│  │  - status/help       │      │         │  │  - status/help       │      │
+│  │  Command Processor   │      │         │  │  Command Processor   │      │
+│  │  Command Pattern     │      │         │  │  Command Pattern     │      │
 │  └──────────────────────┘      │         │  └──────────────────────┘      │
 └─────────────────────────────────┘         └─────────────────────────────────┘
 ```
@@ -107,7 +192,15 @@ The implementation is designed for embedded systems (particularly Banana Pi/Rasp
 
 ```
 PJMT/
-├── README.md                          # This file
+├── README.md                          # Main documentation with architecture
+├── ARCHITECTURE.md                    # Design patterns & SOLID principles
+├── MIGRATION.md                       # Migration guide to new architecture
+├── INSTALLATION.md                    # Installation guide
+├── API_REFERENCE.md                   # Complete API documentation
+├── DEVELOPMENT.md                     # Development guidelines
+├── CHANGELOG.md                       # Version history
+├── QUICK_REFERENCE.md                 # Command cheat sheet
+│
 ├── LibPubWallbox/                     # ISO 15118 Protocol Library
 │   ├── IsoStackCtrlProtocol.h        # Protocol definitions & enums
 │   ├── IsoStackCtrlProtocol.cpp      # Protocol implementation
@@ -118,18 +211,34 @@ PJMT/
 │       └── libmicrohttpd/            # HTTP server library
 │
 ├── WallboxCtrl/                       # Main Application
+│   ├── include/                       # Header files (NEW)
+│   │   ├── IGpioController.h         # GPIO interface (Strategy Pattern)
+│   │   ├── StubGpioController.h      # Development GPIO implementation
+│   │   ├── INetworkCommunicator.h    # Network interface
+│   │   ├── UdpCommunicator.h         # UDP implementation
+│   │   ├── WallboxController.h       # Main controller class
+│   │   ├── ChargingStateMachine.h    # State Pattern implementation
+│   │   ├── CommandProcessor.h        # Command Pattern
+│   │   └── WatchdogTimer.h           # Safety timer
+│   │
 │   ├── src/
 │   │   ├── main.cpp                  # Wallbox controller program
 │   │   ├── simulator.cpp             # ISO stack simulator
-│   │   ├── IsoStackCtrlProtocol_impl.cpp  # Simplified protocol impl
+│   │   ├── WallboxController.cpp     # Controller implementation (NEW)
+│   │   ├── UdpCommunicator.cpp       # Network implementation (NEW)
+│   │   ├── ChargingStateMachine.cpp  # State machine (NEW)
+│   │   ├── CommandProcessor.cpp      # Commands (NEW)
+│   │   ├── IsoStackCtrlProtocol_impl.cpp
 │   │   ├── wallbox_ctrl              # Compiled wallbox executable
 │   │   └── simulator                 # Compiled simulator executable
 │   │
-│   ├── build/                         # CMake build directory
-│   │   ├── CMakeFiles/
-│   │   ├── Makefile
-│   │   └── wallbox_control           # CMake-built executable
+│   ├── tests/                         # Unit tests (NEW)
+│   │   ├── GpioControllerTests.cpp
+│   │   ├── NetworkTests.cpp
+│   │   ├── WallboxControllerTests.cpp
+│   │   └── MockObjects.h             # Mock implementations
 │   │
+│   ├── build/                         # CMake build directory
 │   ├── CMakeLists.txt                # CMake configuration
 │   ├── build.sh                      # Build automation script
 │   ├── test.sh                       # Testing script
@@ -142,6 +251,18 @@ PJMT/
     ├── docker-compose.yml            # Docker orchestration
     └── README.md                     # Environment setup guide
 ```
+
+│ ├── test.sh # Testing script
+│ ├── test_interactive.sh # Interactive testing
+│ ├── README.md # Component documentation
+│ └── INTERACTIVE_GUIDE.md # User guide
+│
+└── env/ # Docker Environment
+├── Dockerfile # Container definition
+├── docker-compose.yml # Docker orchestration
+└── README.md # Environment setup guide
+
+````
 
 ## 💻 Requirements
 
@@ -184,7 +305,7 @@ g++ -std=c++17 -O2 simulator.cpp IsoStackCtrlProtocol_impl.cpp -o simulator
 
 # Verify builds
 ls -lh wallbox_ctrl simulator
-```
+````
 
 ### Method 2: Using CMake
 

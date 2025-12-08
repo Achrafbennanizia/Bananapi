@@ -7,21 +7,100 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Executable (adjust src/main.cpp if your path is different)
+# Add compiler warnings
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+# Include directories
+include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../LibPubWallbox
+)
+
+# =============================================================================
+# Legacy v1.0 Executable (original procedural code)
+# =============================================================================
 add_executable(wallbox_control
     src/main.cpp
     src/IsoStackCtrlProtocol_impl.cpp
 )
 
-# Add include directory for IsoStackCtrlProtocol.h
-# Adjust path if needed
-target_include_directories(wallbox_control
-    PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/../LibPubWallbox
+target_link_libraries(wallbox_control PRIVATE pthread)
+
+# =============================================================================
+# New v2.0 Executable (SOLID architecture with design patterns)
+# =============================================================================
+add_executable(wallbox_control_v2
+    src/main_v2.cpp
+    src/WallboxController.cpp
+    src/ChargingStateMachine.cpp
+    src/StubGpioController.cpp
+    src/UdpCommunicator.cpp
+    src/IsoStackCtrlProtocol_impl.cpp
 )
 
-# On Unix-like systems, we might need extra system libs
-if(UNIX)
-    # Usually not needed for basic UDP, but if linker complains, uncomment:
-    # target_link_libraries(wallbox_control PRIVATE pthread)
+target_link_libraries(wallbox_control_v2 PRIVATE pthread)
+
+# =============================================================================
+# Simulator (unchanged from v1.0)
+# =============================================================================
+add_executable(simulator
+    src/simulator.cpp
+    src/IsoStackCtrlProtocol_impl.cpp
+)
+
+target_link_libraries(simulator PRIVATE pthread)
+
+# =============================================================================
+# Installation
+# =============================================================================
+install(TARGETS wallbox_control wallbox_control_v2 simulator
+    RUNTIME DESTINATION bin
+)
+
+# =============================================================================
+# Optional: Unit Tests (requires Google Test)
+# =============================================================================
+option(BUILD_TESTS "Build unit tests" OFF)
+
+if(BUILD_TESTS)
+    find_package(GTest REQUIRED)
+    enable_testing()
+    
+    add_executable(wallbox_tests
+        tests/test_ChargingStateMachine.cpp
+        tests/test_WallboxController.cpp
+        src/ChargingStateMachine.cpp
+        src/WallboxController.cpp
+        src/StubGpioController.cpp
+        src/UdpCommunicator.cpp
+    )
+    
+    target_link_libraries(wallbox_tests
+        PRIVATE
+            GTest::GTest
+            GTest::Main
+            pthread
+    )
+    
+    include(GoogleTest)
+    gtest_discover_tests(wallbox_tests)
 endif()
+
+# Print build configuration
+message(STATUS "==========================================")
+message(STATUS "Wallbox Control Build Configuration")
+message(STATUS "==========================================")
+message(STATUS "C++ Standard: ${CMAKE_CXX_STANDARD}")
+message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "Build Tests: ${BUILD_TESTS}")
+message(STATUS "==========================================")
+message(STATUS "Targets:")
+message(STATUS "  - wallbox_control (v1.0 legacy)")
+message(STATUS "  - wallbox_control_v2 (v2.0 SOLID)")
+message(STATUS "  - simulator")
+if(BUILD_TESTS)
+    message(STATUS "  - wallbox_tests (unit tests)")
+endif()
+message(STATUS "==========================================")
