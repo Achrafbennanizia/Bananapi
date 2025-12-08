@@ -77,6 +77,9 @@ namespace Wallbox
         bool disableWallbox();
         bool setRelayState(bool enabled);
 
+        // API for external control (React app, etc.)
+        std::string getStatusJson() const;
+
     private:
         // Dependencies (Dependency Injection)
         std::unique_ptr<IGpioController> m_gpio;

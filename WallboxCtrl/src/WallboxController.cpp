@@ -2,6 +2,8 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
+#include <sstream>
+#include <ctime>
 
 namespace Wallbox
 {
@@ -198,6 +200,19 @@ namespace Wallbox
         m_relayEnabled = enabled;
         std::cout << "Relay " << (enabled ? "enabled" : "disabled") << std::endl;
         return true;
+    }
+
+    std::string WallboxController::getStatusJson() const
+    {
+        std::ostringstream json;
+        json << "{"
+             << "\"state\":\"" << getStateString() << "\","
+             << "\"wallboxEnabled\":" << (m_wallboxEnabled ? "true" : "false") << ","
+             << "\"relayEnabled\":" << (m_relayEnabled ? "true" : "false") << ","
+             << "\"charging\":" << (m_stateMachine->isCharging() ? "true" : "false") << ","
+             << "\"timestamp\":" << std::time(nullptr)
+             << "}";
+        return json.str();
     }
 
     void WallboxController::setupGpio()

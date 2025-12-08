@@ -43,6 +43,21 @@ add_executable(wallbox_control_v2
 target_link_libraries(wallbox_control_v2 PRIVATE pthread)
 
 # =============================================================================
+# New v2.0 with REST API (For React app integration)
+# =============================================================================
+add_executable(wallbox_control_api
+    src/main_v2_with_api.cpp
+    src/WallboxController.cpp
+    src/ChargingStateMachine.cpp
+    src/StubGpioController.cpp
+    src/UdpCommunicator.cpp
+    src/HttpApiServer.cpp
+    src/IsoStackCtrlProtocol_impl.cpp
+)
+
+target_link_libraries(wallbox_control_api PRIVATE pthread)
+
+# =============================================================================
 # Simulator (unchanged from v1.0)
 # =============================================================================
 add_executable(simulator
@@ -55,7 +70,7 @@ target_link_libraries(simulator PRIVATE pthread)
 # =============================================================================
 # Installation
 # =============================================================================
-install(TARGETS wallbox_control wallbox_control_v2 simulator
+install(TARGETS wallbox_control wallbox_control_v2 wallbox_control_api simulator
     RUNTIME DESTINATION bin
 )
 
@@ -99,6 +114,7 @@ message(STATUS "==========================================")
 message(STATUS "Targets:")
 message(STATUS "  - wallbox_control (v1.0 legacy)")
 message(STATUS "  - wallbox_control_v2 (v2.0 SOLID)")
+message(STATUS "  - wallbox_control_api (v2.0 with REST API)")
 message(STATUS "  - simulator")
 if(BUILD_TESTS)
     message(STATUS "  - wallbox_tests (unit tests)")
