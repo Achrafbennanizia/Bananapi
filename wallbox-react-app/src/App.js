@@ -82,7 +82,7 @@ function App() {
         )}
 
         <div className="status-panel">
-          <h2>📊 Current Status</h2>
+          <h2>📊 Current Status & Values</h2>
           <div className="status-grid">
             <div className="status-item">
               <span className="label">State:</span>
@@ -105,7 +105,19 @@ function App() {
             <div className="status-item">
               <span className="label">Charging:</span>
               <span className={`value ${status.charging ? 'text-success charging-indicator' : 'text-muted'}`}>
-                {status.charging ? '🔋 Yes' : '○ No'}
+                {status.charging ? '🔋 Active' : '○ Inactive'}
+              </span>
+            </div>
+            <div className="status-item">
+              <span className="label">Mode:</span>
+              <span className="value">
+                {status.state === 'CHARGING' || status.state === 'PAUSED' ? '🚗 Car Connected' : '○ No Car'}
+              </span>
+            </div>
+            <div className="status-item">
+              <span className="label">Timestamp:</span>
+              <span className="value text-muted">
+                {status.timestamp}
               </span>
             </div>
           </div>
@@ -115,14 +127,34 @@ function App() {
         </div>
 
         <div className="control-panel">
-          <h2>🛑 Emergency Stop</h2>
+          <h2>🎮 Charging Controls</h2>
           
           <div className="control-section">
             <p className="control-description">
-              Use this button to immediately stop an active charging session. 
-              All other operations (start, pause, enable/disable) must be controlled via the simulator or hardware pins.
+              Control charging when a car is connected and in charging mode.
+              Start and system controls are available via simulator or hardware pins.
             </p>
             
+            {/* Pause/Continue buttons - only enabled when car is charging */}
+            <div className="button-grid">
+              <button
+                onClick={() => handleAction(() => wallboxAPI.pauseCharging(), 'pause charging')}
+                disabled={loading || status.state !== 'CHARGING'}
+                className="btn btn-warning btn-large"
+              >
+                ⏸️ Pause Charging
+              </button>
+              
+              <button
+                onClick={() => handleAction(() => wallboxAPI.resumeCharging(), 'continue charging')}
+                disabled={loading || status.state !== 'PAUSED'}
+                className="btn btn-info btn-large"
+              >
+                ▶️ Continue Charging
+              </button>
+            </div>
+
+            {/* Emergency Stop button */}
             <button
               onClick={() => handleAction(() => wallboxAPI.stopCharging(), 'stop charging')}
               disabled={loading || !status.charging}
@@ -131,18 +163,28 @@ function App() {
               ⏹️ STOP CHARGING
             </button>
             
-            {!status.charging && (
+            {(status.state !== 'CHARGING' && status.state !== 'PAUSED') && (
               <p className="info-text">
-                ℹ️ Stop button is only active when charging is in progress
+                ℹ️ Controls are only active when a car is in charging mode
+              </p>
+            )}
+            {status.state === 'CHARGING' && (
+              <p className="info-text text-success">
+                ✓ Car is charging - Pause or Stop available
+              </p>
+            )}
+            {status.state === 'PAUSED' && (
+              <p className="info-text text-warning">
+                ⏸️ Charging paused - Continue or Stop available
               </p>
             )}
           </div>
         </div>
 
         <footer className="app-footer">
-          <p>Wallbox Controller v3.0 - Emergency Stop Interface</p>
+          <p>Wallbox Controller v3.0 - Charging Control Interface</p>
           <p style={{ fontSize: '0.9rem', marginTop: '5px', color: '#888' }}>
-            Use simulator or hardware pins for start, pause, and system control
+            Use simulator or hardware pins to start charging and system control
           </p>
         </footer>
       </div>

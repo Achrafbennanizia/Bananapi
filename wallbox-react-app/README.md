@@ -1,12 +1,18 @@
 # Wallbox Controller - React App
 
-A simple React application for **emergency stop control** of your wallbox charging station.
+A React application for **charging control** of your wallbox charging station when a car is connected.
 
 ## Purpose
 
-This web interface provides **ONE critical function**: **Emergency Stop**
+This web interface provides **charging session control** for connected vehicles:
 
-All other charging operations (start, pause, enable/disable) are controlled via:
+- **Pause** - Temporarily pause active charging
+- **Continue** - Resume paused charging
+- **Stop** - End charging session
+
+All controls are **context-aware** and only enabled when a car is in charging mode.
+
+System operations (start, enable/disable wallbox) are controlled via:
 
 - **Simulator** (development mode)
 - **Hardware pins** (production mode)
@@ -14,19 +20,23 @@ All other charging operations (start, pause, enable/disable) are controlled via:
 ## Features
 
 - ✅ Real-time status monitoring (every 2 seconds)
-- 🛑 **Emergency Stop** - Stop charging immediately
-- 📊 Live status display (state, relay, charging status)
-- 🎨 Clean, focused UI
-- ⚠️ Context-aware button (only active when charging)
+- ⏸️ **Pause Charging** - Pause active charging session
+- ▶️ **Continue Charging** - Resume paused session
+- 🛑 **Stop Charging** - End charging session
+- 📊 Enhanced status display with values
+- 🚗 Car connection detection
+- 🎨 Context-aware UI (buttons only active when applicable)
+- 💡 Smart state indicators
 
-## Why Only Stop?
+## Context-Aware Controls
 
-The web interface is intentionally limited to emergency stop functionality for safety and control:
+The interface intelligently enables/disables controls based on charging state:
 
-- **Safety**: Remote emergency stop capability
-- **Simplicity**: Clear, single-purpose interface
-- **Control**: Primary operations remain on simulator/hardware
-- **Security**: Minimal remote control surface
+| State        | Pause          | Continue       | Stop           | Status          |
+| ------------ | -------------- | -------------- | -------------- | --------------- |
+| **No Car**   | ❌ Disabled    | ❌ Disabled    | ❌ Disabled    | Waiting for car |
+| **CHARGING** | ✅ **Enabled** | ❌ Disabled    | ✅ **Enabled** | Car is charging |
+| **PAUSED**   | ❌ Disabled    | ✅ **Enabled** | ✅ **Enabled** | Charging paused |
 
 ## Prerequisites
 
@@ -60,32 +70,42 @@ The app will open in your browser at `http://localhost:3000`
 1. **Start the wallbox controller API** first (see Prerequisites)
 2. **Open the React app** in your browser
 3. The app will automatically connect and show the current status
-4. Monitor charging status in real-time
-5. Use the **STOP CHARGING** button when needed (only active during charging)
+4. **Start charging via simulator/hardware pins**
+5. Once car is charging, use the web interface to:
+   - **Pause** - Temporarily pause charging
+   - **Continue** - Resume after pausing
+   - **Stop** - End the charging session
 
-### For Other Operations
+### System Operations (Not on Web Interface)
 
 - **Start Charging** → Use simulator or hardware pins
-- **Pause/Resume** → Use simulator or hardware pins
 - **Enable/Disable Wallbox** → Use simulator or hardware pins
 
 ## What You'll See
 
-### Status Panel
+### Status Panel (Enhanced with Values)
 
-- Current state (IDLE, CHARGING, PAUSED, etc.)
-- Wallbox enabled/disabled
-- Relay status (ON/OFF)
-- Charging status
-- Last update timestamp
+- **State** - Current charging state (IDLE, CHARGING, PAUSED, etc.)
+- **Wallbox** - System enabled/disabled status
+- **Relay** - Main contactor status (ON/OFF)
+- **Charging** - Active/Inactive indicator
+- **Mode** - Car connection status (🚗 Car Connected / ○ No Car)
+- **Timestamp** - Unix timestamp value
+- **Last update** - Human-readable time
 
 ### Control Panel
 
-- **Emergency Stop Button** (STOP CHARGING)
-  - Large, prominent red button
-  - Only enabled when charging is active
-  - Immediate action
-  - Glowing animation for visibility
+**Context-Aware Buttons:**
+
+- **Pause Charging** (⏸️) - Only enabled when state is CHARGING
+- **Continue Charging** (▶️) - Only enabled when state is PAUSED
+- **STOP CHARGING** (⏹️) - Enabled when car is charging or paused
+
+**Smart Status Messages:**
+
+- Shows current state and available actions
+- Color-coded feedback (green for active, orange for paused)
+- Clear indication when controls are disabled
 
 ## How It Works
 
@@ -100,15 +120,20 @@ React App (Port 3000) → HTTP API → Wallbox Controller (Port 8080)
 - `GET /api/status` - Get current status (auto-refresh every 2s)
 - `POST /api/charging/stop` - **Emergency stop charging** 🛑
 
-### Other Available Endpoints (Not Used by Web App)
+### API Endpoints Used by Web App
 
-These endpoints are available for simulator/hardware control:
+- `GET /api/status` - Get current status (auto-refresh every 2s)
+- `POST /api/charging/pause` - **Pause charging** (only when CHARGING)
+- `POST /api/charging/resume` - **Continue charging** (only when PAUSED)
+- `POST /api/charging/stop` - **Stop charging** (emergency stop)
 
-- `POST /api/charging/start` - Start charging
-- `POST /api/charging/pause` - Pause charging
-- `POST /api/charging/resume` - Resume charging
-- `POST /api/wallbox/enable` - Enable wallbox
-- `POST /api/wallbox/disable` - Disable wallbox
+### Other Available Endpoints (Simulator/Hardware Only)
+
+These endpoints exist but are NOT used by the web interface:
+
+- `POST /api/charging/start` - Start charging (use simulator/pins)
+- `POST /api/wallbox/enable` - Enable wallbox (use simulator/pins)
+- `POST /api/wallbox/disable` - Disable wallbox (use simulator/pins)
 
 ## Project Structure
 

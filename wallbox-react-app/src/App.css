@@ -289,6 +289,16 @@ body {
   margin-top: 15px;
 }
 
+.info-text.text-success {
+  color: #4CAF50;
+  font-weight: 600;
+}
+
+.info-text.text-warning {
+  color: #ff9800;
+  font-weight: 600;
+}
+
 .app-footer {
   padding: 20px 30px;
   background: #f8f9fa;

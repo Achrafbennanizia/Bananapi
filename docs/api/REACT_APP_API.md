@@ -2,23 +2,29 @@
 
 ## Overview
 
-The Wallbox Controller includes a RESTful HTTP API server for **emergency stop control** and status monitoring. The API runs on port **8080** by default and includes CORS support for cross-origin requests.
+The Wallbox Controller includes a RESTful HTTP API server for **charging session control** and status monitoring. The API runs on port **8080** by default and includes CORS support for cross-origin requests.
 
 ### Web Interface Purpose
 
-The React web app provides **ONE primary function**: **Emergency Stop**
+The React web app provides **charging session control** for connected vehicles:
 
-All other charging operations (start, pause, enable/disable) are controlled via:
+- **Pause** - Temporarily pause active charging
+- **Continue** - Resume paused charging
+- **Stop** - End charging session
+
+All controls are **context-aware** and only enabled when a car is in charging mode.
+
+System operations (start charging, enable/disable wallbox) are controlled via:
 
 - **Simulator** (development mode)
 - **Hardware pins** (production mode)
 
 This design ensures:
 
-- **Safety**: Remote emergency stop capability
-- **Simplicity**: Clear, single-purpose web interface
-- **Control**: Primary operations remain on local simulator/hardware
-- **Security**: Minimal remote control surface
+- **Safety**: Remote control of active charging sessions
+- **Context-Aware**: Controls only work when applicable
+- **Control**: System initialization remains on local simulator/hardware
+- **Simplicity**: Clear, focused interface
 
 ## Base URL
 
@@ -75,11 +81,65 @@ Get the current status of the wallbox.
 
 ---
 
-### 3. Stop Charging (Web Interface)
+### 3. Pause Charging (Web Interface)
+
+**POST** `/api/charging/pause`
+
+Pause the active charging process. Can be resumed later.
+
+**Context:** Only enabled in web interface when state is `CHARGING`
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Charging paused",
+  "state": "PAUSED"
+}
+```
+
+**Usage:**
+
+- Used by React web app to pause active charging
+- Only works when car is actively charging
+- Charging can be resumed with `/api/charging/resume`
+
+---
+
+### 4. Resume Charging (Web Interface)
+
+**POST** `/api/charging/resume`
+
+Resume charging after it has been paused.
+
+**Context:** Only enabled in web interface when state is `PAUSED`
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Charging resumed",
+  "state": "CHARGING"
+}
+```
+
+**Usage:**
+
+- Used by React web app to continue paused charging
+- Only works when charging is in PAUSED state
+- Returns to CHARGING state
+
+---
+
+### 5. Stop Charging (Web Interface)
 
 **POST** `/api/charging/stop`
 
-**Emergency stop** the charging process. This is the **primary control** available to the web interface.
+Stop the charging process completely. Ends the charging session.
+
+**Context:** Enabled when car is charging or paused
 
 **Response:**
 
@@ -93,13 +153,14 @@ Get the current status of the wallbox.
 
 **Usage:**
 
-- Used by React web app for emergency stop
-- Only active when charging is in progress
-- Immediate action, stops charging safely
+- Used by React web app to stop charging
+- Works in both CHARGING and PAUSED states
+- Emergency stop capability
+- Ends the current charging session
 
 ---
 
-### 4. Start Charging (Simulator/Hardware Only)
+### 6. Start Charging (Simulator/Hardware Only)
 
 **POST** `/api/charging/start`
 
@@ -122,46 +183,6 @@ Start the charging process.
 ```json
 {
   "error": "Failed to start charging"
-}
-```
-
----
-
-### 5. Pause Charging (Simulator/Hardware Only)
-
-**POST** `/api/charging/pause`
-
-Pause the charging process (can be resumed).
-
-⚠️ **Note:** This endpoint is **NOT used by the web interface**. Use simulator or hardware pins.
-
-**Response:**
-
-```json
-{
-  "success": true,
-  "message": "Charging paused",
-  "state": "PAUSED"
-}
-```
-
----
-
-### 6. Resume Charging (Simulator/Hardware Only)
-
-**POST** `/api/charging/resume`
-
-Resume charging after pause.
-
-⚠️ **Note:** This endpoint is **NOT used by the web interface**. Use simulator or hardware pins.
-
-**Response:**
-
-```json
-{
-  "success": true,
-  "message": "Charging resumed",
-  "state": "CHARGING"
 }
 ```
 
