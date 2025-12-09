@@ -214,6 +214,19 @@ wallbox_control_v3/fast:
 .PHONY : wallbox_control_v3/fast
 
 #=============================================================================
+# Target rules for targets named wallbox_control_v4
+
+# Build rule for target.
+wallbox_control_v4: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wallbox_control_v4
+.PHONY : wallbox_control_v4
+
+# fast build rule for target.
+wallbox_control_v4/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v4.dir/build.make CMakeFiles/wallbox_control_v4.dir/build
+.PHONY : wallbox_control_v4/fast
+
+#=============================================================================
 # Target rules for targets named simulator
 
 # Build rule for target.
@@ -233,6 +246,7 @@ src/BananaPiGpioController.o: src/BananaPiGpioController.cpp.o
 src/BananaPiGpioController.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/BananaPiGpioController.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v3.dir/build.make CMakeFiles/wallbox_control_v3.dir/src/BananaPiGpioController.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v4.dir/build.make CMakeFiles/wallbox_control_v4.dir/src/BananaPiGpioController.cpp.o
 .PHONY : src/BananaPiGpioController.cpp.o
 
 src/BananaPiGpioController.i: src/BananaPiGpioController.cpp.i
@@ -242,6 +256,7 @@ src/BananaPiGpioController.i: src/BananaPiGpioController.cpp.i
 src/BananaPiGpioController.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/BananaPiGpioController.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v3.dir/build.make CMakeFiles/wallbox_control_v3.dir/src/BananaPiGpioController.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v4.dir/build.make CMakeFiles/wallbox_control_v4.dir/src/BananaPiGpioController.cpp.i
 .PHONY : src/BananaPiGpioController.cpp.i
 
 src/BananaPiGpioController.s: src/BananaPiGpioController.cpp.s
@@ -251,6 +266,7 @@ src/BananaPiGpioController.s: src/BananaPiGpioController.cpp.s
 src/BananaPiGpioController.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/BananaPiGpioController.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v3.dir/build.make CMakeFiles/wallbox_control_v3.dir/src/BananaPiGpioController.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v4.dir/build.make CMakeFiles/wallbox_control_v4.dir/src/BananaPiGpioController.cpp.s
 .PHONY : src/BananaPiGpioController.cpp.s
 
 src/ChargingStateMachine.o: src/ChargingStateMachine.cpp.o
@@ -346,6 +362,30 @@ src/IsoStackCtrlProtocol_impl.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/simulator.dir/build.make CMakeFiles/simulator.dir/src/IsoStackCtrlProtocol_impl.cpp.s
 .PHONY : src/IsoStackCtrlProtocol_impl.cpp.s
 
+src/SimpleWallboxController.o: src/SimpleWallboxController.cpp.o
+.PHONY : src/SimpleWallboxController.o
+
+# target to build an object file
+src/SimpleWallboxController.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v4.dir/build.make CMakeFiles/wallbox_control_v4.dir/src/SimpleWallboxController.cpp.o
+.PHONY : src/SimpleWallboxController.cpp.o
+
+src/SimpleWallboxController.i: src/SimpleWallboxController.cpp.i
+.PHONY : src/SimpleWallboxController.i
+
+# target to preprocess a source file
+src/SimpleWallboxController.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v4.dir/build.make CMakeFiles/wallbox_control_v4.dir/src/SimpleWallboxController.cpp.i
+.PHONY : src/SimpleWallboxController.cpp.i
+
+src/SimpleWallboxController.s: src/SimpleWallboxController.cpp.s
+.PHONY : src/SimpleWallboxController.s
+
+# target to generate assembly for a file
+src/SimpleWallboxController.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v4.dir/build.make CMakeFiles/wallbox_control_v4.dir/src/SimpleWallboxController.cpp.s
+.PHONY : src/SimpleWallboxController.cpp.s
+
 src/StubGpioController.o: src/StubGpioController.cpp.o
 .PHONY : src/StubGpioController.o
 
@@ -354,6 +394,7 @@ src/StubGpioController.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/StubGpioController.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/StubGpioController.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v3.dir/build.make CMakeFiles/wallbox_control_v3.dir/src/StubGpioController.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v4.dir/build.make CMakeFiles/wallbox_control_v4.dir/src/StubGpioController.cpp.o
 .PHONY : src/StubGpioController.cpp.o
 
 src/StubGpioController.i: src/StubGpioController.cpp.i
@@ -364,6 +405,7 @@ src/StubGpioController.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/StubGpioController.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/StubGpioController.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v3.dir/build.make CMakeFiles/wallbox_control_v3.dir/src/StubGpioController.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v4.dir/build.make CMakeFiles/wallbox_control_v4.dir/src/StubGpioController.cpp.i
 .PHONY : src/StubGpioController.cpp.i
 
 src/StubGpioController.s: src/StubGpioController.cpp.s
@@ -374,6 +416,7 @@ src/StubGpioController.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/StubGpioController.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/StubGpioController.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v3.dir/build.make CMakeFiles/wallbox_control_v3.dir/src/StubGpioController.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v4.dir/build.make CMakeFiles/wallbox_control_v4.dir/src/StubGpioController.cpp.s
 .PHONY : src/StubGpioController.cpp.s
 
 src/UdpCommunicator.o: src/UdpCommunicator.cpp.o
@@ -532,6 +575,30 @@ src/main_v3.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v3.dir/build.make CMakeFiles/wallbox_control_v3.dir/src/main_v3.cpp.s
 .PHONY : src/main_v3.cpp.s
 
+src/main_v4.o: src/main_v4.cpp.o
+.PHONY : src/main_v4.o
+
+# target to build an object file
+src/main_v4.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v4.dir/build.make CMakeFiles/wallbox_control_v4.dir/src/main_v4.cpp.o
+.PHONY : src/main_v4.cpp.o
+
+src/main_v4.i: src/main_v4.cpp.i
+.PHONY : src/main_v4.i
+
+# target to preprocess a source file
+src/main_v4.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v4.dir/build.make CMakeFiles/wallbox_control_v4.dir/src/main_v4.cpp.i
+.PHONY : src/main_v4.cpp.i
+
+src/main_v4.s: src/main_v4.cpp.s
+.PHONY : src/main_v4.s
+
+# target to generate assembly for a file
+src/main_v4.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v4.dir/build.make CMakeFiles/wallbox_control_v4.dir/src/main_v4.cpp.s
+.PHONY : src/main_v4.cpp.s
+
 src/simulator.o: src/simulator.cpp.o
 .PHONY : src/simulator.o
 
@@ -573,6 +640,7 @@ help:
 	@echo "... wallbox_control_api"
 	@echo "... wallbox_control_v2"
 	@echo "... wallbox_control_v3"
+	@echo "... wallbox_control_v4"
 	@echo "... src/BananaPiGpioController.o"
 	@echo "... src/BananaPiGpioController.i"
 	@echo "... src/BananaPiGpioController.s"
@@ -585,6 +653,9 @@ help:
 	@echo "... src/IsoStackCtrlProtocol_impl.o"
 	@echo "... src/IsoStackCtrlProtocol_impl.i"
 	@echo "... src/IsoStackCtrlProtocol_impl.s"
+	@echo "... src/SimpleWallboxController.o"
+	@echo "... src/SimpleWallboxController.i"
+	@echo "... src/SimpleWallboxController.s"
 	@echo "... src/StubGpioController.o"
 	@echo "... src/StubGpioController.i"
 	@echo "... src/StubGpioController.s"
@@ -606,6 +677,9 @@ help:
 	@echo "... src/main_v3.o"
 	@echo "... src/main_v3.i"
 	@echo "... src/main_v3.s"
+	@echo "... src/main_v4.o"
+	@echo "... src/main_v4.i"
+	@echo "... src/main_v4.s"
 	@echo "... src/simulator.o"
 	@echo "... src/simulator.i"
 	@echo "... src/simulator.s"

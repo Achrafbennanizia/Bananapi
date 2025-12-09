@@ -6,7 +6,7 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/Users/achraf/pro/PJMT/WallboxCtrl/include -I/Users/achraf/pro/PJMT/WallboxCtrl/../LibPubWallbox
 
-CXX_FLAGSarm64 = -std=c++17 -arch arm64 -Wall -Wextra -Wpedantic
+CXX_FLAGSarm64 = -std=c++14 -arch arm64 -Wall -Wextra -Wpedantic
 
-CXX_FLAGS = -std=c++17 -arch arm64 -Wall -Wextra -Wpedantic
+CXX_FLAGS = -std=c++14 -arch arm64 -Wall -Wextra -Wpedantic
 

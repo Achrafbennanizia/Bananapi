@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 
 project(WallboxControl LANGUAGES CXX)
 
-# Use C++17 (or higher if you want)
-set(CMAKE_CXX_STANDARD 17)
+# Use C++14 minimum (C++11 lacks make_unique)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -75,6 +75,18 @@ add_executable(wallbox_control_v3
 target_link_libraries(wallbox_control_v3 PRIVATE pthread)
 
 # =============================================================================
+# New v4.0 - Simplified: Only relay control, GPIO 21 as default
+# =============================================================================
+add_executable(wallbox_control_v4
+    src/main_v4.cpp
+    src/SimpleWallboxController.cpp
+    src/StubGpioController.cpp
+    src/BananaPiGpioController.cpp
+)
+
+target_link_libraries(wallbox_control_v4 PRIVATE pthread)
+
+# =============================================================================
 # Simulator (unchanged from v1.0)
 # =============================================================================
 add_executable(simulator
@@ -87,7 +99,7 @@ target_link_libraries(simulator PRIVATE pthread)
 # =============================================================================
 # Installation
 # =============================================================================
-install(TARGETS wallbox_control wallbox_control_v2 wallbox_control_api wallbox_control_v3 simulator
+install(TARGETS wallbox_control wallbox_control_v2 wallbox_control_api wallbox_control_v3 wallbox_control_v4 simulator
     RUNTIME DESTINATION bin
 )
 

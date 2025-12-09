@@ -1,0 +1,20 @@
+PROGRAMNAME = WallboxCtrl
+
+CPPFILES += \
+	../LibCpp/HAL/linux/cLxConsoleInput.cpp \
+	../LibCpp/HAL/linux/cLxIp.cpp \
+	../LibCpp/HAL/linux/cLxUdpSocket.cpp \
+	../LibCpp/HAL/linux/HW_Tools.cpp \
+	../LibCpp/HAL/Tools.cpp \
+	../LibCpp/HAL/cConsoleInput.cpp \
+	../LibCpp/HAL/cDebug.cpp \
+	../LibCpp/HAL/cFramePort.cpp \
+	../LibCpp/HAL/cIp.cpp \
+	../LibCpp/HAL/cUdpSocket.cpp \
+	OpenUdp.cpp \
+	main.cpp
+
+STATLIBS += \
+	../LibCpp/HAL/linux/iphlpapi.lib \
+	../LibCpp/HAL/linux/ws2_32.lib
+

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import wallboxAPI from './api/wallboxApi';
+import logger from './utils/logger';
 import './App.css';
 
 function App() {
@@ -10,9 +11,13 @@ function App() {
 
   // Load status on mount and every 2 seconds
   useEffect(() => {
+    logger.info('React app started');
     loadStatus();
     const interval = setInterval(loadStatus, 2000);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      logger.info('React app unmounted');
+    };
   }, []);
 
   const loadStatus = async () => {
@@ -21,21 +26,27 @@ function App() {
       setStatus(data);
       setConnected(true);
       setError(null);
+      logger.debug('Status loaded', data);
     } catch (err) {
       setConnected(false);
-      setError('Cannot connect to wallbox controller. Make sure wallbox_control_api is running on port 8080.');
+      const errorMsg = 'Cannot connect to wallbox controller. Make sure wallbox_control_api is running on port 8080.';
+      setError(errorMsg);
+      logger.error('Failed to load status', err.message);
     }
   };
 
   const handleAction = async (actionFn, actionName) => {
     setLoading(true);
     setError(null);
+    logger.info(`Executing action: ${actionName}`);
     try {
       const result = await actionFn();
-      console.log(`${actionName} result:`, result);
+      logger.info(`Action ${actionName} successful`, result);
       await loadStatus();
     } catch (err) {
-      setError(err.response?.data?.error || `Failed to ${actionName}`);
+      const errorMsg = err.response?.data?.error || `Failed to ${actionName}`;
+      setError(errorMsg);
+      logger.error(`Action ${actionName} failed`, errorMsg);
     } finally {
       setLoading(false);
     }
@@ -186,6 +197,22 @@ function App() {
           <p style={{ fontSize: '0.9rem', marginTop: '5px', color: '#888' }}>
             Use simulator or hardware pins to start charging and system control
           </p>
+          <button 
+            onClick={() => logger.downloadLogs()} 
+            className="btn-log-download"
+            style={{
+              marginTop: '10px',
+              padding: '8px 16px',
+              fontSize: '0.85rem',
+              background: '#667eea',
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer'
+            }}
+          >
+            📥 Download Logs
+          </button>
         </footer>
       </div>
     </div>

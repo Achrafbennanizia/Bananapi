@@ -1,0 +1,14 @@
+PROGRAMNAME = WallboxCtrl
+
+CPPFILES += \
+	main_v4.cpp \
+	SimpleWallboxController.cpp \
+	IsoStackCtrlProtocol_impl.cpp \
+	BananaPiGpioController.cpp \
+	UdpCommunicator.cpp \
+	ChargingStateMachine.cpp \
+	HttpApiServer.cpp \
+	StubGpioController.cpp \
+
+STATLIBS += \
+    -pthread
