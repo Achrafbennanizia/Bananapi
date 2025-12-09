@@ -9,6 +9,7 @@ A professional-grade EV charging wallbox control system implementing ISO 15118 s
 - [Architecture](#architecture)
 - [System Design](#system-design)
 - [Project Structure](#project-structure)
+- [Documentation](#documentation)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
@@ -192,64 +193,92 @@ This project follows **SOLID principles** and implements proven **design pattern
 
 ```
 PJMT/
-├── README.md                          # Main documentation with architecture
-├── ARCHITECTURE.md                    # Design patterns & SOLID principles
-├── MIGRATION.md                       # Migration guide to new architecture
-├── INSTALLATION.md                    # Installation guide
-├── API_REFERENCE.md                   # Complete API documentation
-├── DEVELOPMENT.md                     # Development guidelines
-├── CHANGELOG.md                       # Version history
-├── QUICK_REFERENCE.md                 # Command cheat sheet
+├── README.md                          # Main project documentation
+├── FILE_STRUCTURE.md                  # File organization guide
+├── .gitattributes                     # Git configuration
 │
-├── LibPubWallbox/                     # ISO 15118 Protocol Library
-│   ├── IsoStackCtrlProtocol.h        # Protocol definitions & enums
-│   ├── IsoStackCtrlProtocol.cpp      # Protocol implementation
-│   ├── Messages.h/cpp                 # Message handling
-│   ├── libIsoStackCtrl.a             # Compiled static library
-│   ├── Makefile                       # Library build system
-│   └── curl/                          # HTTP client library
-│       └── libmicrohttpd/            # HTTP server library
+├── docs/                              # 📚 All Documentation
+│   ├── DOCS_INDEX.md                 # Documentation navigation
+│   │
+│   ├── architecture/                  # Design & Architecture
+│   │   ├── ARCHITECTURE.md           # Original architecture
+│   │   ├── ARCHITECTURE_V3.md        # v3.0 architecture (7 patterns)
+│   │   └── ARCHITECTURE_VISUAL.md    # Visual diagrams
+│   │
+│   ├── guides/                        # User & Developer Guides
+│   │   ├── MODES_GUIDE.md            # Development/Production modes
+│   │   ├── DEVELOPMENT.md            # Development guidelines
+│   │   ├── INSTALLATION.md           # Installation guide
+│   │   └── MIGRATION.md              # Migration guide
+│   │
+│   ├── api/                           # API Documentation
+│   │   ├── API_REFERENCE.md          # Complete REST API reference
+│   │   ├── REACT_APP_API.md          # React app integration
+│   │   └── QUICK_REFERENCE.md        # Quick command reference
+│   │
+│   ├── CHANGELOG.md                   # Version history
+│   ├── IMPROVEMENTS_SUMMARY.md        # Project improvements
+│   └── TRANSFORMATION_SUMMARY.md      # Transformation overview
 │
-├── WallboxCtrl/                       # Main Application
-│   ├── include/                       # Header files (NEW)
-│   │   ├── IGpioController.h         # GPIO interface (Strategy Pattern)
-│   │   ├── StubGpioController.h      # Development GPIO implementation
+├── scripts/                           # 🔧 Executable Scripts
+│   ├── start-dev.sh                  # Start development mode
+│   └── start-prod.sh                 # Start production mode
+│
+├── WallboxCtrl/                       # 🔌 Main C++ Application
+│   ├── include/                       # Header files
+│   │   ├── Configuration.h           # Singleton config manager
+│   │   ├── GpioFactory.h             # Factory pattern for GPIO
+│   │   ├── ApiController.h           # MVC REST controller
+│   │   ├── Application.h             # Application controller
+│   │   ├── IGpioController.h         # GPIO interface
+│   │   ├── StubGpioController.h      # Development GPIO
 │   │   ├── INetworkCommunicator.h    # Network interface
 │   │   ├── UdpCommunicator.h         # UDP implementation
-│   │   ├── WallboxController.h       # Main controller class
-│   │   ├── ChargingStateMachine.h    # State Pattern implementation
-│   │   ├── CommandProcessor.h        # Command Pattern
+│   │   ├── WallboxController.h       # Main controller
+│   │   ├── ChargingStateMachine.h    # State pattern
+│   │   ├── CommandProcessor.h        # Command pattern
 │   │   └── WatchdogTimer.h           # Safety timer
 │   │
-│   ├── src/
-│   │   ├── main.cpp                  # Wallbox controller program
-│   │   ├── simulator.cpp             # ISO stack simulator
-│   │   ├── WallboxController.cpp     # Controller implementation (NEW)
-│   │   ├── UdpCommunicator.cpp       # Network implementation (NEW)
-│   │   ├── ChargingStateMachine.cpp  # State machine (NEW)
-│   │   ├── CommandProcessor.cpp      # Commands (NEW)
-│   │   ├── IsoStackCtrlProtocol_impl.cpp
-│   │   ├── wallbox_ctrl              # Compiled wallbox executable
-│   │   └── simulator                 # Compiled simulator executable
+│   ├── src/                           # Source files
+│   │   ├── main_v3.cpp               # Application entry point
+│   │   ├── WallboxController.cpp     # Controller implementation
+│   │   ├── UdpCommunicator.cpp       # Network implementation
+│   │   ├── ChargingStateMachine.cpp  # State machine
+│   │   ├── CommandProcessor.cpp      # Commands
+│   │   └── simulator.cpp             # ISO stack simulator
 │   │
-│   ├── tests/                         # Unit tests (NEW)
-│   │   ├── GpioControllerTests.cpp
-│   │   ├── NetworkTests.cpp
-│   │   ├── WallboxControllerTests.cpp
-│   │   └── MockObjects.h             # Mock implementations
-│   │
-│   ├── build/                         # CMake build directory
+│   ├── tests/                         # Unit tests
+│   ├── build/                         # CMake build output
 │   ├── CMakeLists.txt                # CMake configuration
-│   ├── build.sh                      # Build automation script
-│   ├── test.sh                       # Testing script
-│   ├── test_interactive.sh           # Interactive testing
-│   ├── README.md                     # Component documentation
-│   └── INTERACTIVE_GUIDE.md          # User guide
+│   └── README.md                     # Component documentation
 │
-└── env/                               # Docker Environment
+├── wallbox-react-app/                 # ⚛️ React Web Interface
+│   ├── src/
+│   │   ├── App.jsx                   # Main component
+│   │   ├── components/               # React components
+│   │   └── styles/                   # CSS styles
+│   ├── public/
+│   └── package.json
+│
+├── LibPubWallbox/                     # 📡 ISO 15118 Protocol Library
+│   ├── IsoStackCtrlProtocol.h        # Protocol definitions
+│   ├── Messages.h/cpp                 # Message handling
+│   ├── libIsoStackCtrl.a             # Static library
+│   └── curl/                          # HTTP libraries
+│
+└── env/                               # 🐳 Docker Environment
+    ├── Dockerfile
+    ├── docker-compose.yml
+    └── README.md
+```
+
+> **📖 See [FILE_STRUCTURE.md](FILE_STRUCTURE.md) for detailed organization guide**  
+> **📚 Browse all docs at [docs/DOCS_INDEX.md](docs/DOCS_INDEX.md)**
+
     ├── Dockerfile                     # Container definition
     ├── docker-compose.yml            # Docker orchestration
     └── README.md                     # Environment setup guide
+
 ```
 
 │ ├── test.sh # Testing script
@@ -262,7 +291,7 @@ PJMT/
 ├── docker-compose.yml # Docker orchestration
 └── README.md # Environment setup guide
 
-````
+```
 
 ## 💻 Requirements
 
@@ -305,7 +334,7 @@ g++ -std=c++17 -O2 simulator.cpp IsoStackCtrlProtocol_impl.cpp -o simulator
 
 # Verify builds
 ls -lh wallbox_ctrl simulator
-````
+```
 
 ### Method 2: Using CMake
 
@@ -659,6 +688,18 @@ Contributions are welcome! Please:
 4. Create a feature branch
 5. Write tests for new features
 6. Submit a pull request
+
+See [docs/guides/DEVELOPMENT.md](docs/guides/DEVELOPMENT.md) for development guidelines.
+
+## 📚 Documentation
+
+Complete documentation is available in the [`docs/`](docs/) directory:
+
+- **[Documentation Index](docs/DOCS_INDEX.md)** - Complete navigation guide
+- **[File Structure Guide](FILE_STRUCTURE.md)** - Project organization
+- **[Architecture](docs/architecture/)** - Design patterns & SOLID principles
+- **[User Guides](docs/guides/)** - Installation, modes, development
+- **[API Reference](docs/api/)** - REST API and integration docs
 
 ## 📄 License
 

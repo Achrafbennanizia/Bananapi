@@ -1,0 +1,8 @@
+# Documentation
+*.md linguist-documentation
+
+# Build artifacts
+build/ export-ignore
+*.o export-ignore
+*.so export-ignore
+*.a export-ignore
