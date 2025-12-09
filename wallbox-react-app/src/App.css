@@ -252,6 +252,43 @@ body {
   color: white;
 }
 
+.btn-emergency {
+  padding: 25px 40px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  width: 100%;
+  margin: 20px 0;
+  animation: emergencyGlow 2s ease-in-out infinite;
+}
+
+@keyframes emergencyGlow {
+  0%, 100% {
+    box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4);
+  }
+  50% {
+    box-shadow: 0 8px 30px rgba(244, 67, 54, 0.7);
+  }
+}
+
+.control-description {
+  color: #555;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-left: 4px solid #667eea;
+  border-radius: 4px;
+}
+
+.info-text {
+  text-align: center;
+  color: #666;
+  font-size: 0.95rem;
+  font-style: italic;
+  margin-top: 15px;
+}
+
 .app-footer {
   padding: 20px 30px;
   background: #f8f9fa;

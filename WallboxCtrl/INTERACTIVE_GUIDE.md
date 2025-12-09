@@ -67,11 +67,11 @@ cd /Users/achraf/pro/PJMT/WallboxCtrl
 
 ```
 ┌─────────────────┐          UDP          ┌──────────────────┐
-│   Simulator     │ ◄─────────────────► │ Wallbox Control  │
-│                 │                        │                  │
+│   Simulator     │ ◄─────────────────►   │ Wallbox Control  │
+│                 │                       │                  │
 │ Port: 50011 IN  │   stSeIsoStackState   │ Port: 50010 IN   │
 │ Port: 50010 OUT │   stSeIsoStackCmd     │ Port: 50011 OUT  │
-└─────────────────┘                        └──────────────────┘
+└─────────────────┘                       └──────────────────┘
        ▲                                            ▲
        │                                            │
    Terminal                                    Terminal

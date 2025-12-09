@@ -115,71 +115,35 @@ function App() {
         </div>
 
         <div className="control-panel">
-          <h2>🎮 Controls</h2>
+          <h2>🛑 Emergency Stop</h2>
           
           <div className="control-section">
-            <h3>Charging Control</h3>
-            <div className="button-grid">
-              <button
-                onClick={() => handleAction(() => wallboxAPI.startCharging(), 'start charging')}
-                disabled={loading || status.charging || !status.wallboxEnabled}
-                className="btn btn-success btn-large"
-              >
-                ▶️ Start Charging
-              </button>
-              
-              <button
-                onClick={() => handleAction(() => wallboxAPI.stopCharging(), 'stop charging')}
-                disabled={loading || !status.charging}
-                className="btn btn-danger btn-large"
-              >
-                ⏹️ Stop Charging
-              </button>
-            </div>
-
-            <div className="button-grid">
-              <button
-                onClick={() => handleAction(() => wallboxAPI.pauseCharging(), 'pause charging')}
-                disabled={loading || status.state !== 'CHARGING'}
-                className="btn btn-warning"
-              >
-                ⏸️ Pause
-              </button>
-              
-              <button
-                onClick={() => handleAction(() => wallboxAPI.resumeCharging(), 'resume charging')}
-                disabled={loading || status.state !== 'PAUSED'}
-                className="btn btn-info"
-              >
-                ⏯️ Resume
-              </button>
-            </div>
-          </div>
-
-          <div className="control-section">
-            <h3>System Control</h3>
-            <div className="button-grid">
-              <button
-                onClick={() => handleAction(() => wallboxAPI.enableWallbox(), 'enable wallbox')}
-                disabled={loading || status.wallboxEnabled}
-                className="btn btn-primary"
-              >
-                ✓ Enable Wallbox
-              </button>
-              
-              <button
-                onClick={() => handleAction(() => wallboxAPI.disableWallbox(), 'disable wallbox')}
-                disabled={loading || !status.wallboxEnabled}
-                className="btn btn-secondary"
-              >
-                ✗ Disable Wallbox
-              </button>
-            </div>
+            <p className="control-description">
+              Use this button to immediately stop an active charging session. 
+              All other operations (start, pause, enable/disable) must be controlled via the simulator or hardware pins.
+            </p>
+            
+            <button
+              onClick={() => handleAction(() => wallboxAPI.stopCharging(), 'stop charging')}
+              disabled={loading || !status.charging}
+              className="btn btn-danger btn-emergency"
+            >
+              ⏹️ STOP CHARGING
+            </button>
+            
+            {!status.charging && (
+              <p className="info-text">
+                ℹ️ Stop button is only active when charging is in progress
+              </p>
+            )}
           </div>
         </div>
 
         <footer className="app-footer">
-          <p>Wallbox Controller v2.0 - REST API Integration</p>
+          <p>Wallbox Controller v3.0 - Emergency Stop Interface</p>
+          <p style={{ fontSize: '0.9rem', marginTop: '5px', color: '#888' }}>
+            Use simulator or hardware pins for start, pause, and system control
+          </p>
         </footer>
       </div>
     </div>

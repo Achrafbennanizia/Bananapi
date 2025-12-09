@@ -2,7 +2,23 @@
 
 ## Overview
 
-The Wallbox Controller now includes a RESTful HTTP API server that allows control from web applications, including React apps. The API runs on port **8080** by default and includes CORS support for cross-origin requests.
+The Wallbox Controller includes a RESTful HTTP API server for **emergency stop control** and status monitoring. The API runs on port **8080** by default and includes CORS support for cross-origin requests.
+
+### Web Interface Purpose
+
+The React web app provides **ONE primary function**: **Emergency Stop**
+
+All other charging operations (start, pause, enable/disable) are controlled via:
+
+- **Simulator** (development mode)
+- **Hardware pins** (production mode)
+
+This design ensures:
+
+- **Safety**: Remote emergency stop capability
+- **Simplicity**: Clear, single-purpose web interface
+- **Control**: Primary operations remain on local simulator/hardware
+- **Security**: Minimal remote control surface
 
 ## Base URL
 
@@ -59,11 +75,37 @@ Get the current status of the wallbox.
 
 ---
 
-### 3. Start Charging
+### 3. Stop Charging (Web Interface)
+
+**POST** `/api/charging/stop`
+
+**Emergency stop** the charging process. This is the **primary control** available to the web interface.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Charging stopped",
+  "state": "IDLE"
+}
+```
+
+**Usage:**
+
+- Used by React web app for emergency stop
+- Only active when charging is in progress
+- Immediate action, stops charging safely
+
+---
+
+### 4. Start Charging (Simulator/Hardware Only)
 
 **POST** `/api/charging/start`
 
 Start the charging process.
+
+⚠️ **Note:** This endpoint is **NOT used by the web interface**. Use simulator or hardware pins to start charging.
 
 **Response (Success):**
 
@@ -85,29 +127,13 @@ Start the charging process.
 
 ---
 
-### 4. Stop Charging
-
-**POST** `/api/charging/stop`
-
-Stop the charging process.
-
-**Response:**
-
-```json
-{
-  "success": true,
-  "message": "Charging stopped",
-  "state": "IDLE"
-}
-```
-
----
-
-### 5. Pause Charging
+### 5. Pause Charging (Simulator/Hardware Only)
 
 **POST** `/api/charging/pause`
 
 Pause the charging process (can be resumed).
+
+⚠️ **Note:** This endpoint is **NOT used by the web interface**. Use simulator or hardware pins.
 
 **Response:**
 
@@ -121,11 +147,13 @@ Pause the charging process (can be resumed).
 
 ---
 
-### 6. Resume Charging
+### 6. Resume Charging (Simulator/Hardware Only)
 
 **POST** `/api/charging/resume`
 
 Resume charging after pause.
+
+⚠️ **Note:** This endpoint is **NOT used by the web interface**. Use simulator or hardware pins.
 
 **Response:**
 
@@ -139,11 +167,13 @@ Resume charging after pause.
 
 ---
 
-### 7. Enable Wallbox
+### 7. Enable Wallbox (Simulator/Hardware Only)
 
 **POST** `/api/wallbox/enable`
 
 Enable the wallbox system.
+
+⚠️ **Note:** This endpoint is **NOT used by the web interface**. Use simulator or hardware pins.
 
 **Response:**
 
@@ -157,11 +187,13 @@ Enable the wallbox system.
 
 ---
 
-### 8. Disable Wallbox
+### 8. Disable Wallbox (Simulator/Hardware Only)
 
 **POST** `/api/wallbox/disable`
 
 Disable the wallbox system (stops charging if active).
+
+⚠️ **Note:** This endpoint is **NOT used by the web interface**. Use simulator or hardware pins.
 
 **Response:**
 
@@ -194,6 +226,15 @@ Get the current relay status.
 
 ## React App Integration Example
 
+### Design Philosophy
+
+The React web app is intentionally limited to:
+
+- **Status Monitoring** (read-only)
+- **Emergency Stop** (single write operation)
+
+All other controls (start, pause, enable/disable) remain on simulator/hardware.
+
 ### Install Dependencies
 
 ```bash
@@ -202,7 +243,7 @@ npm install axios
 npm install fetch
 ```
 
-### API Service (wallboxApi.js)
+### Simplified API Service (wallboxApi.js)
 
 ```javascript
 import axios from "axios";
@@ -210,51 +251,15 @@ import axios from "axios";
 const API_BASE_URL = "http://localhost:8080";
 
 class WallboxAPI {
-  // Get current status
+  // Get current status (used by web app)
   async getStatus() {
     const response = await axios.get(`${API_BASE_URL}/api/status`);
     return response.data;
   }
 
-  // Start charging
-  async startCharging() {
-    const response = await axios.post(`${API_BASE_URL}/api/charging/start`);
-    return response.data;
-  }
-
-  // Stop charging
+  // Stop charging - EMERGENCY STOP (used by web app)
   async stopCharging() {
     const response = await axios.post(`${API_BASE_URL}/api/charging/stop`);
-    return response.data;
-  }
-
-  // Pause charging
-  async pauseCharging() {
-    const response = await axios.post(`${API_BASE_URL}/api/charging/pause`);
-    return response.data;
-  }
-
-  // Resume charging
-  async resumeCharging() {
-    const response = await axios.post(`${API_BASE_URL}/api/charging/resume`);
-    return response.data;
-  }
-
-  // Enable wallbox
-  async enableWallbox() {
-    const response = await axios.post(`${API_BASE_URL}/api/wallbox/enable`);
-    return response.data;
-  }
-
-  // Disable wallbox
-  async disableWallbox() {
-    const response = await axios.post(`${API_BASE_URL}/api/wallbox/disable`);
-    return response.data;
-  }
-
-  // Get relay status
-  async getRelayStatus() {
-    const response = await axios.get(`${API_BASE_URL}/api/relay`);
     return response.data;
   }
 
@@ -263,12 +268,45 @@ class WallboxAPI {
     const response = await axios.get(`${API_BASE_URL}/health`);
     return response.data;
   }
+
+  // --- Following methods available but NOT used by web app ---
+  // Use simulator or hardware pins for these operations
+
+  async startCharging() {
+    const response = await axios.post(`${API_BASE_URL}/api/charging/start`);
+    return response.data;
+  }
+
+  async pauseCharging() {
+    const response = await axios.post(`${API_BASE_URL}/api/charging/pause`);
+    return response.data;
+  }
+
+  async resumeCharging() {
+    const response = await axios.post(`${API_BASE_URL}/api/charging/resume`);
+    return response.data;
+  }
+
+  async enableWallbox() {
+    const response = await axios.post(`${API_BASE_URL}/api/wallbox/enable`);
+    return response.data;
+  }
+
+  async disableWallbox() {
+    const response = await axios.post(`${API_BASE_URL}/api/wallbox/disable`);
+    return response.data;
+  }
+
+  async getRelayStatus() {
+    const response = await axios.get(`${API_BASE_URL}/api/relay`);
+    return response.data;
+  }
 }
 
 export default new WallboxAPI();
 ```
 
-### React Component Example
+### Simplified React Component Example
 
 ```javascript
 import React, { useState, useEffect } from "react";
@@ -298,14 +336,14 @@ function WallboxControl() {
     }
   };
 
-  const handleAction = async (action) => {
+  const handleEmergencyStop = async () => {
     setLoading(true);
     try {
-      await action();
+      await wallboxAPI.stopCharging();
       await loadStatus(); // Refresh status
       setError(null);
     } catch (err) {
-      setError(err.response?.data?.error || "Action failed");
+      setError(err.response?.data?.error || "Emergency stop failed");
     } finally {
       setLoading(false);
     }
@@ -317,12 +355,13 @@ function WallboxControl() {
 
   return (
     <div className="wallbox-control">
-      <h1>Wallbox Controller</h1>
+      <h1>🔌 Wallbox Emergency Stop</h1>
 
       {error && <div className="error">{error}</div>}
 
+      {/* Status Panel - Read Only */}
       <div className="status-panel">
-        <h2>Status</h2>
+        <h2>📊 Current Status</h2>
         <div className="status-item">
           <span>State:</span>
           <strong className={`state-${status.state.toLowerCase()}`}>
@@ -331,78 +370,51 @@ function WallboxControl() {
         </div>
         <div className="status-item">
           <span>Wallbox:</span>
-          <strong>{status.wallboxEnabled ? "Enabled" : "Disabled"}</strong>
+          <strong>{status.wallboxEnabled ? "✓ Enabled" : "✗ Disabled"}</strong>
         </div>
         <div className="status-item">
           <span>Relay:</span>
-          <strong>{status.relayEnabled ? "ON" : "OFF"}</strong>
+          <strong>{status.relayEnabled ? "⚡ ON" : "○ OFF"}</strong>
         </div>
         <div className="status-item">
           <span>Charging:</span>
-          <strong>{status.charging ? "Yes" : "No"}</strong>
+          <strong>{status.charging ? "🔋 Yes" : "○ No"}</strong>
         </div>
       </div>
 
+      {/* Emergency Stop Control - Single Button */}
       <div className="control-panel">
-        <h2>Controls</h2>
+        <h2>🛑 Emergency Stop</h2>
+        <p className="control-info">
+          Use this button to immediately stop charging. All other operations
+          must be controlled via simulator or hardware pins.
+        </p>
 
-        <div className="button-group">
-          <button
-            onClick={() => handleAction(wallboxAPI.startCharging)}
-            disabled={loading || status.charging}
-            className="btn-start"
-          >
-            Start Charging
-          </button>
+        <button
+          onClick={handleEmergencyStop}
+          disabled={loading || !status.charging}
+          className="btn-emergency-stop"
+        >
+          ⏹️ STOP CHARGING
+        </button>
 
-          <button
-            onClick={() => handleAction(wallboxAPI.stopCharging)}
-            disabled={loading || !status.charging}
-            className="btn-stop"
-          >
-            Stop Charging
-          </button>
-        </div>
-
-        <div className="button-group">
-          <button
-            onClick={() => handleAction(wallboxAPI.pauseCharging)}
-            disabled={loading || status.state !== "CHARGING"}
-            className="btn-pause"
-          >
-            Pause
-          </button>
-
-          <button
-            onClick={() => handleAction(wallboxAPI.resumeCharging)}
-            disabled={loading || status.state !== "PAUSED"}
-            className="btn-resume"
-          >
-            Resume
-          </button>
-        </div>
-
-        <div className="button-group">
-          <button
-            onClick={() => handleAction(wallboxAPI.enableWallbox)}
-            disabled={loading || status.wallboxEnabled}
-            className="btn-enable"
-          >
-            Enable Wallbox
-          </button>
-
-          <button
-            onClick={() => handleAction(wallboxAPI.disableWallbox)}
-            disabled={loading || !status.wallboxEnabled}
-            className="btn-disable"
-          >
-            Disable Wallbox
-          </button>
-        </div>
+        {!status.charging && (
+          <p className="info-text">
+            ℹ️ Stop button is only active when charging is in progress
+          </p>
+        )}
       </div>
 
       <div className="info">
         Last updated: {new Date(status.timestamp * 1000).toLocaleString()}
+      </div>
+
+      <div className="help-text">
+        <strong>To start, pause, or resume charging:</strong>
+        <ul>
+          <li>Development Mode: Use the simulator</li>
+          <li>Production Mode: Use hardware pins</li>
+        </ul>
       </div>
     </div>
   );
