@@ -28,10 +28,10 @@ if [ ! -d "WallboxCtrl/build" ]; then
 fi
 
 # Check if executable exists
-if [ ! -f "WallboxCtrl/build/wallbox_control_api" ]; then
-    echo "❌ wallbox_control_api not found. Building..."
+if [ ! -f "WallboxCtrl/build/wallbox_control_v3" ]; then
+    echo "❌ wallbox_control_v3 not found. Building..."
     cd WallboxCtrl/build
-    cmake .. && make
+    cmake .. && make wallbox_control_v3
     cd ../..
 fi
 
@@ -68,9 +68,9 @@ cleanup() {
 trap cleanup INT TERM
 
 # Start API server
-echo "Starting API server with REAL GPIO..."
+echo "Starting API server with REAL GPIO (v3.0 architecture)..."
 cd WallboxCtrl/build
-./wallbox_control_api &
+./wallbox_control_v3 &
 PID_API=$!
 cd ../..
 

@@ -25,22 +25,12 @@ namespace Wallbox
      * - Single Responsibility: Coordinates subsystems only
      * - Dependency Inversion: Depends on abstractions (interfaces)
      * - Open/Closed: Extensible through interface implementations
+     *
+     * Note: Pin definitions moved to Configuration class for centralization
      */
     class WallboxController
     {
     public:
-        /**
-         * @brief Pin definitions for hardware control
-         */
-        struct Pins
-        {
-            static constexpr int RELAY_ENABLE = 4; ///< Main relay control
-            static constexpr int LED_GREEN = 17;   ///< Green LED (ready)
-            static constexpr int LED_YELLOW = 27;  ///< Yellow LED (charging)
-            static constexpr int LED_RED = 22;     ///< Red LED (error)
-            static constexpr int BUTTON = 23;      ///< User button input
-        };
-
         /**
          * @brief Construct wallbox controller with dependencies
          * @param gpio GPIO controller (Strategy Pattern)

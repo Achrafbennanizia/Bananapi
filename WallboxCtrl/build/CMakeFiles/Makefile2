@@ -66,6 +66,7 @@ CMAKE_BINARY_DIR = /Users/achraf/pro/PJMT/WallboxCtrl/build
 all: CMakeFiles/wallbox_control.dir/all
 all: CMakeFiles/wallbox_control_v2.dir/all
 all: CMakeFiles/wallbox_control_api.dir/all
+all: CMakeFiles/wallbox_control_v3.dir/all
 all: CMakeFiles/simulator.dir/all
 .PHONY : all
 
@@ -73,6 +74,7 @@ all: CMakeFiles/simulator.dir/all
 codegen: CMakeFiles/wallbox_control.dir/codegen
 codegen: CMakeFiles/wallbox_control_v2.dir/codegen
 codegen: CMakeFiles/wallbox_control_api.dir/codegen
+codegen: CMakeFiles/wallbox_control_v3.dir/codegen
 codegen: CMakeFiles/simulator.dir/codegen
 .PHONY : codegen
 
@@ -84,6 +86,7 @@ preinstall:
 clean: CMakeFiles/wallbox_control.dir/clean
 clean: CMakeFiles/wallbox_control_v2.dir/clean
 clean: CMakeFiles/wallbox_control_api.dir/clean
+clean: CMakeFiles/wallbox_control_v3.dir/clean
 clean: CMakeFiles/simulator.dir/clean
 .PHONY : clean
 
@@ -182,6 +185,38 @@ CMakeFiles/wallbox_control_api.dir/codegen:
 CMakeFiles/wallbox_control_api.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/clean
 .PHONY : CMakeFiles/wallbox_control_api.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/wallbox_control_v3.dir
+
+# All Build rule for target.
+CMakeFiles/wallbox_control_v3.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v3.dir/build.make CMakeFiles/wallbox_control_v3.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v3.dir/build.make CMakeFiles/wallbox_control_v3.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles --progress-num=23,24,25,26,27,28,29,30,31 "Built target wallbox_control_v3"
+.PHONY : CMakeFiles/wallbox_control_v3.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/wallbox_control_v3.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles 9
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/wallbox_control_v3.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles 0
+.PHONY : CMakeFiles/wallbox_control_v3.dir/rule
+
+# Convenience name for target.
+wallbox_control_v3: CMakeFiles/wallbox_control_v3.dir/rule
+.PHONY : wallbox_control_v3
+
+# codegen rule for target.
+CMakeFiles/wallbox_control_v3.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v3.dir/build.make CMakeFiles/wallbox_control_v3.dir/codegen
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles --progress-num=23,24,25,26,27,28,29,30,31 "Finished codegen for target wallbox_control_v3"
+.PHONY : CMakeFiles/wallbox_control_v3.dir/codegen
+
+# clean rule for target.
+CMakeFiles/wallbox_control_v3.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v3.dir/build.make CMakeFiles/wallbox_control_v3.dir/clean
+.PHONY : CMakeFiles/wallbox_control_v3.dir/clean
 
 #=============================================================================
 # Target rules for target CMakeFiles/simulator.dir

@@ -51,5 +51,6 @@ set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/wallbox_control.dir/DependInfo.cmake"
   "CMakeFiles/wallbox_control_v2.dir/DependInfo.cmake"
   "CMakeFiles/wallbox_control_api.dir/DependInfo.cmake"
+  "CMakeFiles/wallbox_control_v3.dir/DependInfo.cmake"
   "CMakeFiles/simulator.dir/DependInfo.cmake"
   )

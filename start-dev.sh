@@ -19,10 +19,10 @@ if [ ! -d "WallboxCtrl/build" ]; then
 fi
 
 # Check if executables exist
-if [ ! -f "WallboxCtrl/build/wallbox_control_api" ]; then
-    echo "❌ wallbox_control_api not found. Building..."
+if [ ! -f "WallboxCtrl/build/wallbox_control_v3" ]; then
+    echo "❌ wallbox_control_v3 not found. Building..."
     cd WallboxCtrl/build
-    cmake .. && make
+    cmake .. && make wallbox_control_v3
     cd ../..
 fi
 
@@ -66,9 +66,9 @@ echo "   📝 Log: /tmp/wallbox_simulator.log"
 echo ""
 
 # Start API server in background
-echo "2️⃣  Starting API server on port 8080..."
+echo "2️⃣  Starting API server (v3.0 architecture) on port 8080..."
 cd WallboxCtrl/build
-./wallbox_control_api > /tmp/wallbox_api.log 2>&1 &
+./wallbox_control_v3 > /tmp/wallbox_api.log 2>&1 &
 PID_API=$!
 cd ../..
 sleep 2

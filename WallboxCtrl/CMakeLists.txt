@@ -59,6 +59,22 @@ add_executable(wallbox_control_api
 target_link_libraries(wallbox_control_api PRIVATE pthread)
 
 # =============================================================================
+# New v3.0 - Improved Architecture (Clean, modular design)
+# =============================================================================
+add_executable(wallbox_control_v3
+    src/main_v3.cpp
+    src/WallboxController.cpp
+    src/ChargingStateMachine.cpp
+    src/StubGpioController.cpp
+    src/BananaPiGpioController.cpp
+    src/UdpCommunicator.cpp
+    src/HttpApiServer.cpp
+    src/IsoStackCtrlProtocol_impl.cpp
+)
+
+target_link_libraries(wallbox_control_v3 PRIVATE pthread)
+
+# =============================================================================
 # Simulator (unchanged from v1.0)
 # =============================================================================
 add_executable(simulator
@@ -71,7 +87,7 @@ target_link_libraries(simulator PRIVATE pthread)
 # =============================================================================
 # Installation
 # =============================================================================
-install(TARGETS wallbox_control wallbox_control_v2 wallbox_control_api simulator
+install(TARGETS wallbox_control wallbox_control_v2 wallbox_control_api wallbox_control_v3 simulator
     RUNTIME DESTINATION bin
 )
 
@@ -116,6 +132,7 @@ message(STATUS "Targets:")
 message(STATUS "  - wallbox_control (v1.0 legacy)")
 message(STATUS "  - wallbox_control_v2 (v2.0 SOLID)")
 message(STATUS "  - wallbox_control_api (v2.0 with REST API)")
+message(STATUS "  - wallbox_control_v3 (v3.0 improved architecture)")
 message(STATUS "  - simulator")
 if(BUILD_TESTS)
     message(STATUS "  - wallbox_tests (unit tests)")

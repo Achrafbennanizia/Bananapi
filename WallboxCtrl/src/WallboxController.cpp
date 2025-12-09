@@ -1,4 +1,5 @@
 #include "WallboxController.h"
+#include "Configuration.h"
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -99,7 +100,7 @@ namespace Wallbox
             updateLeds();
 
             // Check for button press (if implemented)
-            // PinValue buttonState = m_gpio->digitalRead(Pins::BUTTON);
+            // PinValue buttonState = m_gpio->digitalRead(Configuration::Pins::BUTTON);
 
             // Small delay to prevent CPU spinning
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -191,7 +192,7 @@ namespace Wallbox
     {
         PinValue value = enabled ? PinValue::HIGH : PinValue::LOW;
 
-        if (!m_gpio->digitalWrite(Pins::RELAY_ENABLE, value))
+        if (!m_gpio->digitalWrite(Configuration::Pins::RELAY_ENABLE, value))
         {
             std::cerr << "Failed to set relay state" << std::endl;
             return false;
@@ -218,19 +219,19 @@ namespace Wallbox
     void WallboxController::setupGpio()
     {
         // Configure output pins
-        m_gpio->setPinMode(Pins::RELAY_ENABLE, PinMode::OUTPUT);
-        m_gpio->setPinMode(Pins::LED_GREEN, PinMode::OUTPUT);
-        m_gpio->setPinMode(Pins::LED_YELLOW, PinMode::OUTPUT);
-        m_gpio->setPinMode(Pins::LED_RED, PinMode::OUTPUT);
+        m_gpio->setPinMode(Configuration::Pins::RELAY_ENABLE, PinMode::OUTPUT);
+        m_gpio->setPinMode(Configuration::Pins::LED_GREEN, PinMode::OUTPUT);
+        m_gpio->setPinMode(Configuration::Pins::LED_YELLOW, PinMode::OUTPUT);
+        m_gpio->setPinMode(Configuration::Pins::LED_RED, PinMode::OUTPUT);
 
         // Configure input pins
-        m_gpio->setPinMode(Pins::BUTTON, PinMode::INPUT);
+        m_gpio->setPinMode(Configuration::Pins::BUTTON, PinMode::INPUT);
 
         // Initialize outputs to OFF
-        m_gpio->digitalWrite(Pins::RELAY_ENABLE, PinValue::LOW);
-        m_gpio->digitalWrite(Pins::LED_GREEN, PinValue::LOW);
-        m_gpio->digitalWrite(Pins::LED_YELLOW, PinValue::LOW);
-        m_gpio->digitalWrite(Pins::LED_RED, PinValue::LOW);
+        m_gpio->digitalWrite(Configuration::Pins::RELAY_ENABLE, PinValue::LOW);
+        m_gpio->digitalWrite(Configuration::Pins::LED_GREEN, PinValue::LOW);
+        m_gpio->digitalWrite(Configuration::Pins::LED_YELLOW, PinValue::LOW);
+        m_gpio->digitalWrite(Configuration::Pins::LED_RED, PinValue::LOW);
     }
 
     void WallboxController::updateLeds()
@@ -238,9 +239,9 @@ namespace Wallbox
         if (!m_wallboxEnabled)
         {
             // All LEDs off when disabled
-            setLedState(Pins::LED_GREEN, false);
-            setLedState(Pins::LED_YELLOW, false);
-            setLedState(Pins::LED_RED, false);
+            setLedState(Configuration::Pins::LED_GREEN, false);
+            setLedState(Configuration::Pins::LED_YELLOW, false);
+            setLedState(Configuration::Pins::LED_RED, false);
             return;
         }
 
@@ -295,30 +296,30 @@ namespace Wallbox
 
     void WallboxController::showIdleLeds()
     {
-        setLedState(Pins::LED_GREEN, true);   // Green ON
-        setLedState(Pins::LED_YELLOW, false); // Yellow OFF
-        setLedState(Pins::LED_RED, false);    // Red OFF
+        setLedState(Configuration::Pins::LED_GREEN, true);   // Green ON
+        setLedState(Configuration::Pins::LED_YELLOW, false); // Yellow OFF
+        setLedState(Configuration::Pins::LED_RED, false);    // Red OFF
     }
 
     void WallboxController::showChargingLeds()
     {
-        setLedState(Pins::LED_GREEN, false); // Green OFF
-        setLedState(Pins::LED_YELLOW, true); // Yellow ON
-        setLedState(Pins::LED_RED, false);   // Red OFF
+        setLedState(Configuration::Pins::LED_GREEN, false); // Green OFF
+        setLedState(Configuration::Pins::LED_YELLOW, true); // Yellow ON
+        setLedState(Configuration::Pins::LED_RED, false);   // Red OFF
     }
 
     void WallboxController::showErrorLeds()
     {
-        setLedState(Pins::LED_GREEN, false);  // Green OFF
-        setLedState(Pins::LED_YELLOW, false); // Yellow OFF
-        setLedState(Pins::LED_RED, true);     // Red ON
+        setLedState(Configuration::Pins::LED_GREEN, false);  // Green OFF
+        setLedState(Configuration::Pins::LED_YELLOW, false); // Yellow OFF
+        setLedState(Configuration::Pins::LED_RED, true);     // Red ON
     }
 
     void WallboxController::showPausedLeds()
     {
-        setLedState(Pins::LED_GREEN, false); // Green OFF
-        setLedState(Pins::LED_YELLOW, true); // Yellow ON (blinking could be implemented)
-        setLedState(Pins::LED_RED, true);    // Red ON
+        setLedState(Configuration::Pins::LED_GREEN, false); // Green OFF
+        setLedState(Configuration::Pins::LED_YELLOW, true); // Yellow ON (blinking could be implemented)
+        setLedState(Configuration::Pins::LED_RED, true);    // Red ON
     }
 
 } // namespace Wallbox
