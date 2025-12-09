@@ -47,5 +47,6 @@
     "unordered_map": "cpp",
     "variant": "cpp",
     "thread": "cpp"
-  }
+  },
+  "cmake.sourceDirectory": "/Users/achraf/pro/PJMT/WallboxCtrl"
 }

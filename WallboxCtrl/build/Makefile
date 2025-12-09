@@ -85,6 +85,51 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 .PHONY : rebuild_cache/fast
 
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+.PHONY : list_install_components/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/opt/homebrew/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/opt/homebrew/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/opt/homebrew/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/opt/homebrew/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/opt/homebrew/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/opt/homebrew/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
+
 # The main all target
 all: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles /Users/achraf/pro/PJMT/WallboxCtrl/build//CMakeFiles/progress.marks
@@ -129,12 +174,129 @@ wallbox_control/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control.dir/build.make CMakeFiles/wallbox_control.dir/build
 .PHONY : wallbox_control/fast
 
+#=============================================================================
+# Target rules for targets named wallbox_control_v2
+
+# Build rule for target.
+wallbox_control_v2: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wallbox_control_v2
+.PHONY : wallbox_control_v2
+
+# fast build rule for target.
+wallbox_control_v2/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/build
+.PHONY : wallbox_control_v2/fast
+
+#=============================================================================
+# Target rules for targets named wallbox_control_api
+
+# Build rule for target.
+wallbox_control_api: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wallbox_control_api
+.PHONY : wallbox_control_api
+
+# fast build rule for target.
+wallbox_control_api/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/build
+.PHONY : wallbox_control_api/fast
+
+#=============================================================================
+# Target rules for targets named simulator
+
+# Build rule for target.
+simulator: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 simulator
+.PHONY : simulator
+
+# fast build rule for target.
+simulator/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simulator.dir/build.make CMakeFiles/simulator.dir/build
+.PHONY : simulator/fast
+
+src/BananaPiGpioController.o: src/BananaPiGpioController.cpp.o
+.PHONY : src/BananaPiGpioController.o
+
+# target to build an object file
+src/BananaPiGpioController.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/BananaPiGpioController.cpp.o
+.PHONY : src/BananaPiGpioController.cpp.o
+
+src/BananaPiGpioController.i: src/BananaPiGpioController.cpp.i
+.PHONY : src/BananaPiGpioController.i
+
+# target to preprocess a source file
+src/BananaPiGpioController.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/BananaPiGpioController.cpp.i
+.PHONY : src/BananaPiGpioController.cpp.i
+
+src/BananaPiGpioController.s: src/BananaPiGpioController.cpp.s
+.PHONY : src/BananaPiGpioController.s
+
+# target to generate assembly for a file
+src/BananaPiGpioController.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/BananaPiGpioController.cpp.s
+.PHONY : src/BananaPiGpioController.cpp.s
+
+src/ChargingStateMachine.o: src/ChargingStateMachine.cpp.o
+.PHONY : src/ChargingStateMachine.o
+
+# target to build an object file
+src/ChargingStateMachine.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/ChargingStateMachine.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/ChargingStateMachine.cpp.o
+.PHONY : src/ChargingStateMachine.cpp.o
+
+src/ChargingStateMachine.i: src/ChargingStateMachine.cpp.i
+.PHONY : src/ChargingStateMachine.i
+
+# target to preprocess a source file
+src/ChargingStateMachine.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/ChargingStateMachine.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/ChargingStateMachine.cpp.i
+.PHONY : src/ChargingStateMachine.cpp.i
+
+src/ChargingStateMachine.s: src/ChargingStateMachine.cpp.s
+.PHONY : src/ChargingStateMachine.s
+
+# target to generate assembly for a file
+src/ChargingStateMachine.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/ChargingStateMachine.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/ChargingStateMachine.cpp.s
+.PHONY : src/ChargingStateMachine.cpp.s
+
+src/HttpApiServer.o: src/HttpApiServer.cpp.o
+.PHONY : src/HttpApiServer.o
+
+# target to build an object file
+src/HttpApiServer.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/HttpApiServer.cpp.o
+.PHONY : src/HttpApiServer.cpp.o
+
+src/HttpApiServer.i: src/HttpApiServer.cpp.i
+.PHONY : src/HttpApiServer.i
+
+# target to preprocess a source file
+src/HttpApiServer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/HttpApiServer.cpp.i
+.PHONY : src/HttpApiServer.cpp.i
+
+src/HttpApiServer.s: src/HttpApiServer.cpp.s
+.PHONY : src/HttpApiServer.s
+
+# target to generate assembly for a file
+src/HttpApiServer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/HttpApiServer.cpp.s
+.PHONY : src/HttpApiServer.cpp.s
+
 src/IsoStackCtrlProtocol_impl.o: src/IsoStackCtrlProtocol_impl.cpp.o
 .PHONY : src/IsoStackCtrlProtocol_impl.o
 
 # target to build an object file
 src/IsoStackCtrlProtocol_impl.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control.dir/build.make CMakeFiles/wallbox_control.dir/src/IsoStackCtrlProtocol_impl.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/IsoStackCtrlProtocol_impl.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/IsoStackCtrlProtocol_impl.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simulator.dir/build.make CMakeFiles/simulator.dir/src/IsoStackCtrlProtocol_impl.cpp.o
 .PHONY : src/IsoStackCtrlProtocol_impl.cpp.o
 
 src/IsoStackCtrlProtocol_impl.i: src/IsoStackCtrlProtocol_impl.cpp.i
@@ -143,6 +305,9 @@ src/IsoStackCtrlProtocol_impl.i: src/IsoStackCtrlProtocol_impl.cpp.i
 # target to preprocess a source file
 src/IsoStackCtrlProtocol_impl.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control.dir/build.make CMakeFiles/wallbox_control.dir/src/IsoStackCtrlProtocol_impl.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/IsoStackCtrlProtocol_impl.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/IsoStackCtrlProtocol_impl.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simulator.dir/build.make CMakeFiles/simulator.dir/src/IsoStackCtrlProtocol_impl.cpp.i
 .PHONY : src/IsoStackCtrlProtocol_impl.cpp.i
 
 src/IsoStackCtrlProtocol_impl.s: src/IsoStackCtrlProtocol_impl.cpp.s
@@ -151,7 +316,91 @@ src/IsoStackCtrlProtocol_impl.s: src/IsoStackCtrlProtocol_impl.cpp.s
 # target to generate assembly for a file
 src/IsoStackCtrlProtocol_impl.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control.dir/build.make CMakeFiles/wallbox_control.dir/src/IsoStackCtrlProtocol_impl.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/IsoStackCtrlProtocol_impl.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/IsoStackCtrlProtocol_impl.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simulator.dir/build.make CMakeFiles/simulator.dir/src/IsoStackCtrlProtocol_impl.cpp.s
 .PHONY : src/IsoStackCtrlProtocol_impl.cpp.s
+
+src/StubGpioController.o: src/StubGpioController.cpp.o
+.PHONY : src/StubGpioController.o
+
+# target to build an object file
+src/StubGpioController.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/StubGpioController.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/StubGpioController.cpp.o
+.PHONY : src/StubGpioController.cpp.o
+
+src/StubGpioController.i: src/StubGpioController.cpp.i
+.PHONY : src/StubGpioController.i
+
+# target to preprocess a source file
+src/StubGpioController.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/StubGpioController.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/StubGpioController.cpp.i
+.PHONY : src/StubGpioController.cpp.i
+
+src/StubGpioController.s: src/StubGpioController.cpp.s
+.PHONY : src/StubGpioController.s
+
+# target to generate assembly for a file
+src/StubGpioController.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/StubGpioController.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/StubGpioController.cpp.s
+.PHONY : src/StubGpioController.cpp.s
+
+src/UdpCommunicator.o: src/UdpCommunicator.cpp.o
+.PHONY : src/UdpCommunicator.o
+
+# target to build an object file
+src/UdpCommunicator.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/UdpCommunicator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/UdpCommunicator.cpp.o
+.PHONY : src/UdpCommunicator.cpp.o
+
+src/UdpCommunicator.i: src/UdpCommunicator.cpp.i
+.PHONY : src/UdpCommunicator.i
+
+# target to preprocess a source file
+src/UdpCommunicator.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/UdpCommunicator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/UdpCommunicator.cpp.i
+.PHONY : src/UdpCommunicator.cpp.i
+
+src/UdpCommunicator.s: src/UdpCommunicator.cpp.s
+.PHONY : src/UdpCommunicator.s
+
+# target to generate assembly for a file
+src/UdpCommunicator.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/UdpCommunicator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/UdpCommunicator.cpp.s
+.PHONY : src/UdpCommunicator.cpp.s
+
+src/WallboxController.o: src/WallboxController.cpp.o
+.PHONY : src/WallboxController.o
+
+# target to build an object file
+src/WallboxController.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/WallboxController.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/WallboxController.cpp.o
+.PHONY : src/WallboxController.cpp.o
+
+src/WallboxController.i: src/WallboxController.cpp.i
+.PHONY : src/WallboxController.i
+
+# target to preprocess a source file
+src/WallboxController.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/WallboxController.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/WallboxController.cpp.i
+.PHONY : src/WallboxController.cpp.i
+
+src/WallboxController.s: src/WallboxController.cpp.s
+.PHONY : src/WallboxController.s
+
+# target to generate assembly for a file
+src/WallboxController.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/WallboxController.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/WallboxController.cpp.s
+.PHONY : src/WallboxController.cpp.s
 
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
@@ -177,6 +426,78 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control.dir/build.make CMakeFiles/wallbox_control.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/main_v2.o: src/main_v2.cpp.o
+.PHONY : src/main_v2.o
+
+# target to build an object file
+src/main_v2.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/main_v2.cpp.o
+.PHONY : src/main_v2.cpp.o
+
+src/main_v2.i: src/main_v2.cpp.i
+.PHONY : src/main_v2.i
+
+# target to preprocess a source file
+src/main_v2.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/main_v2.cpp.i
+.PHONY : src/main_v2.cpp.i
+
+src/main_v2.s: src/main_v2.cpp.s
+.PHONY : src/main_v2.s
+
+# target to generate assembly for a file
+src/main_v2.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/main_v2.cpp.s
+.PHONY : src/main_v2.cpp.s
+
+src/main_v2_with_api.o: src/main_v2_with_api.cpp.o
+.PHONY : src/main_v2_with_api.o
+
+# target to build an object file
+src/main_v2_with_api.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/main_v2_with_api.cpp.o
+.PHONY : src/main_v2_with_api.cpp.o
+
+src/main_v2_with_api.i: src/main_v2_with_api.cpp.i
+.PHONY : src/main_v2_with_api.i
+
+# target to preprocess a source file
+src/main_v2_with_api.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/main_v2_with_api.cpp.i
+.PHONY : src/main_v2_with_api.cpp.i
+
+src/main_v2_with_api.s: src/main_v2_with_api.cpp.s
+.PHONY : src/main_v2_with_api.s
+
+# target to generate assembly for a file
+src/main_v2_with_api.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/main_v2_with_api.cpp.s
+.PHONY : src/main_v2_with_api.cpp.s
+
+src/simulator.o: src/simulator.cpp.o
+.PHONY : src/simulator.o
+
+# target to build an object file
+src/simulator.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simulator.dir/build.make CMakeFiles/simulator.dir/src/simulator.cpp.o
+.PHONY : src/simulator.cpp.o
+
+src/simulator.i: src/simulator.cpp.i
+.PHONY : src/simulator.i
+
+# target to preprocess a source file
+src/simulator.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simulator.dir/build.make CMakeFiles/simulator.dir/src/simulator.cpp.i
+.PHONY : src/simulator.cpp.i
+
+src/simulator.s: src/simulator.cpp.s
+.PHONY : src/simulator.s
+
+# target to generate assembly for a file
+src/simulator.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simulator.dir/build.make CMakeFiles/simulator.dir/src/simulator.cpp.s
+.PHONY : src/simulator.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -184,14 +505,48 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
+	@echo "... install"
+	@echo "... install/local"
+	@echo "... install/strip"
+	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... simulator"
 	@echo "... wallbox_control"
+	@echo "... wallbox_control_api"
+	@echo "... wallbox_control_v2"
+	@echo "... src/BananaPiGpioController.o"
+	@echo "... src/BananaPiGpioController.i"
+	@echo "... src/BananaPiGpioController.s"
+	@echo "... src/ChargingStateMachine.o"
+	@echo "... src/ChargingStateMachine.i"
+	@echo "... src/ChargingStateMachine.s"
+	@echo "... src/HttpApiServer.o"
+	@echo "... src/HttpApiServer.i"
+	@echo "... src/HttpApiServer.s"
 	@echo "... src/IsoStackCtrlProtocol_impl.o"
 	@echo "... src/IsoStackCtrlProtocol_impl.i"
 	@echo "... src/IsoStackCtrlProtocol_impl.s"
+	@echo "... src/StubGpioController.o"
+	@echo "... src/StubGpioController.i"
+	@echo "... src/StubGpioController.s"
+	@echo "... src/UdpCommunicator.o"
+	@echo "... src/UdpCommunicator.i"
+	@echo "... src/UdpCommunicator.s"
+	@echo "... src/WallboxController.o"
+	@echo "... src/WallboxController.i"
+	@echo "... src/WallboxController.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/main_v2.o"
+	@echo "... src/main_v2.i"
+	@echo "... src/main_v2.s"
+	@echo "... src/main_v2_with_api.o"
+	@echo "... src/main_v2_with_api.i"
+	@echo "... src/main_v2_with_api.s"
+	@echo "... src/simulator.o"
+	@echo "... src/simulator.i"
+	@echo "... src/simulator.s"
 .PHONY : help
 
 

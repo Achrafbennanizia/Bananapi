@@ -1,3 +1,10 @@
 /Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/wallbox_control.dir
+/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/wallbox_control_v2.dir
+/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/wallbox_control_api.dir
+/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/simulator.dir
 /Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/edit_cache.dir
 /Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/rebuild_cache.dir
+/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/list_install_components.dir
+/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/install.dir
+/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/install/local.dir
+/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/install/strip.dir

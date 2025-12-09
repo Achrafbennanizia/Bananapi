@@ -1,5 +1,6 @@
 #include "WallboxController.h"
 #include "StubGpioController.h"
+#include "BananaPiGpioController.h"
 #include "UdpCommunicator.h"
 #include "HttpApiServer.h"
 #include <iostream>
@@ -8,6 +9,7 @@
 #include <atomic>
 #include <thread>
 #include <chrono>
+#include <cstdlib>
 
 using namespace Wallbox;
 
@@ -25,14 +27,22 @@ void signalHandler(int signal)
 
 /**
  * @brief Factory function for creating GPIO controller
+ * @param type Type of GPIO controller ("stub" for development, "bananapi" for production)
  */
 std::unique_ptr<IGpioController> createGpioController(const std::string &type)
 {
     if (type == "stub")
     {
+        std::cout << "[GPIO Factory] Creating stub GPIO controller (development mode)" << std::endl;
         return std::make_unique<StubGpioController>();
     }
-    std::cerr << "Unknown GPIO type: " << type << ", using stub" << std::endl;
+    else if (type == "bananapi" || type == "real")
+    {
+        std::cout << "[GPIO Factory] Creating Banana Pi GPIO controller (production mode)" << std::endl;
+        return std::make_unique<BananaPiGpioController>();
+    }
+
+    std::cerr << "[GPIO Factory] Unknown GPIO type: " << type << ", using stub" << std::endl;
     return std::make_unique<StubGpioController>();
 }
 
@@ -159,23 +169,50 @@ int main(int argc, char *argv[])
 
     try
     {
-        // Configuration
+        // Configuration - Check for development mode
+        // Set WALLBOX_MODE=dev for development (simulator + React app)
+        // Set WALLBOX_MODE=prod for production (real pins)
+        const char *modeEnv = std::getenv("WALLBOX_MODE");
+        std::string mode = modeEnv ? std::string(modeEnv) : "dev";
+
+        bool isDevelopment = (mode == "dev" || mode == "development");
+        std::string gpioType = isDevelopment ? "stub" : "bananapi";
+
         const int UDP_LISTEN_PORT = 50010;
         const int UDP_SEND_PORT = 50011;
         const std::string UDP_SEND_ADDRESS = "127.0.0.1";
-        const std::string GPIO_TYPE = "stub";
         const int API_PORT = 8080;
 
+        std::cout << "\n╔════════════════════════════════════════════════╗" << std::endl;
+        std::cout << "║  MODE: " << (isDevelopment ? "DEVELOPMENT 🔧" : "PRODUCTION ⚡ ") << "                        ║" << std::endl;
+        std::cout << "╚════════════════════════════════════════════════╝" << std::endl;
+
         std::cout << "\nConfiguration:" << std::endl;
+        std::cout << "  Mode: " << mode << std::endl;
+        std::cout << "  GPIO Type: " << gpioType << (isDevelopment ? " (simulator)" : " (real pins)") << std::endl;
         std::cout << "  UDP Listen Port: " << UDP_LISTEN_PORT << std::endl;
         std::cout << "  UDP Send Port: " << UDP_SEND_PORT << std::endl;
         std::cout << "  UDP Send Address: " << UDP_SEND_ADDRESS << std::endl;
-        std::cout << "  GPIO Type: " << GPIO_TYPE << std::endl;
         std::cout << "  REST API Port: " << API_PORT << std::endl;
+
+        if (isDevelopment)
+        {
+            std::cout << "\n💡 Development Mode Active:" << std::endl;
+            std::cout << "  ✓ Using GPIO simulator (no real hardware)" << std::endl;
+            std::cout << "  ✓ React app: http://localhost:3000" << std::endl;
+            std::cout << "  ✓ API server: http://localhost:" << API_PORT << std::endl;
+            std::cout << "  ✓ Simulator: UDP on ports " << UDP_LISTEN_PORT << "/" << UDP_SEND_PORT << std::endl;
+        }
+        else
+        {
+            std::cout << "\n⚡ Production Mode Active:" << std::endl;
+            std::cout << "  ✓ Using real Banana Pi GPIO pins" << std::endl;
+            std::cout << "  ⚠️  WARNING: This will control real hardware!" << std::endl;
+        }
         std::cout << std::endl;
 
         // Create dependencies
-        auto gpio = createGpioController(GPIO_TYPE);
+        auto gpio = createGpioController(gpioType);
         auto network = std::make_unique<UdpCommunicator>(UDP_LISTEN_PORT, UDP_SEND_PORT, UDP_SEND_ADDRESS);
 
         // Create controller

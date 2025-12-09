@@ -50,6 +50,7 @@ add_executable(wallbox_control_api
     src/WallboxController.cpp
     src/ChargingStateMachine.cpp
     src/StubGpioController.cpp
+    src/BananaPiGpioController.cpp
     src/UdpCommunicator.cpp
     src/HttpApiServer.cpp
     src/IsoStackCtrlProtocol_impl.cpp

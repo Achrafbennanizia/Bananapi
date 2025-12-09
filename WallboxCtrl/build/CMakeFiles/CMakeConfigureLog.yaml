@@ -25,6 +25,8 @@ events:
       - "/Users/achraf/.airbyte/bin/"
       - "/opt/homebrew/opt/libpq/bin/"
       - "/usr/local/opt/libpq/bin/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
       - "/opt/homebrew/bin/"
       - "/opt/homebrew/sbin/"
       - "/usr/local/bin/"
@@ -39,14 +41,14 @@ events:
       - "/Applications/Wireshark.app/Contents/MacOS/"
       - "/usr/local/share/dotnet/"
       - "/Users/achraf/.dotnet/tools/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
     searched_directories:
       - "/opt/homebrew/opt/mysql-client/bin/uname"
       - "/usr/local/opt/mysql-client/bin/uname"
       - "/Users/achraf/.airbyte/bin/uname"
       - "/opt/homebrew/opt/libpq/bin/uname"
       - "/usr/local/opt/libpq/bin/uname"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/uname"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/uname"
       - "/opt/homebrew/bin/uname"
       - "/opt/homebrew/sbin/uname"
       - "/usr/local/bin/uname"
@@ -62,6 +64,8 @@ events:
         - "/opt/homebrew/opt/libpq/bin"
         - "/opt/homebrew/opt/libpq/bin"
         - "/usr/local/opt/libpq/bin"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/bin"
         - "/opt/homebrew/sbin"
         - "/usr/local/bin"
@@ -76,8 +80,8 @@ events:
         - "/Applications/Wireshark.app/Contents/MacOS"
         - "/usr/local/share/dotnet"
         - "~/.dotnet/tools"
-        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/opt/mysql-client/bin"
         - "/usr/local/opt/mysql-client/bin"
         - "/Users/achraf/.airbyte/bin"
@@ -116,6 +120,8 @@ events:
       - "/Users/achraf/.airbyte/bin/"
       - "/opt/homebrew/opt/libpq/bin/"
       - "/usr/local/opt/libpq/bin/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
       - "/opt/homebrew/bin/"
       - "/opt/homebrew/sbin/"
       - "/usr/local/bin/"
@@ -130,14 +136,14 @@ events:
       - "/Applications/Wireshark.app/Contents/MacOS/"
       - "/usr/local/share/dotnet/"
       - "/Users/achraf/.dotnet/tools/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
     searched_directories:
       - "/opt/homebrew/opt/mysql-client/bin/gmake"
       - "/usr/local/opt/mysql-client/bin/gmake"
       - "/Users/achraf/.airbyte/bin/gmake"
       - "/opt/homebrew/opt/libpq/bin/gmake"
       - "/usr/local/opt/libpq/bin/gmake"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/gmake"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/gmake"
       - "/opt/homebrew/bin/gmake"
       - "/opt/homebrew/sbin/gmake"
       - "/usr/local/bin/gmake"
@@ -152,13 +158,13 @@ events:
       - "/Applications/Wireshark.app/Contents/MacOS/gmake"
       - "/usr/local/share/dotnet/gmake"
       - "/Users/achraf/.dotnet/tools/gmake"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/gmake"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/gmake"
       - "/opt/homebrew/opt/mysql-client/bin/make"
       - "/usr/local/opt/mysql-client/bin/make"
       - "/Users/achraf/.airbyte/bin/make"
       - "/opt/homebrew/opt/libpq/bin/make"
       - "/usr/local/opt/libpq/bin/make"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/make"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/make"
       - "/opt/homebrew/bin/make"
       - "/opt/homebrew/sbin/make"
       - "/usr/local/bin/make"
@@ -174,6 +180,8 @@ events:
         - "/opt/homebrew/opt/libpq/bin"
         - "/opt/homebrew/opt/libpq/bin"
         - "/usr/local/opt/libpq/bin"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/bin"
         - "/opt/homebrew/sbin"
         - "/usr/local/bin"
@@ -188,8 +196,8 @@ events:
         - "/Applications/Wireshark.app/Contents/MacOS"
         - "/usr/local/share/dotnet"
         - "~/.dotnet/tools"
-        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/opt/mysql-client/bin"
         - "/usr/local/opt/mysql-client/bin"
         - "/Users/achraf/.airbyte/bin"
@@ -226,6 +234,8 @@ events:
       - "/Users/achraf/.airbyte/bin/"
       - "/opt/homebrew/opt/libpq/bin/"
       - "/usr/local/opt/libpq/bin/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
       - "/opt/homebrew/bin/"
       - "/opt/homebrew/sbin/"
       - "/usr/local/bin/"
@@ -240,14 +250,14 @@ events:
       - "/Applications/Wireshark.app/Contents/MacOS/"
       - "/usr/local/share/dotnet/"
       - "/Users/achraf/.dotnet/tools/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
     searched_directories:
       - "/opt/homebrew/opt/mysql-client/bin/c++"
       - "/usr/local/opt/mysql-client/bin/c++"
       - "/Users/achraf/.airbyte/bin/c++"
       - "/opt/homebrew/opt/libpq/bin/c++"
       - "/usr/local/opt/libpq/bin/c++"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/c++"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/c++"
       - "/opt/homebrew/bin/c++"
       - "/opt/homebrew/sbin/c++"
       - "/usr/local/bin/c++"
@@ -263,6 +273,8 @@ events:
         - "/opt/homebrew/opt/libpq/bin"
         - "/opt/homebrew/opt/libpq/bin"
         - "/usr/local/opt/libpq/bin"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/bin"
         - "/opt/homebrew/sbin"
         - "/usr/local/bin"
@@ -277,8 +289,8 @@ events:
         - "/Applications/Wireshark.app/Contents/MacOS"
         - "/usr/local/share/dotnet"
         - "~/.dotnet/tools"
-        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/opt/mysql-client/bin"
         - "/usr/local/opt/mysql-client/bin"
         - "/Users/achraf/.airbyte/bin"
@@ -319,6 +331,8 @@ events:
         - "/opt/homebrew/opt/libpq/bin"
         - "/opt/homebrew/opt/libpq/bin"
         - "/usr/local/opt/libpq/bin"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/bin"
         - "/opt/homebrew/sbin"
         - "/usr/local/bin"
@@ -333,8 +347,8 @@ events:
         - "/Applications/Wireshark.app/Contents/MacOS"
         - "/usr/local/share/dotnet"
         - "~/.dotnet/tools"
-        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/opt/mysql-client/bin"
         - "/usr/local/opt/mysql-client/bin"
         - "/Users/achraf/.airbyte/bin"
@@ -429,6 +443,8 @@ events:
       - "/Users/achraf/.airbyte/bin/"
       - "/opt/homebrew/opt/libpq/bin/"
       - "/usr/local/opt/libpq/bin/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
       - "/opt/homebrew/bin/"
       - "/opt/homebrew/sbin/"
       - "/usr/local/bin/"
@@ -442,8 +458,6 @@ events:
       - "/Applications/Wireshark.app/Contents/MacOS/"
       - "/usr/local/share/dotnet/"
       - "/Users/achraf/.dotnet/tools/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
     found: "/usr/bin/ar"
     search_context:
       ENV{PATH}:
@@ -455,6 +469,8 @@ events:
         - "/opt/homebrew/opt/libpq/bin"
         - "/opt/homebrew/opt/libpq/bin"
         - "/usr/local/opt/libpq/bin"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/bin"
         - "/opt/homebrew/sbin"
         - "/usr/local/bin"
@@ -469,8 +485,8 @@ events:
         - "/Applications/Wireshark.app/Contents/MacOS"
         - "/usr/local/share/dotnet"
         - "~/.dotnet/tools"
-        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/opt/mysql-client/bin"
         - "/usr/local/opt/mysql-client/bin"
         - "/Users/achraf/.airbyte/bin"
@@ -502,6 +518,8 @@ events:
       - "/Users/achraf/.airbyte/bin/"
       - "/opt/homebrew/opt/libpq/bin/"
       - "/usr/local/opt/libpq/bin/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
       - "/opt/homebrew/bin/"
       - "/opt/homebrew/sbin/"
       - "/usr/local/bin/"
@@ -515,8 +533,6 @@ events:
       - "/Applications/Wireshark.app/Contents/MacOS/"
       - "/usr/local/share/dotnet/"
       - "/Users/achraf/.dotnet/tools/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
     found: "/usr/bin/ranlib"
     search_context:
       ENV{PATH}:
@@ -528,6 +544,8 @@ events:
         - "/opt/homebrew/opt/libpq/bin"
         - "/opt/homebrew/opt/libpq/bin"
         - "/usr/local/opt/libpq/bin"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/bin"
         - "/opt/homebrew/sbin"
         - "/usr/local/bin"
@@ -542,8 +560,8 @@ events:
         - "/Applications/Wireshark.app/Contents/MacOS"
         - "/usr/local/share/dotnet"
         - "~/.dotnet/tools"
-        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/opt/mysql-client/bin"
         - "/usr/local/opt/mysql-client/bin"
         - "/Users/achraf/.airbyte/bin"
@@ -575,6 +593,8 @@ events:
       - "/Users/achraf/.airbyte/bin/"
       - "/opt/homebrew/opt/libpq/bin/"
       - "/usr/local/opt/libpq/bin/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
       - "/opt/homebrew/bin/"
       - "/opt/homebrew/sbin/"
       - "/usr/local/bin/"
@@ -588,8 +608,6 @@ events:
       - "/Applications/Wireshark.app/Contents/MacOS/"
       - "/usr/local/share/dotnet/"
       - "/Users/achraf/.dotnet/tools/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
     found: "/usr/bin/strip"
     search_context:
       ENV{PATH}:
@@ -601,6 +619,8 @@ events:
         - "/opt/homebrew/opt/libpq/bin"
         - "/opt/homebrew/opt/libpq/bin"
         - "/usr/local/opt/libpq/bin"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/bin"
         - "/opt/homebrew/sbin"
         - "/usr/local/bin"
@@ -615,8 +635,8 @@ events:
         - "/Applications/Wireshark.app/Contents/MacOS"
         - "/usr/local/share/dotnet"
         - "~/.dotnet/tools"
-        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/opt/mysql-client/bin"
         - "/usr/local/opt/mysql-client/bin"
         - "/Users/achraf/.airbyte/bin"
@@ -648,6 +668,8 @@ events:
       - "/Users/achraf/.airbyte/bin/"
       - "/opt/homebrew/opt/libpq/bin/"
       - "/usr/local/opt/libpq/bin/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
       - "/opt/homebrew/bin/"
       - "/opt/homebrew/sbin/"
       - "/usr/local/bin/"
@@ -661,8 +683,6 @@ events:
       - "/Applications/Wireshark.app/Contents/MacOS/"
       - "/usr/local/share/dotnet/"
       - "/Users/achraf/.dotnet/tools/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
     found: "/usr/bin/ld"
     search_context:
       ENV{PATH}:
@@ -674,6 +694,8 @@ events:
         - "/opt/homebrew/opt/libpq/bin"
         - "/opt/homebrew/opt/libpq/bin"
         - "/usr/local/opt/libpq/bin"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/bin"
         - "/opt/homebrew/sbin"
         - "/usr/local/bin"
@@ -688,8 +710,8 @@ events:
         - "/Applications/Wireshark.app/Contents/MacOS"
         - "/usr/local/share/dotnet"
         - "~/.dotnet/tools"
-        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/opt/mysql-client/bin"
         - "/usr/local/opt/mysql-client/bin"
         - "/Users/achraf/.airbyte/bin"
@@ -721,6 +743,8 @@ events:
       - "/Users/achraf/.airbyte/bin/"
       - "/opt/homebrew/opt/libpq/bin/"
       - "/usr/local/opt/libpq/bin/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
       - "/opt/homebrew/bin/"
       - "/opt/homebrew/sbin/"
       - "/usr/local/bin/"
@@ -734,8 +758,6 @@ events:
       - "/Applications/Wireshark.app/Contents/MacOS/"
       - "/usr/local/share/dotnet/"
       - "/Users/achraf/.dotnet/tools/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
     found: "/usr/bin/nm"
     search_context:
       ENV{PATH}:
@@ -747,6 +769,8 @@ events:
         - "/opt/homebrew/opt/libpq/bin"
         - "/opt/homebrew/opt/libpq/bin"
         - "/usr/local/opt/libpq/bin"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/bin"
         - "/opt/homebrew/sbin"
         - "/usr/local/bin"
@@ -761,8 +785,8 @@ events:
         - "/Applications/Wireshark.app/Contents/MacOS"
         - "/usr/local/share/dotnet"
         - "~/.dotnet/tools"
-        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/opt/mysql-client/bin"
         - "/usr/local/opt/mysql-client/bin"
         - "/Users/achraf/.airbyte/bin"
@@ -794,6 +818,8 @@ events:
       - "/Users/achraf/.airbyte/bin/"
       - "/opt/homebrew/opt/libpq/bin/"
       - "/usr/local/opt/libpq/bin/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
       - "/opt/homebrew/bin/"
       - "/opt/homebrew/sbin/"
       - "/usr/local/bin/"
@@ -807,8 +833,6 @@ events:
       - "/Applications/Wireshark.app/Contents/MacOS/"
       - "/usr/local/share/dotnet/"
       - "/Users/achraf/.dotnet/tools/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
     found: "/usr/bin/objdump"
     search_context:
       ENV{PATH}:
@@ -820,6 +844,8 @@ events:
         - "/opt/homebrew/opt/libpq/bin"
         - "/opt/homebrew/opt/libpq/bin"
         - "/usr/local/opt/libpq/bin"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/bin"
         - "/opt/homebrew/sbin"
         - "/usr/local/bin"
@@ -834,8 +860,8 @@ events:
         - "/Applications/Wireshark.app/Contents/MacOS"
         - "/usr/local/share/dotnet"
         - "~/.dotnet/tools"
-        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/opt/mysql-client/bin"
         - "/usr/local/opt/mysql-client/bin"
         - "/Users/achraf/.airbyte/bin"
@@ -867,6 +893,8 @@ events:
       - "/Users/achraf/.airbyte/bin/"
       - "/opt/homebrew/opt/libpq/bin/"
       - "/usr/local/opt/libpq/bin/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
       - "/opt/homebrew/bin/"
       - "/opt/homebrew/sbin/"
       - "/usr/local/bin/"
@@ -880,8 +908,6 @@ events:
       - "/Applications/Wireshark.app/Contents/MacOS/"
       - "/usr/local/share/dotnet/"
       - "/Users/achraf/.dotnet/tools/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
     searched_directories:
       - "/usr/bin/objcopy"
       - "/opt/homebrew/opt/mysql-client/bin/objcopy"
@@ -889,6 +915,8 @@ events:
       - "/Users/achraf/.airbyte/bin/objcopy"
       - "/opt/homebrew/opt/libpq/bin/objcopy"
       - "/usr/local/opt/libpq/bin/objcopy"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/objcopy"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/objcopy"
       - "/opt/homebrew/bin/objcopy"
       - "/opt/homebrew/sbin/objcopy"
       - "/usr/local/bin/objcopy"
@@ -902,8 +930,6 @@ events:
       - "/Applications/Wireshark.app/Contents/MacOS/objcopy"
       - "/usr/local/share/dotnet/objcopy"
       - "/Users/achraf/.dotnet/tools/objcopy"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/objcopy"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/objcopy"
     found: false
     search_context:
       ENV{PATH}:
@@ -915,6 +941,8 @@ events:
         - "/opt/homebrew/opt/libpq/bin"
         - "/opt/homebrew/opt/libpq/bin"
         - "/usr/local/opt/libpq/bin"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/bin"
         - "/opt/homebrew/sbin"
         - "/usr/local/bin"
@@ -929,8 +957,8 @@ events:
         - "/Applications/Wireshark.app/Contents/MacOS"
         - "/usr/local/share/dotnet"
         - "~/.dotnet/tools"
-        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/opt/mysql-client/bin"
         - "/usr/local/opt/mysql-client/bin"
         - "/Users/achraf/.airbyte/bin"
@@ -962,6 +990,8 @@ events:
       - "/Users/achraf/.airbyte/bin/"
       - "/opt/homebrew/opt/libpq/bin/"
       - "/usr/local/opt/libpq/bin/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
       - "/opt/homebrew/bin/"
       - "/opt/homebrew/sbin/"
       - "/usr/local/bin/"
@@ -975,8 +1005,6 @@ events:
       - "/Applications/Wireshark.app/Contents/MacOS/"
       - "/usr/local/share/dotnet/"
       - "/Users/achraf/.dotnet/tools/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
     searched_directories:
       - "/usr/bin/readelf"
       - "/opt/homebrew/opt/mysql-client/bin/readelf"
@@ -984,6 +1012,8 @@ events:
       - "/Users/achraf/.airbyte/bin/readelf"
       - "/opt/homebrew/opt/libpq/bin/readelf"
       - "/usr/local/opt/libpq/bin/readelf"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/readelf"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/readelf"
       - "/opt/homebrew/bin/readelf"
       - "/opt/homebrew/sbin/readelf"
       - "/usr/local/bin/readelf"
@@ -997,8 +1027,6 @@ events:
       - "/Applications/Wireshark.app/Contents/MacOS/readelf"
       - "/usr/local/share/dotnet/readelf"
       - "/Users/achraf/.dotnet/tools/readelf"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/readelf"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/readelf"
     found: false
     search_context:
       ENV{PATH}:
@@ -1010,6 +1038,8 @@ events:
         - "/opt/homebrew/opt/libpq/bin"
         - "/opt/homebrew/opt/libpq/bin"
         - "/usr/local/opt/libpq/bin"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/bin"
         - "/opt/homebrew/sbin"
         - "/usr/local/bin"
@@ -1024,8 +1054,8 @@ events:
         - "/Applications/Wireshark.app/Contents/MacOS"
         - "/usr/local/share/dotnet"
         - "~/.dotnet/tools"
-        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/opt/mysql-client/bin"
         - "/usr/local/opt/mysql-client/bin"
         - "/Users/achraf/.airbyte/bin"
@@ -1057,6 +1087,8 @@ events:
       - "/Users/achraf/.airbyte/bin/"
       - "/opt/homebrew/opt/libpq/bin/"
       - "/usr/local/opt/libpq/bin/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
       - "/opt/homebrew/bin/"
       - "/opt/homebrew/sbin/"
       - "/usr/local/bin/"
@@ -1070,8 +1102,6 @@ events:
       - "/Applications/Wireshark.app/Contents/MacOS/"
       - "/usr/local/share/dotnet/"
       - "/Users/achraf/.dotnet/tools/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
     searched_directories:
       - "/usr/bin/dlltool"
       - "/opt/homebrew/opt/mysql-client/bin/dlltool"
@@ -1079,6 +1109,8 @@ events:
       - "/Users/achraf/.airbyte/bin/dlltool"
       - "/opt/homebrew/opt/libpq/bin/dlltool"
       - "/usr/local/opt/libpq/bin/dlltool"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/dlltool"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/dlltool"
       - "/opt/homebrew/bin/dlltool"
       - "/opt/homebrew/sbin/dlltool"
       - "/usr/local/bin/dlltool"
@@ -1092,8 +1124,6 @@ events:
       - "/Applications/Wireshark.app/Contents/MacOS/dlltool"
       - "/usr/local/share/dotnet/dlltool"
       - "/Users/achraf/.dotnet/tools/dlltool"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/dlltool"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/dlltool"
     found: false
     search_context:
       ENV{PATH}:
@@ -1105,6 +1135,8 @@ events:
         - "/opt/homebrew/opt/libpq/bin"
         - "/opt/homebrew/opt/libpq/bin"
         - "/usr/local/opt/libpq/bin"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/bin"
         - "/opt/homebrew/sbin"
         - "/usr/local/bin"
@@ -1119,8 +1151,8 @@ events:
         - "/Applications/Wireshark.app/Contents/MacOS"
         - "/usr/local/share/dotnet"
         - "~/.dotnet/tools"
-        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/opt/mysql-client/bin"
         - "/usr/local/opt/mysql-client/bin"
         - "/Users/achraf/.airbyte/bin"
@@ -1152,6 +1184,8 @@ events:
       - "/Users/achraf/.airbyte/bin/"
       - "/opt/homebrew/opt/libpq/bin/"
       - "/usr/local/opt/libpq/bin/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
       - "/opt/homebrew/bin/"
       - "/opt/homebrew/sbin/"
       - "/usr/local/bin/"
@@ -1165,8 +1199,6 @@ events:
       - "/Applications/Wireshark.app/Contents/MacOS/"
       - "/usr/local/share/dotnet/"
       - "/Users/achraf/.dotnet/tools/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
     searched_directories:
       - "/usr/bin/addr2line"
       - "/opt/homebrew/opt/mysql-client/bin/addr2line"
@@ -1174,6 +1206,8 @@ events:
       - "/Users/achraf/.airbyte/bin/addr2line"
       - "/opt/homebrew/opt/libpq/bin/addr2line"
       - "/usr/local/opt/libpq/bin/addr2line"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/addr2line"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/addr2line"
       - "/opt/homebrew/bin/addr2line"
       - "/opt/homebrew/sbin/addr2line"
       - "/usr/local/bin/addr2line"
@@ -1187,8 +1221,6 @@ events:
       - "/Applications/Wireshark.app/Contents/MacOS/addr2line"
       - "/usr/local/share/dotnet/addr2line"
       - "/Users/achraf/.dotnet/tools/addr2line"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/addr2line"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/addr2line"
     found: false
     search_context:
       ENV{PATH}:
@@ -1200,6 +1232,8 @@ events:
         - "/opt/homebrew/opt/libpq/bin"
         - "/opt/homebrew/opt/libpq/bin"
         - "/usr/local/opt/libpq/bin"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/bin"
         - "/opt/homebrew/sbin"
         - "/usr/local/bin"
@@ -1214,8 +1248,8 @@ events:
         - "/Applications/Wireshark.app/Contents/MacOS"
         - "/usr/local/share/dotnet"
         - "~/.dotnet/tools"
-        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/opt/mysql-client/bin"
         - "/usr/local/opt/mysql-client/bin"
         - "/Users/achraf/.airbyte/bin"
@@ -1247,6 +1281,8 @@ events:
       - "/Users/achraf/.airbyte/bin/"
       - "/opt/homebrew/opt/libpq/bin/"
       - "/usr/local/opt/libpq/bin/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
       - "/opt/homebrew/bin/"
       - "/opt/homebrew/sbin/"
       - "/usr/local/bin/"
@@ -1260,8 +1296,6 @@ events:
       - "/Applications/Wireshark.app/Contents/MacOS/"
       - "/usr/local/share/dotnet/"
       - "/Users/achraf/.dotnet/tools/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
     searched_directories:
       - "/usr/bin/tapi"
       - "/opt/homebrew/opt/mysql-client/bin/tapi"
@@ -1269,6 +1303,8 @@ events:
       - "/Users/achraf/.airbyte/bin/tapi"
       - "/opt/homebrew/opt/libpq/bin/tapi"
       - "/usr/local/opt/libpq/bin/tapi"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/tapi"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/tapi"
       - "/opt/homebrew/bin/tapi"
       - "/opt/homebrew/sbin/tapi"
       - "/usr/local/bin/tapi"
@@ -1282,8 +1318,6 @@ events:
       - "/Applications/Wireshark.app/Contents/MacOS/tapi"
       - "/usr/local/share/dotnet/tapi"
       - "/Users/achraf/.dotnet/tools/tapi"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/tapi"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/tapi"
     found: false
     search_context:
       ENV{PATH}:
@@ -1295,6 +1329,8 @@ events:
         - "/opt/homebrew/opt/libpq/bin"
         - "/opt/homebrew/opt/libpq/bin"
         - "/usr/local/opt/libpq/bin"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/bin"
         - "/opt/homebrew/sbin"
         - "/usr/local/bin"
@@ -1309,8 +1345,8 @@ events:
         - "/Applications/Wireshark.app/Contents/MacOS"
         - "/usr/local/share/dotnet"
         - "~/.dotnet/tools"
-        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/opt/mysql-client/bin"
         - "/usr/local/opt/mysql-client/bin"
         - "/Users/achraf/.airbyte/bin"
@@ -1341,6 +1377,8 @@ events:
       - "/Users/achraf/.airbyte/bin/"
       - "/opt/homebrew/opt/libpq/bin/"
       - "/usr/local/opt/libpq/bin/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
       - "/opt/homebrew/bin/"
       - "/opt/homebrew/sbin/"
       - "/usr/local/bin/"
@@ -1355,14 +1393,14 @@ events:
       - "/Applications/Wireshark.app/Contents/MacOS/"
       - "/usr/local/share/dotnet/"
       - "/Users/achraf/.dotnet/tools/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/"
     searched_directories:
       - "/opt/homebrew/opt/mysql-client/bin/install_name_tool"
       - "/usr/local/opt/mysql-client/bin/install_name_tool"
       - "/Users/achraf/.airbyte/bin/install_name_tool"
       - "/opt/homebrew/opt/libpq/bin/install_name_tool"
       - "/usr/local/opt/libpq/bin/install_name_tool"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli/install_name_tool"
+      - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand/install_name_tool"
       - "/opt/homebrew/bin/install_name_tool"
       - "/opt/homebrew/sbin/install_name_tool"
       - "/usr/local/bin/install_name_tool"
@@ -1378,6 +1416,8 @@ events:
         - "/opt/homebrew/opt/libpq/bin"
         - "/opt/homebrew/opt/libpq/bin"
         - "/usr/local/opt/libpq/bin"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/bin"
         - "/opt/homebrew/sbin"
         - "/usr/local/bin"
@@ -1392,8 +1432,8 @@ events:
         - "/Applications/Wireshark.app/Contents/MacOS"
         - "/usr/local/share/dotnet"
         - "~/.dotnet/tools"
-        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/Users/achraf/Library/Application Support/Code/User/globalStorage/github.copilot-chat/debugCommand"
         - "/opt/homebrew/opt/mysql-client/bin"
         - "/usr/local/opt/mysql-client/bin"
         - "/Users/achraf/.airbyte/bin"
@@ -1409,8 +1449,8 @@ events:
     checks:
       - "Detecting CXX compiler ABI info"
     directories:
-      source: "/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/CMakeScratch/TryCompile-HwQsRV"
-      binary: "/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/CMakeScratch/TryCompile-HwQsRV"
+      source: "/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/CMakeScratch/TryCompile-1s7WOT"
+      binary: "/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/CMakeScratch/TryCompile-1s7WOT"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
@@ -1423,19 +1463,19 @@ events:
       variable: "CMAKE_CXX_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: '/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/CMakeScratch/TryCompile-HwQsRV'
+        Change Dir: '/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/CMakeScratch/TryCompile-1s7WOT'
         
-        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_64dc9/fast
-        /Library/Developer/CommandLineTools/usr/bin/make  -f CMakeFiles/cmTC_64dc9.dir/build.make CMakeFiles/cmTC_64dc9.dir/build
-        Building CXX object CMakeFiles/cmTC_64dc9.dir/CMakeCXXCompilerABI.cpp.o
-        /usr/bin/c++   -arch arm64   -v -Wl,-v -MD -MT CMakeFiles/cmTC_64dc9.dir/CMakeCXXCompilerABI.cpp.o -MF CMakeFiles/cmTC_64dc9.dir/CMakeCXXCompilerABI.cpp.o.d -o CMakeFiles/cmTC_64dc9.dir/CMakeCXXCompilerABI.cpp.o -c /opt/homebrew/share/cmake/Modules/CMakeCXXCompilerABI.cpp
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_b49b7/fast
+        /Library/Developer/CommandLineTools/usr/bin/make  -f CMakeFiles/cmTC_b49b7.dir/build.make CMakeFiles/cmTC_b49b7.dir/build
+        Building CXX object CMakeFiles/cmTC_b49b7.dir/CMakeCXXCompilerABI.cpp.o
+        /usr/bin/c++   -arch arm64   -v -Wl,-v -MD -MT CMakeFiles/cmTC_b49b7.dir/CMakeCXXCompilerABI.cpp.o -MF CMakeFiles/cmTC_b49b7.dir/CMakeCXXCompilerABI.cpp.o.d -o CMakeFiles/cmTC_b49b7.dir/CMakeCXXCompilerABI.cpp.o -c /opt/homebrew/share/cmake/Modules/CMakeCXXCompilerABI.cpp
         Apple clang version 17.0.0 (clang-1700.4.4.1)
         Target: arm64-apple-darwin25.0.0
         Thread model: posix
         InstalledDir: /Library/Developer/CommandLineTools/usr/bin
         clang++: warning: -Wl,-v: 'linker' input unused [-Wunused-command-line-argument]
         ignoring nonexistent directory "/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1"
-         "/Library/Developer/CommandLineTools/usr/bin/clang" -cc1 -triple arm64-apple-macosx26.0.0 -Wundef-prefix=TARGET_OS_ -Wdeprecated-objc-isa-usage -Werror=deprecated-objc-isa-usage -Werror=implicit-function-declaration -emit-obj -disable-free -clear-ast-before-backend -disable-llvm-verifier -discard-value-names -main-file-name CMakeCXXCompilerABI.cpp -mrelocation-model pic -pic-level 2 -mframe-pointer=non-leaf -fno-strict-return -ffp-contract=on -fno-rounding-math -funwind-tables=1 -fobjc-msgsend-selector-stubs -target-sdk-version=26.1 -fvisibility-inlines-hidden-static-local-var -fdefine-target-os-macros -fno-assume-unique-vtables -fno-modulemap-allow-subdirectory-search -target-cpu apple-m1 -target-feature +zcm -target-feature +zcz -target-feature +v8.5a -target-feature +aes -target-feature +altnzcv -target-feature +ccdp -target-feature +complxnum -target-feature +crc -target-feature +dotprod -target-feature +fp-armv8 -target-feature +fp16fml -target-feature +fptoint -target-feature +fullfp16 -target-feature +jsconv -target-feature +lse -target-feature +neon -target-feature +pauth -target-feature +perfmon -target-feature +predres -target-feature +ras -target-feature +rcpc -target-feature +rdm -target-feature +sb -target-feature +sha2 -target-feature +sha3 -target-feature +specrestrict -target-feature +ssbs -target-abi darwinpcs -debugger-tuning=lldb -fdebug-compilation-dir=/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/CMakeScratch/TryCompile-HwQsRV -target-linker-version 1230.1 -v -fcoverage-compilation-dir=/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/CMakeScratch/TryCompile-HwQsRV -resource-dir /Library/Developer/CommandLineTools/usr/lib/clang/17 -dependency-file CMakeFiles/cmTC_64dc9.dir/CMakeCXXCompilerABI.cpp.o.d -skip-unused-modulemap-deps -MT CMakeFiles/cmTC_64dc9.dir/CMakeCXXCompilerABI.cpp.o -sys-header-deps -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -internal-isystem /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1 -internal-isystem /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/local/include -internal-isystem /Library/Developer/CommandLineTools/usr/lib/clang/17/include -internal-externc-isystem /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -internal-externc-isystem /Library/Developer/CommandLineTools/usr/include -internal-iframework /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -internal-iframework /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/SubFrameworks -internal-iframework /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/Library/Frameworks -Wno-reorder-init-list -Wno-implicit-int-float-conversion -Wno-c99-designator -Wno-final-dtor-non-final-class -Wno-extra-semi-stmt -Wno-misleading-indentation -Wno-quoted-include-in-framework-header -Wno-implicit-fallthrough -Wno-enum-enum-conversion -Wno-enum-float-conversion -Wno-elaborated-enum-base -fdeprecated-macro -ferror-limit 19 -stack-protector 1 -fstack-check -mdarwin-stkchk-strong-link -fblocks -fencode-extended-block-signature -fregister-global-dtors-with-atexit -fgnuc-version=4.2.1 -fno-cxx-modules -fskip-odr-check-in-gmf -fcxx-exceptions -fexceptions -fmax-type-align=16 -fcommon -clang-vendor-feature=+disableNonDependentMemberExprInCurrentInstantiation -fno-odr-hash-protocols -clang-vendor-feature=+enableAggressiveVLAFolding -clang-vendor-feature=+revert09abecef7bbf -clang-vendor-feature=+thisNoAlignAttr -clang-vendor-feature=+thisNoNullAttr -clang-vendor-feature=+disableAtImportPrivateFrameworkInImplementationError -D__GCC_HAVE_DWARF2_CFI_ASM=1 -o CMakeFiles/cmTC_64dc9.dir/CMakeCXXCompilerABI.cpp.o -x c++ /opt/homebrew/share/cmake/Modules/CMakeCXXCompilerABI.cpp
+         "/Library/Developer/CommandLineTools/usr/bin/clang" -cc1 -triple arm64-apple-macosx26.0.0 -Wundef-prefix=TARGET_OS_ -Wdeprecated-objc-isa-usage -Werror=deprecated-objc-isa-usage -Werror=implicit-function-declaration -emit-obj -disable-free -clear-ast-before-backend -disable-llvm-verifier -discard-value-names -main-file-name CMakeCXXCompilerABI.cpp -mrelocation-model pic -pic-level 2 -mframe-pointer=non-leaf -fno-strict-return -ffp-contract=on -fno-rounding-math -funwind-tables=1 -fobjc-msgsend-selector-stubs -target-sdk-version=26.1 -fvisibility-inlines-hidden-static-local-var -fdefine-target-os-macros -fno-assume-unique-vtables -fno-modulemap-allow-subdirectory-search -target-cpu apple-m1 -target-feature +zcm -target-feature +zcz -target-feature +v8.5a -target-feature +aes -target-feature +altnzcv -target-feature +ccdp -target-feature +complxnum -target-feature +crc -target-feature +dotprod -target-feature +fp-armv8 -target-feature +fp16fml -target-feature +fptoint -target-feature +fullfp16 -target-feature +jsconv -target-feature +lse -target-feature +neon -target-feature +pauth -target-feature +perfmon -target-feature +predres -target-feature +ras -target-feature +rcpc -target-feature +rdm -target-feature +sb -target-feature +sha2 -target-feature +sha3 -target-feature +specrestrict -target-feature +ssbs -target-abi darwinpcs -debugger-tuning=lldb -fdebug-compilation-dir=/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/CMakeScratch/TryCompile-1s7WOT -target-linker-version 1230.1 -v -fcoverage-compilation-dir=/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/CMakeScratch/TryCompile-1s7WOT -resource-dir /Library/Developer/CommandLineTools/usr/lib/clang/17 -dependency-file CMakeFiles/cmTC_b49b7.dir/CMakeCXXCompilerABI.cpp.o.d -skip-unused-modulemap-deps -MT CMakeFiles/cmTC_b49b7.dir/CMakeCXXCompilerABI.cpp.o -sys-header-deps -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -internal-isystem /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1 -internal-isystem /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/local/include -internal-isystem /Library/Developer/CommandLineTools/usr/lib/clang/17/include -internal-externc-isystem /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -internal-externc-isystem /Library/Developer/CommandLineTools/usr/include -internal-iframework /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -internal-iframework /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/SubFrameworks -internal-iframework /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/Library/Frameworks -Wno-reorder-init-list -Wno-implicit-int-float-conversion -Wno-c99-designator -Wno-final-dtor-non-final-class -Wno-extra-semi-stmt -Wno-misleading-indentation -Wno-quoted-include-in-framework-header -Wno-implicit-fallthrough -Wno-enum-enum-conversion -Wno-enum-float-conversion -Wno-elaborated-enum-base -fdeprecated-macro -ferror-limit 19 -stack-protector 1 -fstack-check -mdarwin-stkchk-strong-link -fblocks -fencode-extended-block-signature -fregister-global-dtors-with-atexit -fgnuc-version=4.2.1 -fno-cxx-modules -fskip-odr-check-in-gmf -fcxx-exceptions -fexceptions -fmax-type-align=16 -fcommon -clang-vendor-feature=+disableNonDependentMemberExprInCurrentInstantiation -fno-odr-hash-protocols -clang-vendor-feature=+enableAggressiveVLAFolding -clang-vendor-feature=+revert09abecef7bbf -clang-vendor-feature=+thisNoAlignAttr -clang-vendor-feature=+thisNoNullAttr -clang-vendor-feature=+disableAtImportPrivateFrameworkInImplementationError -D__GCC_HAVE_DWARF2_CFI_ASM=1 -o CMakeFiles/cmTC_b49b7.dir/CMakeCXXCompilerABI.cpp.o -x c++ /opt/homebrew/share/cmake/Modules/CMakeCXXCompilerABI.cpp
         clang -cc1 version 17.0.0 (clang-1700.4.4.1) default target arm64-apple-darwin25.0.0
         ignoring nonexistent directory "/usr/local/include"
         ignoring nonexistent directory "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/local/include"
@@ -1449,13 +1489,13 @@ events:
          /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks (framework directory)
          /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/SubFrameworks (framework directory)
         End of search list.
-        Linking CXX executable cmTC_64dc9
-        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_64dc9.dir/link.txt --verbose=1
+        Linking CXX executable cmTC_b49b7
+        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b49b7.dir/link.txt --verbose=1
         Apple clang version 17.0.0 (clang-1700.4.4.1)
         Target: arm64-apple-darwin25.0.0
         Thread model: posix
         InstalledDir: /Library/Developer/CommandLineTools/usr/bin
-         "/Library/Developer/CommandLineTools/usr/bin/ld" -demangle -lto_library /Library/Developer/CommandLineTools/usr/lib/libLTO.dylib -dynamic -arch arm64 -platform_version macos 26.0.0 26.1 -syslibroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -mllvm -enable-linkonceodr-outlining -o cmTC_64dc9 -L/usr/local/lib -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_64dc9.dir/CMakeCXXCompilerABI.cpp.o -lc++ -lSystem /Library/Developer/CommandLineTools/usr/lib/clang/17/lib/darwin/libclang_rt.osx.a
+         "/Library/Developer/CommandLineTools/usr/bin/ld" -demangle -lto_library /Library/Developer/CommandLineTools/usr/lib/libLTO.dylib -dynamic -arch arm64 -platform_version macos 26.0.0 26.1 -syslibroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -mllvm -enable-linkonceodr-outlining -o cmTC_b49b7 -L/usr/local/lib -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_b49b7.dir/CMakeCXXCompilerABI.cpp.o -lc++ -lSystem /Library/Developer/CommandLineTools/usr/lib/clang/17/lib/darwin/libclang_rt.osx.a
         @(#)PROGRAM:ld PROJECT:ld-1230.1
         BUILD 16:18:08 Oct 17 2025
         configured to support archs: armv6 armv7 armv7s arm64 arm64e arm64_32 i386 x86_64 x86_64h armv6m armv7k armv7m armv7em armv8m.main armv8.1m.main
@@ -1468,7 +1508,7 @@ events:
         	/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib/swift
         Framework search paths:
         	/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks
-        /usr/bin/c++  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_64dc9.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_64dc9
+        /usr/bin/c++  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_b49b7.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_b49b7
         
       exitCode: 0
   -
@@ -1512,19 +1552,19 @@ events:
       Parsed CXX implicit link information:
         link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
         linker tool regex: [^[ 	]*(->|")?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)))("|,| |$)]
-        ignore line: [Change Dir: '/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/CMakeScratch/TryCompile-HwQsRV']
+        ignore line: [Change Dir: '/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/CMakeScratch/TryCompile-1s7WOT']
         ignore line: []
-        ignore line: [Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_64dc9/fast]
-        ignore line: [/Library/Developer/CommandLineTools/usr/bin/make  -f CMakeFiles/cmTC_64dc9.dir/build.make CMakeFiles/cmTC_64dc9.dir/build]
-        ignore line: [Building CXX object CMakeFiles/cmTC_64dc9.dir/CMakeCXXCompilerABI.cpp.o]
-        ignore line: [/usr/bin/c++   -arch arm64   -v -Wl -v -MD -MT CMakeFiles/cmTC_64dc9.dir/CMakeCXXCompilerABI.cpp.o -MF CMakeFiles/cmTC_64dc9.dir/CMakeCXXCompilerABI.cpp.o.d -o CMakeFiles/cmTC_64dc9.dir/CMakeCXXCompilerABI.cpp.o -c /opt/homebrew/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
+        ignore line: [Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_b49b7/fast]
+        ignore line: [/Library/Developer/CommandLineTools/usr/bin/make  -f CMakeFiles/cmTC_b49b7.dir/build.make CMakeFiles/cmTC_b49b7.dir/build]
+        ignore line: [Building CXX object CMakeFiles/cmTC_b49b7.dir/CMakeCXXCompilerABI.cpp.o]
+        ignore line: [/usr/bin/c++   -arch arm64   -v -Wl -v -MD -MT CMakeFiles/cmTC_b49b7.dir/CMakeCXXCompilerABI.cpp.o -MF CMakeFiles/cmTC_b49b7.dir/CMakeCXXCompilerABI.cpp.o.d -o CMakeFiles/cmTC_b49b7.dir/CMakeCXXCompilerABI.cpp.o -c /opt/homebrew/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
         ignore line: [Apple clang version 17.0.0 (clang-1700.4.4.1)]
         ignore line: [Target: arm64-apple-darwin25.0.0]
         ignore line: [Thread model: posix]
         ignore line: [InstalledDir: /Library/Developer/CommandLineTools/usr/bin]
         ignore line: [clang++: warning: -Wl -v: 'linker' input unused [-Wunused-command-line-argument]]
         ignore line: [ignoring nonexistent directory "/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1"]
-        ignore line: [ "/Library/Developer/CommandLineTools/usr/bin/clang" -cc1 -triple arm64-apple-macosx26.0.0 -Wundef-prefix=TARGET_OS_ -Wdeprecated-objc-isa-usage -Werror=deprecated-objc-isa-usage -Werror=implicit-function-declaration -emit-obj -disable-free -clear-ast-before-backend -disable-llvm-verifier -discard-value-names -main-file-name CMakeCXXCompilerABI.cpp -mrelocation-model pic -pic-level 2 -mframe-pointer=non-leaf -fno-strict-return -ffp-contract=on -fno-rounding-math -funwind-tables=1 -fobjc-msgsend-selector-stubs -target-sdk-version=26.1 -fvisibility-inlines-hidden-static-local-var -fdefine-target-os-macros -fno-assume-unique-vtables -fno-modulemap-allow-subdirectory-search -target-cpu apple-m1 -target-feature +zcm -target-feature +zcz -target-feature +v8.5a -target-feature +aes -target-feature +altnzcv -target-feature +ccdp -target-feature +complxnum -target-feature +crc -target-feature +dotprod -target-feature +fp-armv8 -target-feature +fp16fml -target-feature +fptoint -target-feature +fullfp16 -target-feature +jsconv -target-feature +lse -target-feature +neon -target-feature +pauth -target-feature +perfmon -target-feature +predres -target-feature +ras -target-feature +rcpc -target-feature +rdm -target-feature +sb -target-feature +sha2 -target-feature +sha3 -target-feature +specrestrict -target-feature +ssbs -target-abi darwinpcs -debugger-tuning=lldb -fdebug-compilation-dir=/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/CMakeScratch/TryCompile-HwQsRV -target-linker-version 1230.1 -v -fcoverage-compilation-dir=/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/CMakeScratch/TryCompile-HwQsRV -resource-dir /Library/Developer/CommandLineTools/usr/lib/clang/17 -dependency-file CMakeFiles/cmTC_64dc9.dir/CMakeCXXCompilerABI.cpp.o.d -skip-unused-modulemap-deps -MT CMakeFiles/cmTC_64dc9.dir/CMakeCXXCompilerABI.cpp.o -sys-header-deps -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -internal-isystem /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1 -internal-isystem /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/local/include -internal-isystem /Library/Developer/CommandLineTools/usr/lib/clang/17/include -internal-externc-isystem /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -internal-externc-isystem /Library/Developer/CommandLineTools/usr/include -internal-iframework /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -internal-iframework /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/SubFrameworks -internal-iframework /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/Library/Frameworks -Wno-reorder-init-list -Wno-implicit-int-float-conversion -Wno-c99-designator -Wno-final-dtor-non-final-class -Wno-extra-semi-stmt -Wno-misleading-indentation -Wno-quoted-include-in-framework-header -Wno-implicit-fallthrough -Wno-enum-enum-conversion -Wno-enum-float-conversion -Wno-elaborated-enum-base -fdeprecated-macro -ferror-limit 19 -stack-protector 1 -fstack-check -mdarwin-stkchk-strong-link -fblocks -fencode-extended-block-signature -fregister-global-dtors-with-atexit -fgnuc-version=4.2.1 -fno-cxx-modules -fskip-odr-check-in-gmf -fcxx-exceptions -fexceptions -fmax-type-align=16 -fcommon -clang-vendor-feature=+disableNonDependentMemberExprInCurrentInstantiation -fno-odr-hash-protocols -clang-vendor-feature=+enableAggressiveVLAFolding -clang-vendor-feature=+revert09abecef7bbf -clang-vendor-feature=+thisNoAlignAttr -clang-vendor-feature=+thisNoNullAttr -clang-vendor-feature=+disableAtImportPrivateFrameworkInImplementationError -D__GCC_HAVE_DWARF2_CFI_ASM=1 -o CMakeFiles/cmTC_64dc9.dir/CMakeCXXCompilerABI.cpp.o -x c++ /opt/homebrew/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
+        ignore line: [ "/Library/Developer/CommandLineTools/usr/bin/clang" -cc1 -triple arm64-apple-macosx26.0.0 -Wundef-prefix=TARGET_OS_ -Wdeprecated-objc-isa-usage -Werror=deprecated-objc-isa-usage -Werror=implicit-function-declaration -emit-obj -disable-free -clear-ast-before-backend -disable-llvm-verifier -discard-value-names -main-file-name CMakeCXXCompilerABI.cpp -mrelocation-model pic -pic-level 2 -mframe-pointer=non-leaf -fno-strict-return -ffp-contract=on -fno-rounding-math -funwind-tables=1 -fobjc-msgsend-selector-stubs -target-sdk-version=26.1 -fvisibility-inlines-hidden-static-local-var -fdefine-target-os-macros -fno-assume-unique-vtables -fno-modulemap-allow-subdirectory-search -target-cpu apple-m1 -target-feature +zcm -target-feature +zcz -target-feature +v8.5a -target-feature +aes -target-feature +altnzcv -target-feature +ccdp -target-feature +complxnum -target-feature +crc -target-feature +dotprod -target-feature +fp-armv8 -target-feature +fp16fml -target-feature +fptoint -target-feature +fullfp16 -target-feature +jsconv -target-feature +lse -target-feature +neon -target-feature +pauth -target-feature +perfmon -target-feature +predres -target-feature +ras -target-feature +rcpc -target-feature +rdm -target-feature +sb -target-feature +sha2 -target-feature +sha3 -target-feature +specrestrict -target-feature +ssbs -target-abi darwinpcs -debugger-tuning=lldb -fdebug-compilation-dir=/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/CMakeScratch/TryCompile-1s7WOT -target-linker-version 1230.1 -v -fcoverage-compilation-dir=/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles/CMakeScratch/TryCompile-1s7WOT -resource-dir /Library/Developer/CommandLineTools/usr/lib/clang/17 -dependency-file CMakeFiles/cmTC_b49b7.dir/CMakeCXXCompilerABI.cpp.o.d -skip-unused-modulemap-deps -MT CMakeFiles/cmTC_b49b7.dir/CMakeCXXCompilerABI.cpp.o -sys-header-deps -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include -internal-isystem /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1 -internal-isystem /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/local/include -internal-isystem /Library/Developer/CommandLineTools/usr/lib/clang/17/include -internal-externc-isystem /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -internal-externc-isystem /Library/Developer/CommandLineTools/usr/include -internal-iframework /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -internal-iframework /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/SubFrameworks -internal-iframework /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/Library/Frameworks -Wno-reorder-init-list -Wno-implicit-int-float-conversion -Wno-c99-designator -Wno-final-dtor-non-final-class -Wno-extra-semi-stmt -Wno-misleading-indentation -Wno-quoted-include-in-framework-header -Wno-implicit-fallthrough -Wno-enum-enum-conversion -Wno-enum-float-conversion -Wno-elaborated-enum-base -fdeprecated-macro -ferror-limit 19 -stack-protector 1 -fstack-check -mdarwin-stkchk-strong-link -fblocks -fencode-extended-block-signature -fregister-global-dtors-with-atexit -fgnuc-version=4.2.1 -fno-cxx-modules -fskip-odr-check-in-gmf -fcxx-exceptions -fexceptions -fmax-type-align=16 -fcommon -clang-vendor-feature=+disableNonDependentMemberExprInCurrentInstantiation -fno-odr-hash-protocols -clang-vendor-feature=+enableAggressiveVLAFolding -clang-vendor-feature=+revert09abecef7bbf -clang-vendor-feature=+thisNoAlignAttr -clang-vendor-feature=+thisNoNullAttr -clang-vendor-feature=+disableAtImportPrivateFrameworkInImplementationError -D__GCC_HAVE_DWARF2_CFI_ASM=1 -o CMakeFiles/cmTC_b49b7.dir/CMakeCXXCompilerABI.cpp.o -x c++ /opt/homebrew/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
         ignore line: [clang -cc1 version 17.0.0 (clang-1700.4.4.1) default target arm64-apple-darwin25.0.0]
         ignore line: [ignoring nonexistent directory "/usr/local/include"]
         ignore line: [ignoring nonexistent directory "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/local/include"]
@@ -1538,13 +1578,13 @@ events:
         ignore line: [ /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks (framework directory)]
         ignore line: [ /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/SubFrameworks (framework directory)]
         ignore line: [End of search list.]
-        ignore line: [Linking CXX executable cmTC_64dc9]
-        ignore line: [/opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_64dc9.dir/link.txt --verbose=1]
+        ignore line: [Linking CXX executable cmTC_b49b7]
+        ignore line: [/opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b49b7.dir/link.txt --verbose=1]
         ignore line: [Apple clang version 17.0.0 (clang-1700.4.4.1)]
         ignore line: [Target: arm64-apple-darwin25.0.0]
         ignore line: [Thread model: posix]
         ignore line: [InstalledDir: /Library/Developer/CommandLineTools/usr/bin]
-        link line: [ "/Library/Developer/CommandLineTools/usr/bin/ld" -demangle -lto_library /Library/Developer/CommandLineTools/usr/lib/libLTO.dylib -dynamic -arch arm64 -platform_version macos 26.0.0 26.1 -syslibroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -mllvm -enable-linkonceodr-outlining -o cmTC_64dc9 -L/usr/local/lib -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_64dc9.dir/CMakeCXXCompilerABI.cpp.o -lc++ -lSystem /Library/Developer/CommandLineTools/usr/lib/clang/17/lib/darwin/libclang_rt.osx.a]
+        link line: [ "/Library/Developer/CommandLineTools/usr/bin/ld" -demangle -lto_library /Library/Developer/CommandLineTools/usr/lib/libLTO.dylib -dynamic -arch arm64 -platform_version macos 26.0.0 26.1 -syslibroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -mllvm -enable-linkonceodr-outlining -o cmTC_b49b7 -L/usr/local/lib -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_b49b7.dir/CMakeCXXCompilerABI.cpp.o -lc++ -lSystem /Library/Developer/CommandLineTools/usr/lib/clang/17/lib/darwin/libclang_rt.osx.a]
           arg [/Library/Developer/CommandLineTools/usr/bin/ld] ==> ignore
           arg [-demangle] ==> ignore
           arg [-lto_library] ==> ignore, skip following value
@@ -1561,12 +1601,12 @@ events:
           arg [-mllvm] ==> ignore
           arg [-enable-linkonceodr-outlining] ==> ignore
           arg [-o] ==> ignore
-          arg [cmTC_64dc9] ==> ignore
+          arg [cmTC_b49b7] ==> ignore
           arg [-L/usr/local/lib] ==> dir [/usr/local/lib]
           arg [-search_paths_first] ==> ignore
           arg [-headerpad_max_install_names] ==> ignore
           arg [-v] ==> ignore
-          arg [CMakeFiles/cmTC_64dc9.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+          arg [CMakeFiles/cmTC_b49b7.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
           arg [-lc++] ==> lib [c++]
           arg [-lSystem] ==> lib [System]
           arg [/Library/Developer/CommandLineTools/usr/lib/clang/17/lib/darwin/libclang_rt.osx.a] ==> lib [/Library/Developer/CommandLineTools/usr/lib/clang/17/lib/darwin/libclang_rt.osx.a]
