@@ -1,4 +1,4 @@
-# ISO 15118 Wallbox Control System
+˚# ISO 15118 Wallbox Control System
 
 A professional-grade EV charging wallbox control system implementing ISO 15118 standards with **SOLID principles** and **Design Patterns**. Features clean architecture, dependency injection, and comprehensive testing support.
 
@@ -80,7 +80,42 @@ This project implements a **production-ready** wallbox charging controller for e
 
 ### Clean Architecture Principles
 
-This project follows **SOLID principles** and implements proven **design patterns** for maintainability and extensibility:
+This project follows **Clean Architecture** with **SOLID principles** and implements **7 proven design patterns** for maximum maintainability and extensibility.
+
+#### Architecture Layers
+
+```
+┌────────────────────────────────────────────────────────┐
+│  Presentation Layer (React Web App - Port 3000)        │
+└──────────────────────┬─────────────────────────────────┘
+                       │ HTTP REST API (Port 8080)
+┌──────────────────────┴─────────────────────────────────┐
+│  Application Layer (WallboxCtrl)                        │
+│  - Controllers (ApiController, WallboxController)       │
+│  - State Machine (ChargingStateMachine)                 │
+└──────────────────────┬─────────────────────────────────┘
+                       │ Interfaces (Dependency Inversion)
+┌──────────────────────┴─────────────────────────────────┐
+│  Infrastructure Layer                                   │
+│  - IGpioController (BananaPi/Stub strategies)           │
+│  - INetworkCommunicator (UDP strategy)                  │
+│  - Configuration (Singleton)                            │
+└──────────────────────┬─────────────────────────────────┘
+                       │ Protocol Messages
+┌──────────────────────┴─────────────────────────────────┐
+│  Protocol Layer (LibPubWallbox - ISO 15118)             │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Benefits**:
+
+- ✅ Clear separation of concerns
+- ✅ Dependency inversion (depend on abstractions)
+- ✅ Easy to test (mock interfaces)
+- ✅ Easy to extend (add new implementations)
+- ✅ Independent of frameworks and UI
+
+> **📖 See [docs/CLEAN_ARCHITECTURE.md](docs/CLEAN_ARCHITECTURE.md) for complete architecture guide**
 
 #### SOLID Principles
 
@@ -97,8 +132,8 @@ This project follows **SOLID principles** and implements proven **design pattern
 
 3. **Liskov Substitution** - Derived classes are substitutable
 
-   - `StubGpioController` can replace `IGpioController`
-   - `UdpCommunicator` can replace `INetworkCommunicator`
+   - `StubGpioController` can replace `BananaPiGpioController`
+   - Both implement `IGpioController` interface
 
 4. **Interface Segregation** - Focused, minimal interfaces
 
@@ -118,8 +153,10 @@ This project follows **SOLID principles** and implements proven **design pattern
 | **Command**              | Encapsulate terminal commands          | `CommandProcessor`     |
 | **State**                | Manage charging states                 | `IChargingState`       |
 | **Factory**              | Create appropriate GPIO controller     | `GpioFactory`          |
-| **Dependency Injection** | Inject dependencies via constructor    | `WallboxController`    |
-| **Singleton**            | Global logger instance                 | `Logger`               |
+| **Facade**               | Simplify complex subsystems            | `WallboxController`    |
+| **Dependency Injection** | Inject dependencies via constructor    | All controllers        |
+
+> **📖 See [docs/architecture/SOLID_DESIGN_PATTERNS.md](docs/architecture/SOLID_DESIGN_PATTERNS.md) for detailed pattern documentation**
 
 ### Class Diagram
 
@@ -128,7 +165,7 @@ This project follows **SOLID principles** and implements proven **design pattern
 │                      Application Layer                              │
 │  ┌──────────────┐         ┌───────────────────────────┐            │
 │  │   main()     │────────►│  WallboxController        │            │
-│  └──────────────┘         │  - orchestrates system    │            │
+│  └──────────────┘         │  (Facade Pattern)         │            │
 │                           └─────────┬─────────────────┘            │
 └─────────────────────────────────────┼────────────────────────────┘
                                       │
@@ -142,9 +179,10 @@ This project follows **SOLID principles** and implements proven **design pattern
       ┌─────────┴────────┐  ┌────────┴─────────┐
       │                  │  │                  │
 ┌─────▼──────┐  ┌───────▼──────┐  ┌──────▼────────┐
-│StubGpio    │  │RaspberryPi   │  │Udp            │
+│StubGpio    │  │BananaPi      │  │Udp            │
 │Controller  │  │GpioController│  │Communicator   │
 └────────────┘  └──────────────┘  └───────────────┘
+ (Testing)       (Production)        (Network)
 ```
 
 ### System Architecture
@@ -193,105 +231,146 @@ This project follows **SOLID principles** and implements proven **design pattern
 
 ```
 PJMT/
-├── README.md                          # Main project documentation
-├── FILE_STRUCTURE.md                  # File organization guide
-├── .gitattributes                     # Git configuration
+├── 📄 README.md                       # ⭐ Start here - Project overview
+├── 📄 SYSTEM_OVERVIEW.md              # Complete system guide
+├── 📄 QUICK_START.md                  # 5-minute quickstart
+├── 📄 INTERACTIVE_MODE.md             # Simulator commands
+├── 📄 FILE_STRUCTURE.md               # Complete file organization
+├── 📄 .gitattributes                  # Git configuration
 │
-├── docs/                              # 📚 All Documentation
-│   ├── DOCS_INDEX.md                 # Documentation navigation
+├── 📂 docs/                           # 📚 Documentation Layer
+│   ├── 📑 DOCS_INDEX.md               # Navigation hub (start here!)
 │   │
-│   ├── architecture/                  # Design & Architecture
-│   │   ├── ARCHITECTURE.md           # Original architecture
-│   │   ├── ARCHITECTURE_V3.md        # v3.0 architecture (7 patterns)
-│   │   └── ARCHITECTURE_VISUAL.md    # Visual diagrams
+│   ├── 📂 architecture/               # System Design & Patterns
+│   │   ├── ARCHITECTURE_V3.md         # ⭐ Current architecture (v3.0)
+│   │   ├── ARCHITECTURE_VISUAL.md     # Visual diagrams
+│   │   ├── CLEAN_ARCHITECTURE.md      # ⭐ Clean architecture guide
+│   │   ├── SOLID_DESIGN_PATTERNS.md   # ⭐ 7 design patterns
+│   │   ├── ARCHITECTURE_IMPROVEMENTS.md # Architecture improvements
+│   │   └── ARCHITECTURE.md            # Legacy v1.0 architecture
 │   │
-│   ├── guides/                        # User & Developer Guides
-│   │   ├── MODES_GUIDE.md            # Development/Production modes
-│   │   ├── DEVELOPMENT.md            # Development guidelines
-│   │   ├── INSTALLATION.md           # Installation guide
-│   │   └── MIGRATION.md              # Migration guide
+│   ├── 📂 guides/                     # User & Developer Guides
+│   │   ├── INSTALLATION.md            # Setup instructions
+│   │   ├── DEVELOPMENT.md             # Development workflow
+│   │   ├── MODES_GUIDE.md             # Dev vs Production modes
+│   │   └── MIGRATION.md               # Version migration
 │   │
-│   ├── api/                           # API Documentation
-│   │   ├── API_REFERENCE.md          # Complete REST API reference
-│   │   ├── REACT_APP_API.md          # React app integration
-│   │   └── QUICK_REFERENCE.md        # Quick command reference
+│   ├── 📂 api/                        # API Documentation
+│   │   ├── API_REFERENCE.md           # Complete REST API spec
+│   │   ├── REACT_APP_API.md           # React integration guide
+│   │   └── QUICK_REFERENCE.md         # Quick API cheatsheet
 │   │
-│   ├── CHANGELOG.md                   # Version history
-│   ├── IMPROVEMENTS_SUMMARY.md        # Project improvements
-│   └── TRANSFORMATION_SUMMARY.md      # Transformation overview
+│   ├── 📂 history/                    # Change History
+│   │   ├── CHANGELOG.md               # Version history
+│   │   ├── IMPROVEMENTS_SUMMARY.md    # All improvements
+│   │   ├── TRANSFORMATION_SUMMARY.md  # v2 → v3 changes
+│   │   ├── SIMULATOR_INDEPENDENCE.md  # Simulator redesign
+│   │   └── REMOVAL_SUMMARY.md         # Removed features
+│   │
+│   └── 📂 summaries/                  # Status Reports
+│       ├── CHECKLIST.md               # Implementation checklist
+│       └── COMPLETE.md                # Completion report
 │
-├── scripts/                           # 🔧 Executable Scripts
-│   ├── start-dev.sh                  # Start development mode
-│   └── start-prod.sh                 # Start production mode
+├── 📂 scripts/                        # 🛠️ Infrastructure Scripts
+│   ├── start-dev.sh                   # Start development mode
+│   ├── start-prod.sh                  # Start production mode
+│   └── start-api-only.sh              # API server only
 │
-├── WallboxCtrl/                       # 🔌 Main C++ Application
-│   ├── include/                       # Header files
-│   │   ├── Configuration.h           # Singleton config manager
-│   │   ├── GpioFactory.h             # Factory pattern for GPIO
-│   │   ├── ApiController.h           # MVC REST controller
-│   │   ├── Application.h             # Application controller
-│   │   ├── IGpioController.h         # GPIO interface
-│   │   ├── StubGpioController.h      # Development GPIO
-│   │   ├── INetworkCommunicator.h    # Network interface
-│   │   ├── UdpCommunicator.h         # UDP implementation
-│   │   ├── WallboxController.h       # Main controller
-│   │   ├── ChargingStateMachine.h    # State pattern
-│   │   ├── CommandProcessor.h        # Command pattern
-│   │   └── WatchdogTimer.h           # Safety timer
+├── 📂 WallboxCtrl/                    # 🎯 Application Layer (C++)
+│   ├── 📂 include/                    # Public interfaces
+│   │   ├── Configuration.h            # Singleton - System config
+│   │   ├── GpioFactory.h              # Factory - GPIO creation
+│   │   ├── ApiController.h            # Controller - REST API
+│   │   ├── Application.h              # Application lifecycle
+│   │   ├── WallboxController.h        # Facade - Main controller
+│   │   ├── ChargingStateMachine.h     # State - State management
+│   │   ├── IGpioController.h          # Interface - GPIO abstraction
+│   │   ├── INetworkCommunicator.h     # Interface - Network abstraction
+│   │   ├── BananaPiGpioController.h   # Strategy - BananaPi GPIO
+│   │   ├── StubGpioController.h       # Strategy - Test GPIO
+│   │   ├── UdpCommunicator.h          # Strategy - UDP network
+│   │   └── HttpApiServer.h            # Infrastructure - HTTP server
 │   │
-│   ├── src/                           # Source files
-│   │   ├── main_v3.cpp               # Application entry point
-│   │   ├── WallboxController.cpp     # Controller implementation
-│   │   ├── UdpCommunicator.cpp       # Network implementation
-│   │   ├── ChargingStateMachine.cpp  # State machine
-│   │   ├── CommandProcessor.cpp      # Commands
-│   │   └── simulator.cpp             # ISO stack simulator
+│   ├── 📂 src/                        # Implementation files
+│   │   ├── main_v3.cpp                # ⭐ v3.0 entry point (current)
+│   │   ├── main_v2_with_api.cpp       # v2.0 with API
+│   │   ├── main_v2.cpp                # v2.0 SOLID version
+│   │   ├── main.cpp                   # v1.0 legacy
+│   │   ├── simulator.cpp              # ISO 15118 simulator
+│   │   ├── WallboxController.cpp      # Main controller logic
+│   │   ├── ChargingStateMachine.cpp   # State machine
+│   │   ├── BananaPiGpioController.cpp # Hardware GPIO impl
+│   │   ├── StubGpioController.cpp     # Test GPIO impl
+│   │   ├── UdpCommunicator.cpp        # Network impl
+│   │   └── HttpApiServer.cpp          # HTTP server impl
 │   │
-│   ├── tests/                         # Unit tests
-│   ├── build/                         # CMake build output
-│   ├── CMakeLists.txt                # CMake configuration
-│   └── README.md                     # Component documentation
+│   ├── 📂 build/                      # Build artifacts (gitignored)
+│   │   ├── wallbox_control_v3         # ⭐ Current executable
+│   │   ├── wallbox_control_v2         # v2.0 SOLID
+│   │   ├── wallbox_control_api        # v2.0 with API
+│   │   ├── wallbox_control            # v1.0 legacy
+│   │   ├── simulator                  # ISO 15118 simulator
+│   │   └── config.json                # Runtime configuration
+│   │
+│   ├── 📂 tests/                      # Unit & integration tests
+│   ├── CMakeLists.txt                 # Build configuration
+│   ├── config.json                    # Default configuration
+│   ├── build.sh                       # Build script
+│   ├── test.sh                        # Test runner
+│   └── [documentation files]          # Component docs
 │
-├── wallbox-react-app/                 # ⚛️ React Web Interface
-│   ├── src/
-│   │   ├── App.jsx                   # Main component
-│   │   ├── components/               # React components
-│   │   └── styles/                   # CSS styles
-│   ├── public/
-│   └── package.json
+├── 📂 LibPubWallbox/                  # 🔌 Protocol Layer (ISO 15118)
+│   ├── IsoStackCtrlProtocol.h         # Protocol definitions
+│   ├── IsoStackCtrlProtocol.cpp       # Protocol implementation
+│   ├── Messages.h                     # Message structures
+│   ├── Messages.cpp                   # Message handling
+│   ├── test_iso.cpp                   # Protocol tests
+│   │
+│   ├── 📂 GruppeC/                    # HTTP transmitter
+│   │   ├── ChargingProcessTransmitterHTTP.h
+│   │   └── ChargingProcessTransmitterHTTP.cpp
+│   │
+│   ├── 📂 curl/                       # libcurl dependency
+│   ├── 📂 libmicrohttpd/              # HTTP server library
+│   └── 📂 Dox/                        # Doxygen documentation
 │
-├── LibPubWallbox/                     # 📡 ISO 15118 Protocol Library
-│   ├── IsoStackCtrlProtocol.h        # Protocol definitions
-│   ├── Messages.h/cpp                 # Message handling
-│   ├── libIsoStackCtrl.a             # Static library
-│   └── curl/                          # HTTP libraries
+├── 📂 wallbox-react-app/              # 🌐 Presentation Layer (React)
+│   ├── 📂 public/
+│   │   └── index.html                 # HTML template
+│   │
+│   ├── 📂 src/
+│   │   ├── App.js                     # Main React component
+│   │   ├── App.css                    # Styling
+│   │   ├── index.js                   # Entry point
+│   │   ├── index.css                  # Global styles
+│   │   │
+│   │   ├── 📂 api/                    # API integration
+│   │   │   └── wallboxApi.js          # Wallbox API client
+│   │   │
+│   │   └── 📂 utils/                  # Utilities
+│   │       └── logger.js              # Logging utility
+│   │
+│   ├── package.json                   # Dependencies
+│   └── README.md                      # React app docs
 │
-└── env/                               # 🐳 Docker Environment
-    ├── Dockerfile
-    ├── docker-compose.yml
-    └── README.md
-```
-
-> **📖 See [FILE_STRUCTURE.md](FILE_STRUCTURE.md) for detailed organization guide**  
-> **📚 Browse all docs at [docs/DOCS_INDEX.md](docs/DOCS_INDEX.md)**
-
+└── 📂 env/                            # 🐳 Deployment Configuration
+    ├── docker-compose.yml             # Container orchestration
     ├── Dockerfile                     # Container definition
-    ├── docker-compose.yml            # Docker orchestration
-    └── README.md                     # Environment setup guide
-
+    └── README.md                      # Deployment guide
 ```
 
-│ ├── test.sh # Testing script
-│ ├── test_interactive.sh # Interactive testing
-│ ├── README.md # Component documentation
-│ └── INTERACTIVE_GUIDE.md # User guide
-│
-└── env/ # Docker Environment
-├── Dockerfile # Container definition
-├── docker-compose.yml # Docker orchestration
-└── README.md # Environment setup guide
+### Architecture Benefits
 
-```
+✅ **Clear Layer Separation** - Documentation, Application, Protocol, Presentation, Infrastructure  
+✅ **SOLID Principles** - Single Responsibility throughout  
+✅ **7 Design Patterns** - Strategy, State, Facade, Factory, Observer, Dependency Injection, Singleton  
+✅ **Clean Dependencies** - Outer layers depend on inner layers  
+✅ **Easy Testing** - Interfaces enable mocking  
+✅ **Version Management** - Clear current vs legacy code
+
+> **📖 See [FILE_STRUCTURE.md](FILE_STRUCTURE.md) for detailed file organization**  
+> **📚 Browse all docs at [docs/DOCS_INDEX.md](docs/DOCS_INDEX.md)**  
+> **🏗️ Architecture details at [docs/CLEAN_ARCHITECTURE.md](docs/CLEAN_ARCHITECTURE.md)**
 
 ## 💻 Requirements
 

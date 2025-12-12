@@ -1,6 +1,31 @@
 # Wallbox Control System
 
-This system consists of two communicating programs that simulate an ISO 15118 charging control system.
+This system consists of multiple versions of wallbox control software with ISO 15118 charging simulation capabilities.
+
+## 🆕 Latest Updates (December 2025)
+
+### New Features in v3
+
+✅ **Dynamic UDP Configuration** - Change UDP ports and addresses at runtime  
+✅ **Real-time Feedback** - Both terminals show live status updates with visual indicators  
+✅ **Disable Protection** - All charging commands blocked when wallbox disabled  
+✅ **State Notifications** - Automatic alerts when charging states change  
+✅ **No Vehicle Simulation** - New `no_can` command for testing disconnection scenarios
+
+See [UDP_CONFIG_GUIDE.md](UDP_CONFIG_GUIDE.md) for detailed examples.
+
+---
+
+## Available Versions
+
+| Version | Description              | Features                                                             |
+| ------- | ------------------------ | -------------------------------------------------------------------- |
+| **v1**  | Original procedural code | Basic UDP control, relay management                                  |
+| **v2**  | SOLID architecture       | OOP design, dependency injection, testable                           |
+| **v3**  | Production-ready         | Full state machine, HTTP API, dynamic UDP config, real-time feedback |
+| **v4**  | Simplified relay-only    | Minimal dependencies, direct relay control                           |
+
+---
 
 ## Components
 

@@ -27,7 +27,8 @@ void signalHandler(int signal)
  * @brief Main entry point for Wallbox Controller v4.0
  *
  * Version 4.0 Features:
- * - Simplified - ONLY relay contr * - C++14 standard (minimum for std::make_unique)
+ * - Simplified - ONLY relay control
+ * - C++14 standard (minimum for std::make_unique)
  * - Default relay pin: GPIO 21
  * - No UDP, no network, no state machine
  * - Direct GPIO control only

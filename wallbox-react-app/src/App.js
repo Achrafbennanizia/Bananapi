@@ -122,7 +122,7 @@ function App() {
             <div className="status-item">
               <span className="label">Mode:</span>
               <span className="value">
-                {status.state === 'CHARGING' || status.state === 'PAUSED' ? '🚗 Car Connected' : '○ No Car'}
+                {(status.state === 'PREPARING' || status.state === 'CHARGING' || status.state === 'PAUSED') ? '🚗 Car Connected' : '○ No Car'}
               </span>
             </div>
             <div className="status-item">
