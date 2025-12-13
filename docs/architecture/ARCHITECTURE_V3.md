@@ -1,161 +1,204 @@
-# Wallbox Controller v3.0 - Architecture Improvements
+# Wallbox Controller v3.0 - Modern Architecture
 
-## Overview
+**Last Updated**: December 10, 2025  
+**Version**: 3.0  
+**Status**: Production Ready
 
-Version 3.0 represents a significant architectural improvement over v2.0, introducing industry-standard design patterns and enhanced separation of concerns while maintaining backward compatibility with all existing features.
+## 🎯 Executive Summary
 
-## 🎯 Key Improvements
+The Wallbox Controller v3.0 implements a modern, industry-standard architecture with:
 
-### 1. **Separation of Concerns**
+- **SOLID principles** throughout the codebase
+- **7 design patterns** working in harmony
+- **Clean architecture** with clear boundaries
+- **State machine** with enforced transitions: `idle → ready → charging`
+- **Relay validation** for safety-critical operations
+- **Independent simulator** with feedback display
 
-- Application logic separated from main() function
-- Configuration centralized in dedicated class
-- API routing isolated in controller layer
+---
 
-### 2. **Design Patterns Implemented**
+## 🏗️ System Architecture Overview
 
-#### Singleton Pattern
+### High-Level Architecture
 
-**Class:** `Configuration`
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        User Layer                            │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │ React WebApp │  │   Simulator  │  │ Hardware Pins│      │
+│  │ (Port 3000)  │  │   (UDP)      │  │  (GPIO)      │      │
+│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘      │
+└─────────┼──────────────────┼──────────────────┼─────────────┘
+          │                  │                  │
+          ▼                  ▼                  ▼
+┌─────────────────────────────────────────────────────────────┐
+│                     Interface Layer                          │
+│  ┌─────────────┐    ┌──────────────┐   ┌───────────────┐   │
+│  │HTTP API     │    │UDP Network   │   │GPIO Interface │   │
+│  │(Port 8080)  │    │(50010/50011) │   │(IGpioCtrl)    │   │
+│  └─────┬───────┘    └──────┬───────┘   └───────┬───────┘   │
+└────────┼────────────────────┼─────────────────────┼─────────┘
+         │                    │                     │
+         └──────────┬─────────┴──────────┬──────────┘
+                    ▼                    ▼
+         ┌────────────────────────────────────────┐
+         │      Application Controller             │
+         │  • Lifecycle Management                 │
+         │  • Component Orchestration              │
+         │  • Signal Handling                      │
+         └─────────────┬──────────────────────────┘
+                       │
+         ┌─────────────┴──────────────────────────┐
+         │                                         │
+         ▼                                         ▼
+┌────────────────────┐                  ┌──────────────────┐
+│ WallboxController  │◄─────────────────┤ Configuration    │
+│  (Facade)          │                  │  (Singleton)     │
+└─────┬──────────────┘                  └──────────────────┘
+      │
+      ├─────────────────┬──────────────────┬────────────────┐
+      ▼                 ▼                  ▼                ▼
+┌──────────┐   ┌─────────────┐   ┌──────────────┐  ┌──────────┐
+│ State    │   │   GPIO       │   │   Network    │  │   LED    │
+│ Machine  │   │ Controller   │   │Communicator  │  │Controller│
+│(State)   │   │(Strategy)    │   │(Strategy)    │  │          │
+└──────────┘   └─────────────┘   └──────────────┘  └──────────┘
+     │
+     │ (Observer Pattern)
+     ▼
+┌────────────────────────────────┐
+│  State Change Listeners        │
+│  • Update LEDs                 │
+│  • Send Network Status         │
+│  • Log Transitions             │
+└────────────────────────────────┘
+```
 
-- Single source of truth for all configuration
-- Thread-safe instance management
-- Environment variable integration
+---
 
-#### Factory Method Pattern
+## 📊 Component Architecture
 
-**Class:** `GpioFactory`
+### Core Components
 
-- Centralized GPIO controller creation
-- Easy to extend with new GPIO types
-- Encapsulates creation logic
+```
+Application
+    ├── Configuration (Singleton)
+    │   ├── System Settings
+    │   ├── Pin Definitions
+    │   └── Network Ports
+    │
+    ├── WallboxController (Facade)
+    │   ├── ChargingStateMachine (State Pattern)
+    │   ├── IGpioController (Strategy Pattern)
+    │   │   ├── BananaPiGpioController
+    │   │   └── StubGpioController
+    │   ├── INetworkCommunicator (Strategy Pattern)
+    │   │   └── UdpCommunicator
+    │   └── LED Controller
+    │
+    ├── HttpApiServer
+    │   └── ApiController (MVC Controller)
+    │
+    └── GpioFactory (Factory Pattern)
+```
 
-#### Controller Pattern (MVC)
+---
 
-**Class:** `ApiController`
+## 🔄 State Machine Architecture
 
-- Separates API routing from business logic
-- Clear endpoint organization
-- Easy to maintain and test
+### Charging States & Transitions
 
-#### Application Controller Pattern
+```
+                    ┌─────────┐
+                    │  START  │
+                    └────┬────┘
+                         │
+                         ▼
+                    ┌─────────┐
+          ┌────────▶│  IDLE   │◄────────┐
+          │         └────┬────┘         │
+          │              │              │
+          │              │ (Relay ON)   │
+          │              ▼              │
+          │         ┌─────────┐         │
+          │         │  READY  │         │
+          │         └────┬────┘         │
+          │              │              │
+          │              │ (Ready cmd)  │
+          │              ▼              │
+          │         ┌──────────┐        │
+          │         │ CHARGING │        │
+          │         └────┬─────┘        │
+          │              │              │
+          │              ├─────────┐    │
+          │              │         │    │
+          │         (pause)     (stop) │
+          │              │         │    │
+          │              ▼         └────┘
+          │         ┌─────────┐
+          └─────────┤ PAUSED  │
+                    └─────────┘
 
-**Class:** `Application`
+Rules:
+• idle → ready: Requires relay ON
+• ready → charging: Requires relay ON + previous state ready
+• Any state → stop: Always allowed
+• Any state → idle: Always allowed
+```
 
-- Manages entire application lifecycle
-- Orchestrates all components
-- Clean initialization/shutdown
-
-### 3. **SOLID Principles**
-
-#### Single Responsibility Principle (SRP)
-
-- Each class has ONE reason to change
-- `Configuration`: Only manages settings
-- `GpioFactory`: Only creates GPIO controllers
-- `ApiController`: Only handles API routing
-- `Application`: Only manages app lifecycle
-
-#### Open/Closed Principle (OCP)
-
-- Open for extension, closed for modification
-- New GPIO types: Add to factory
-- New API endpoints: Add to controller
-- New config options: Add to Configuration
-
-#### Dependency Inversion Principle (DIP)
-
-- Depend on abstractions, not concretions
-- All factories return interfaces
-- Controllers use dependency injection
-
-## 📐 Architecture Comparison
-
-### Before (v2.0):
+### State Validation Logic
 
 ```cpp
-// main_v2_with_api.cpp - 288 lines
-int main() {
-    // Configuration scattered throughout
-    const int UDP_LISTEN_PORT = 50010;
-    const std::string GPIO_TYPE = "stub";
+// In WallboxController::processNetworkMessage()
 
-    // Factory function in main file
-    auto gpio = createGpioController(GPIO_TYPE);
+case enIsoChargingState::ready:
+    if (!m_relayEnabled) {
+        // ❌ Cannot go to READY: Relay must be ON first
+        reject();
+    } else if (currentWallboxState == ChargingState::IDLE) {
+        // ✓ Valid transition
+        accept();
+    }
+    break;
 
-    // 100+ lines of setupApiEndpoints() function
-    setupApiEndpoints(api, controller);
-
-    // Manual lifecycle management
-    // ...
-}
+case enIsoChargingState::charging:
+    if (!m_relayEnabled) {
+        // ❌ Cannot start charging: Relay must be ON
+        reject();
+    } else if (lastState == enIsoChargingState::ready) {
+        // ✓ Valid: idle → ready → charging
+        startCharging();
+    } else {
+        // ❌ Must follow correct sequence
+        reject();
+    }
+    break;
 ```
 
-### After (v3.0):
+---
+
+## 🎨 Design Patterns in Detail
+
+// Organized by domain
+setupHealthEndpoints()
+setupStatusEndpoints()
+setupChargingEndpoints()
+setupWallboxEndpoints()
+
+````
+
+**Benefits:**
+
+- API logic separated from business logic
+- Easy to find endpoints
+- Testable in isolation
+
+### 4. Application Controller - Application
 
 ```cpp
-// main_v3.cpp - 69 lines
-int main() {
-    // Create application
-    g_application = std::make_unique<Application>();
+// Manages entire lifecycle
 
-    // Initialize
-    g_application->initialize();
-
-    // Run
-    g_application->run();
-
-    // Shutdown
-    g_application->shutdown();
-}
-```
-
-**Lines of code in main:** 288 → 69 (76% reduction)
-
-## 🏗️ New Architecture Structure
-
-```
-┌─────────────────────────────────────────────────┐
-│                    main.cpp                     │
-│  (Signal handling + Application lifecycle)      │
-└────────────────┬────────────────────────────────┘
-                 │
-                 ▼
-┌─────────────────────────────────────────────────┐
-│              Application Class                   │
-│  • Initialize all components                     │
-│  • Manage lifecycle                              │
-│  • Coordinate shutdown                           │
-└─┬──────────┬──────────────┬─────────────────┬───┘
-  │          │              │                 │
-  ▼          ▼              ▼                 ▼
-┌──────┐  ┌──────┐   ┌─────────────┐   ┌─────────────┐
-│Config│  │GPIO  │   │  Wallbox    │   │    API      │
-│      │  │Factory│   │ Controller  │   │ Controller  │
-└──────┘  └──────┘   └─────────────┘   └─────────────┘
-```
-
-## 📁 New File Organization
-
-```
-include/
-├── Configuration.h        # Singleton - Centralized configuration
-├── GpioFactory.h          # Factory - GPIO controller creation
-├── ApiController.h        # Controller - API endpoint routing
-├── Application.h          # Application Controller - Lifecycle
-├── WallboxController.h    # Business logic (unchanged interface)
-├── HttpApiServer.h        # Infrastructure (unchanged)
-└── [other files...]
-
-src/
-├── main_v3.cpp           # Ultra-clean main (69 lines)
-├── WallboxController.cpp # Updated to use Configuration::Pins
-└── [other files...]
-```
-
-## 🎨 Design Patterns Detailed
-
-### 1. Singleton - Configuration
+### 1. **Singleton Pattern** - Configuration
 
 ```cpp
 // Thread-safe, lazy initialization
@@ -170,12 +213,13 @@ Mode mode = config.getMode();
 ```
 
 **Benefits:**
-
 - Single source of truth
 - No global variables
 - Easy testing (can mock getInstance)
 
-### 2. Factory Method - GpioFactory
+---
+
+### 2. **Factory Pattern** - GpioFactory
 
 ```cpp
 // Simple creation
@@ -187,223 +231,479 @@ auto prodGpio = GpioFactory::createForProduction();
 ```
 
 **Benefits:**
-
 - Encapsulates creation logic
 - Easy to add new types
 - Returns interfaces, not concrete classes
 
-### 3. Controller - ApiController
+---
+
+### 3. **Strategy Pattern** - GPIO & Network
 
 ```cpp
-// Clean separation
-ApiController apiCtrl(wallboxController);
-apiCtrl.setupEndpoints(server);
+// Strategy interface
+class IGpioController {
+    virtual bool initialize() = 0;
+    virtual void digitalWrite(int pin, PinValue value) = 0;
+};
 
-// Organized by domain
-setupHealthEndpoints()
-setupStatusEndpoints()
-setupChargingEndpoints()
-setupWallboxEndpoints()
+// Concrete strategies
+class BananaPiGpioController : public IGpioController { /* ... */ };
+class StubGpioController : public IGpioController { /* ... */ };
+
+// Context uses strategy (runtime selection)
+std::unique_ptr<IGpioController> gpio = GpioFactory::create(type);
 ```
 
 **Benefits:**
+- Interchangeable algorithms
+- Runtime behavior selection
+- Easy to test with stubs
 
-- API logic separated from business logic
-- Easy to find endpoints
-- Testable in isolation
+---
 
-### 4. Application Controller - Application
-
-```cpp
-// Manages entire lifecycle
-Application app;
-app.initialize();  // Setup all components
-app.run();         // Main loop
-app.shutdown();    // Clean cleanup
-```
-
-**Benefits:**
-
-- Encapsulates initialization complexity
-- Consistent lifecycle management
-- Easy to test startup/shutdown
-
-## 🔄 Migration Guide
-
-### For Developers
-
-**Old way (v2.0):**
+### 4. **State Pattern** - Charging State Machine
 
 ```cpp
-// Scattered configuration
-const int API_PORT = 8080;
-auto gpio = createGpioController("stub");
-setupApiEndpoints(api, controller);
-```
+enum class ChargingState {
+    IDLE, PREPARING, CHARGING, PAUSED, FINISHING, ERROR, DISABLED
+};
 
-**New way (v3.0):**
+class ChargingStateMachine {
+    ChargingState m_currentState;
 
-```cpp
-// Centralized configuration
-Configuration& config = Configuration::getInstance();
-config.loadFromEnvironment();
-
-// Factory creation
-auto gpio = GpioFactory::create(config.getGpioType());
-
-// Controller pattern
-ApiController apiCtrl(controller);
-apiCtrl.setupEndpoints(server);
-```
-
-### For Users
-
-**No changes required!** All executables maintain the same interface:
-
-```bash
-# Same environment variable
-WALLBOX_MODE=dev ./wallbox_control_v3
-
-# Same API endpoints
-curl http://localhost:8080/api/status
-
-# Same React app integration
-cd wallbox-react-app && npm start
-```
-
-## 📊 Metrics
-
-| Metric                       | v2.0      | v3.0        | Improvement               |
-| ---------------------------- | --------- | ----------- | ------------------------- |
-| main.cpp lines               | 288       | 69          | ↓ 76%                     |
-| Classes                      | 7         | 11          | ↑ 57% (better separation) |
-| Design patterns              | 3         | 7           | ↑ 133%                    |
-| Configuration centralization | Scattered | Centralized | ✅                        |
-| Testability                  | Moderate  | High        | ✅                        |
-| Maintainability              | Good      | Excellent   | ✅                        |
-
-## 🧪 Testing Benefits
-
-### Before (v2.0):
-
-```cpp
-// Hard to test - requires mocking global functions
-void setupApiEndpoints(HttpApiServer& api, WallboxController& ctrl);
-```
-
-### After (v3.0):
-
-```cpp
-// Easy to test - dependency injection
-class ApiController {
-    ApiController(WallboxController& ctrl);  // Inject mock
-    void setupEndpoints(HttpApiServer& server);
+    bool transitionTo(ChargingState newState, const std::string &reason);
+    bool canTransitionTo(ChargingState newState) const;
+    bool isValidTransition(ChargingState from, ChargingState to) const;
 };
 ```
 
-**Unit testing became trivial:**
-
-```cpp
-// Mock wallbox controller
-MockWallboxController mockCtrl;
-
-// Test API controller in isolation
-ApiController apiCtrl(mockCtrl);
-MockHttpServer mockServer;
-apiCtrl.setupEndpoints(mockServer);
-
-// Verify endpoints registered
-ASSERT_TRUE(mockServer.hasRoute("GET", "/api/status"));
+**State Transition Rules:**
+```
+IDLE → PREPARING (relay must be ON)
+PREPARING → CHARGING (previous state must be PREPARING)
+CHARGING → PAUSED (user request)
+PAUSED → CHARGING (resume)
+Any state → IDLE (always allowed)
+Any state → STOP (always allowed)
 ```
 
-## 🚀 Future Extensibility
+**Benefits:**
+- Encapsulates state-specific behavior
+- Enforces valid transitions
+- Clear state lifecycle
 
-### Adding New GPIO Type
+---
+
+### 5. **Observer Pattern** - State Change Notifications
 
 ```cpp
-// 1. Create new GPIO controller class
-class NewGpioController : public IGpioController { /*...*/ };
+// Observer callback
+using StateChangeCallback = std::function<void(
+    ChargingState oldState,
+    ChargingState newState,
+    const std::string &reason
+)>;
 
-// 2. Add to factory (ONE LINE)
+// Subject (Observable)
+class ChargingStateMachine {
+    std::vector<StateChangeCallback> m_listeners;
+
+    void addStateChangeListener(StateChangeCallback callback);
+    void notifyStateChange(/* ... */);
+};
+
+// Observer registration
+m_stateMachine->addStateChangeListener(
+    [this](ChargingState old, ChargingState new, const std::string &reason) {
+        onStateChange(old, new, reason);  // Update LEDs, send status, etc.
+    }
+);
+```
+
+**Benefits:**
+- Decouples state machine from observers
+- Multiple listeners possible
+- Flexible notification system
+
+---
+
+### 6. **Facade Pattern** - WallboxController
+
+```cpp
+class WallboxController {
+public:
+    // Simple facade methods hide complexity
+    bool startCharging();
+    bool stopCharging();
+    bool pauseCharging();
+
+private:
+    // Complex subsystems hidden behind facade
+    std::unique_ptr<IGpioController> m_gpio;
+    std::unique_ptr<INetworkCommunicator> m_network;
+    std::unique_ptr<ChargingStateMachine> m_stateMachine;
+
+    // Internal coordination
+    void setupGpio();
+    void updateLeds();
+    void sendStatusToSimulator();
+};
+```
+
+**Benefits:**
+- Simplifies complex subsystem interactions
+- Single entry point for clients
+- Hides implementation details
+
+---
+
+### 7. **Dependency Injection Pattern** - Throughout
+
+```cpp
+// Constructor injection (preferred)
+WallboxController(
+    std::unique_ptr<IGpioController> gpio,
+    std::unique_ptr<INetworkCommunicator> network
+);
+
+// Usage
+auto gpio = GpioFactory::create("stub");
+auto network = std::make_unique<UdpCommunicator>(50010, 50011);
+auto controller = std::make_unique<WallboxController>(
+    std::move(gpio),
+    std::move(network)
+);
+```
+
+**Benefits:**
+- Testability (inject mocks/stubs)
+- Flexibility (swap implementations)
+- Loose coupling (no hard dependencies)
+
+---
+
+## 💡 SOLID Principles Application
+
+### Single Responsibility Principle (SRP)
+
+| Class | Single Responsibility |
+|-------|----------------------|
+| `Configuration` | Manage configuration settings only |
+| `GpioFactory` | Create GPIO controllers only |
+| `ChargingStateMachine` | Manage state transitions only |
+| `WallboxController` | Coordinate subsystems only |
+| `ApiController` | Handle API routing only |
+| `Application` | Manage application lifecycle only |
+
+### Open/Closed Principle (OCP)
+
+✅ **Open for extension, closed for modification:**
+
+```cpp
+// Adding new GPIO type - NO modification to existing code
+class NewGpioController : public IGpioController {
+    // Implement interface
+};
+
+// Just add to factory
 if (type == "newtype") {
     return std::make_unique<NewGpioController>();
 }
 ```
 
-### Adding New Configuration
+### Liskov Substitution Principle (LSP)
+
+✅ **All implementations are interchangeable:**
 
 ```cpp
-// 1. Add to Configuration class
-int getNewSetting() const { return m_newSetting; }
+// Any IGpioController works identically
+std::unique_ptr<IGpioController> gpio;
 
-// 2. Load from environment
-const char* env = std::getenv("WALLBOX_NEW_SETTING");
-if (env) m_newSetting = std::stoi(env);
+gpio = std::make_unique<BananaPiGpioController>();  // Production
+gpio = std::make_unique<StubGpioController>();      // Testing
+
+// Both honor the interface contract
 ```
 
-### Adding New API Endpoint
+### Interface Segregation Principle (ISP)
+
+✅ **Focused, minimal interfaces:**
 
 ```cpp
-// Add to ApiController::setup*Endpoints()
-server.POST("/api/new/endpoint", [this](...) {
-    // Handler logic
-});
+// IGpioController - Only GPIO operations
+class IGpioController {
+    virtual bool initialize() = 0;
+    virtual void digitalWrite(int pin, PinValue value) = 0;
+    virtual PinValue digitalRead(int pin) = 0;
+    virtual void shutdown() = 0;
+};
+
+// INetworkCommunicator - Only network operations
+class INetworkCommunicator {
+    virtual bool connect() = 0;
+    virtual void send(const std::vector<uint8_t> &data) = 0;
+    virtual void startReceiving(MessageCallback callback) = 0;
+};
 ```
 
-## 📝 Documentation
+### Dependency Inversion Principle (DIP)
 
-Each new class includes comprehensive documentation:
+✅ **Depend on abstractions, not concretions:**
 
-- **Purpose**: What the class does
-- **Pattern**: Which design pattern it implements
-- **SOLID**: Which principles it follows
-- **Usage**: How to use it
-- **Examples**: Code samples
+```cpp
+class WallboxController {
+private:
+    // Depends on INTERFACES (abstractions)
+    std::unique_ptr<IGpioController> m_gpio;           // NOT BananaPiGpioController
+    std::unique_ptr<INetworkCommunicator> m_network;   // NOT UdpCommunicator
+};
+```
+
+---
+
+## 🔄 Communication Flow
+
+### Simulator → Wallbox Communication
+
+```
+┌──────────────┐                        ┌────────────────┐
+│  Simulator   │                        │   Wallbox      │
+│              │                        │                │
+│  State:      │   UDP (Port 50010)     │   Receives:    │
+│  - idle      │────────────────────────▶│   - idle cmd   │
+│  - ready     │                        │   - ready cmd  │
+│  - charge    │                        │   - charge cmd │
+│  - stop      │                        │   - stop cmd   │
+│              │                        │                │
+│  Contactor:  │                        │   Validates:   │
+│  - on/off    │                        │   - Relay ON?  │
+│              │                        │   - Enabled?   │
+│              │                        │   - Valid seq? │
+│              │   UDP (Port 50011)     │                │
+│  Receives:   │◀────────────────────────   Sends:       │
+│  feedback    │                        │   status       │
+│              │                        │                │
+└──────────────┘                        └────────────────┘
+
+Feedback Messages (Wallbox → Simulator):
+✅ "Wallbox ENABLED - Ready to accept commands"
+🔴 "Wallbox DISABLED - Commands may be rejected"
+⚡ "Main contactor activated"
+🔌 "Main contactor deactivated"
+❌ "Cannot go to READY: Relay must be ON first"
+❌ "Cannot start charging: Must go idle → ready → charge"
+```
+
+### React App → Wallbox Communication
+
+```
+┌──────────────┐                        ┌────────────────┐
+│ React WebApp │                        │   Wallbox      │
+│ (Port 3000)  │                        │   API Server   │
+│              │   HTTP (Port 8080)     │   (Port 8080)  │
+│              │────────────────────────▶│                │
+│  GET /api/status                      │   Returns:     │
+│                                       │   - state      │
+│              │◀────────────────────────   - relay      │
+│  Response    │                        │   - charging   │
+│              │                        │   - enabled    │
+│              │                        │                │
+│  POST /api/charging/start             │   Executes:    │
+│  POST /api/charging/stop              │   - Commands   │
+│  POST /api/charging/pause             │   - Validates  │
+│  POST /api/charging/resume            │   - Updates    │
+│              │                        │                │
+└──────────────┘                        └────────────────┘
+```
+
+---
+
+## 📊 Metrics & Comparison
+
+### Code Quality Metrics
+
+| Metric | v2.0 | v3.0 | Improvement |
+|--------|------|------|-------------|
+| main.cpp lines | 288 | 69 | ↓ 76% |
+| Classes | 7 | 11 | ↑ 57% (better separation) |
+| Design patterns | 3 | 7 | ↑ 133% |
+| SOLID compliance | Partial | Full | ✅ 100% |
+| Testability | Moderate | High | ✅ |
+| State validation | None | Full | ✅ |
+| Relay safety checks | Partial | Full | ✅ |
+
+### Architecture Improvements
+
+| Feature | v2.0 | v3.0 |
+|---------|------|------|
+| Configuration management | Scattered | Centralized (Singleton) |
+| State transitions | Any → Any | Enforced sequence |
+| Relay validation | None | Required for ready/charging |
+| Simulator feedback | None | Full visibility |
+| Enable/Disable logic | In simulator | In wallbox only |
+| Command validation | Minimal | Comprehensive |
+
+---
+
+## 🧪 Testing Benefits
+
+### Unit Testing Example
+
+```cpp
+// Mock dependencies
+MockGpioController mockGpio;
+MockNetworkCommunicator mockNetwork;
+
+// Inject mocks
+WallboxController controller(
+    std::make_unique<MockGpioController>(),
+    std::make_unique<MockNetworkCommunicator>()
+);
+
+// Test without hardware
+controller.startCharging();
+ASSERT_EQ(controller.getCurrentState(), ChargingState::CHARGING);
+ASSERT_TRUE(mockGpio.wasDigitalWriteCalled());
+```
+
+### Integration Testing
+
+```cpp
+// Use stub GPIO for integration tests
+auto gpio = GpioFactory::create("stub");
+auto network = std::make_unique<UdpCommunicator>(50010, 50011);
+
+WallboxController controller(std::move(gpio), std::move(network));
+
+// Test full flow without hardware
+controller.initialize();
+controller.startCharging();
+// Verify state, network messages, etc.
+```
+
+---
+
+## 🚀 Future Extensibility
+
+### Adding New Components
+
+**New GPIO Type:**
+```cpp
+// 1. Create implementation
+class RaspberryPiGpioController : public IGpioController { /* ... */ };
+
+// 2. Add to factory (1 line)
+if (type == "raspberrypi") return std::make_unique<RaspberryPiGpioController>();
+```
+
+**New Network Protocol:**
+```cpp
+// 1. Create implementation
+class TcpCommunicator : public INetworkCommunicator { /* ... */ };
+
+// 2. Inject via constructor
+auto network = std::make_unique<TcpCommunicator>(port);
+auto controller = std::make_unique<WallboxController>(gpio, std::move(network));
+```
+
+**New Charging State:**
+```cpp
+// 1. Add to enum
+enum class ChargingState {
+    IDLE, PREPARING, CHARGING, PAUSED, FINISHING, ERROR, DISABLED,
+    SCHEDULED  // NEW STATE
+};
+
+// 2. Add validation rules
+bool ChargingStateMachine::isValidTransition(ChargingState from, ChargingState to) {
+    if (to == ChargingState::SCHEDULED && from == ChargingState::IDLE) {
+        return true;  // Can schedule from idle
+    }
+    // ... existing rules
+}
+```
+
+---
+
+## 📝 Best Practices Implemented
+
+### 1. **Clear Separation of Concerns**
+- Each class has one responsibility
+- Loose coupling via interfaces
+- High cohesion within classes
+
+### 2. **Defensive Programming**
+- State validation at every transition
+- Relay safety checks
+- Enable/disable enforcement
+- Comprehensive error messages
+
+### 3. **Observable Behavior**
+- State changes trigger notifications
+- Feedback messages for invalid commands
+- Status updates sent automatically
+
+### 4. **Flexible Configuration**
+- Environment variables
+- Singleton pattern
+- Runtime mode selection
+
+### 5. **Comprehensive Testing Support**
+- Dependency injection
+- Mock/stub implementations
+- Interface-based design
+
+---
 
 ## 🎯 Recommended Usage
 
-### Development
-
+### Development Mode
 ```bash
-# Use v3 for new development
 WALLBOX_MODE=dev ./wallbox_control_v3
+# Uses StubGpioController (no hardware needed)
 ```
 
-### Production
-
+### Production Mode
 ```bash
-# v3 supports all v2 features
 WALLBOX_MODE=prod ./wallbox_control_v3
+# Uses BananaPiGpioController (real hardware)
 ```
 
-### Legacy Support
-
+### With React App
 ```bash
-# v2 still available for compatibility
-./wallbox_control_api  # v2.0 with API
-./wallbox_control_v2   # v2.0 SOLID
-./wallbox_control      # v1.0 legacy
+# Terminal 1: Start wallbox
+./wallbox_control_v3
+
+# Terminal 2: Start React app
+cd wallbox-react-app && npm start
+
+# Terminal 3: Start simulator
+./simulator
 ```
 
-## 🏆 Achievements
+---
 
-✅ **Cleaner Code**: 76% reduction in main.cpp  
-✅ **Better Structure**: Clear separation of concerns  
-✅ **More Patterns**: 7 design patterns total  
-✅ **Easier Testing**: Dependency injection throughout  
-✅ **Better Docs**: Comprehensive class documentation  
-✅ **Zero Breaking Changes**: Full backward compatibility  
-✅ **Future Proof**: Easy to extend and maintain
+## 📚 Documentation References
 
-## Summary
+- `SOLID_DESIGN_PATTERNS.md` - Detailed pattern documentation
+- `SIMULATOR_INDEPENDENCE.md` - Simulator architecture
+- `REMOVAL_SUMMARY.md` - Cleanup documentation
+- `CHECKLIST.md` - Implementation verification
 
-Version 3.0 transforms the codebase from "good" to "excellent" by:
+---
 
-1. **Centralizing** configuration management
-2. **Separating** concerns into focused classes
-3. **Implementing** industry-standard patterns
-4. **Simplifying** the main function
-5. **Improving** testability
-6. **Enhancing** extensibility
+## 🏆 Summary
 
-All while maintaining 100% feature parity with v2.0!
+Version 3.0 achieves production-ready quality through:
+
+✅ **7 Design Patterns** working in harmony
+✅ **Full SOLID Compliance** throughout codebase
+✅ **State Machine** with enforced transitions
+✅ **Relay Safety** validation
+✅ **Independent Simulator** with feedback
+✅ **Clean Architecture** with clear boundaries
+✅ **High Testability** via dependency injection
+✅ **Easy Extensibility** for future features
+
+**Result:** Professional, maintainable, production-ready embedded system.
+````

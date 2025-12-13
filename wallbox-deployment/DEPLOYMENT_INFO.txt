@@ -1,0 +1,163 @@
+╔══════════════════════════════════════════════════════════════╗
+║     WALLBOX CONTROL SYSTEM - BANANA PI DEPLOYMENT           ║
+║                    Version 3.0                               ║
+╚══════════════════════════════════════════════════════════════╝
+
+📦 PACKAGE INFORMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Total Size:          824 KB
+Executables:         776 KB (wallbox + simulator)
+Configuration:       4 KB
+Documentation:       16 KB
+Scripts:             16 KB
+
+📂 PACKAGE STRUCTURE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+wallbox-deployment/
+├── bin/                        # Executables
+│   ├── wallbox_control_v3      (664 KB) ⭐ Main controller
+│   └── simulator               (112 KB) 🧪 Test simulator
+│
+├── config/                     # Configuration
+│   └── config.json             (4 KB)
+│
+├── scripts/                    # Control scripts
+│   ├── start-wallbox.sh        ✅ Start wallbox
+│   ├── stop-wallbox.sh         🛑 Stop wallbox
+│   ├── start-simulator.sh      🧪 Start simulator
+│   └── install-service.sh      📦 Install systemd service
+│
+├── docs/                       # Documentation
+│   ├── QUICK_START.md          ⚡ Quick setup
+│   ├── CONFIG_GUIDE.md         ⚙️  Configuration
+│   └── INTERACTIVE_MODE.md     💻 Commands
+│
+├── lib/                        # Libraries (if needed)
+│
+├── README.md                   📖 Complete guide
+├── TRANSFER.sh                 📤 Transfer script
+└── DEPLOYMENT_INFO.txt         📋 This file
+
+🚀 QUICK TRANSFER TO BANANA PI
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Method 1: Using TRANSFER.sh (Recommended)
+  ./TRANSFER.sh 192.168.1.100 pi
+
+Method 2: Manual rsync
+  rsync -avz wallbox-deployment/ pi@192.168.1.100:~/wallbox/
+
+Method 3: Manual scp
+  scp -r wallbox-deployment/ pi@192.168.1.100:~/wallbox/
+
+📱 SETUP ON BANANA PI
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. SSH into Banana Pi:
+   ssh pi@192.168.1.100
+
+2. Navigate to directory:
+   cd ~/wallbox
+
+3. Make scripts executable:
+   chmod +x scripts/*.sh bin/*
+
+4. Start wallbox:
+   ./scripts/start-wallbox.sh
+
+   OR install as service:
+   sudo ./scripts/install-service.sh
+   sudo systemctl start wallbox
+
+📡 NETWORK CONFIGURATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Port 50010 (UDP)  → Wallbox receives commands
+Port 50011 (UDP)  → Wallbox sends status
+Port 8080 (HTTP)  → REST API (optional)
+Port 3000 (HTTP)  → Web UI (optional)
+
+🔧 REQUIREMENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Hardware:
+  ✓ Banana Pi (any model with GPIO)
+  ✓ Network connection
+  ✓ 1 MB free disk space
+
+Software:
+  ✓ Linux kernel with GPIO support
+  ✓ Network stack (UDP)
+  ✓ WiringPi library (optional, for GPIO)
+
+🧪 TESTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Terminal 1 - Start Wallbox:
+  ./scripts/start-wallbox.sh
+
+Terminal 2 - Start Simulator:
+  ./scripts/start-simulator.sh
+
+In Simulator:
+  help     → Show commands
+  status   → Show current state
+  on       → Enable contactor
+  ready    → Set ready state
+  charge   → Start charging
+
+✅ SYSTEMD SERVICE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Install:    sudo ./scripts/install-service.sh
+Start:      sudo systemctl start wallbox
+Stop:       sudo systemctl stop wallbox
+Status:     sudo systemctl status wallbox
+Enable:     sudo systemctl enable wallbox
+Logs:       journalctl -u wallbox -f
+
+🔍 TROUBLESHOOTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Permission denied:
+  chmod +x bin/* scripts/*
+
+Port in use:
+  sudo netstat -ulnp | grep -E "50010|50011"
+  sudo lsof -i :50010
+
+GPIO errors:
+  sudo usermod -a -G gpio $USER
+  ls -l /sys/class/gpio
+
+Binary not found:
+  ls -l bin/wallbox_control_v3
+  file bin/wallbox_control_v3
+
+📚 DOCUMENTATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Complete:     README.md
+Quick Start:  docs/QUICK_START.md
+Config:       docs/CONFIG_GUIDE.md
+Commands:     docs/INTERACTIVE_MODE.md
+
+🎯 FEATURES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✓ ISO 15118 protocol support
+✓ State machine with validation
+✓ UDP network communication
+✓ GPIO control (BananaPi)
+✓ Safety features (relay validation)
+✓ Systemd service support
+✓ Logging and monitoring
+✓ Test simulator included
+
+📝 VERSION INFORMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Version:        3.0
+Build Date:     December 10, 2025
+Architecture:   ARM Linux / x86_64
+Compiler:       GCC 11+
+C++ Standard:   C++17
+Protocol:       ISO 15118
+
+🎉 READY TO DEPLOY!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+This package is ready to be transferred to your Banana Pi.
+
+Start with: ./TRANSFER.sh <banana-pi-ip>
+
+For support, see README.md or main project documentation.
