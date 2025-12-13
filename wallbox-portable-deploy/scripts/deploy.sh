@@ -76,6 +76,30 @@ test_connection() {
     fi
     
     log "Connection successful"
+    
+    # Check sudo permissions
+    log "Checking sudo permissions..."
+    if ssh -o ConnectTimeout=5 "$SSH_USER@$PI_HOST" "sudo -n true" &> /dev/null; then
+        log "Passwordless sudo is configured"
+    else
+        warn "Passwordless sudo not configured for user '$SSH_USER'"
+        echo ""
+        echo "Options to fix this:"
+        echo "  1. Run with root user:"
+        echo "     PI_USER=root $0 $PI_HOST"
+        echo ""
+        echo "  2. Configure passwordless sudo on Pi:"
+        echo "     ssh $SSH_USER@$PI_HOST"
+        echo "     echo \"$SSH_USER ALL=(ALL) NOPASSWD: ALL\" | sudo tee /etc/sudoers.d/$SSH_USER"
+        echo ""
+        echo "  3. Enter sudo password when prompted during deployment"
+        echo ""
+        read -p "Continue anyway? (y/N): " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            error "Deployment cancelled by user"
+        fi
+    fi
 }
 
 package_project() {
@@ -134,9 +158,11 @@ deploy_to_pi() {
 install_remote_dependencies() {
     log "Checking and installing dependencies on Pi..."
     
-    ssh "$SSH_USER@$PI_HOST" "bash -s" << 'EOF'
+    # Use -t flag to allocate pseudo-terminal for sudo
+    ssh -t "$SSH_USER@$PI_HOST" "bash -s" << 'EOF'
+        set -e
         echo "Updating package lists..."
-        sudo apt-get update -qq || exit 1
+        sudo apt-get update -qq
         
         echo "Upgrading packages..."
         sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y -qq || echo "Warning: Upgrade had issues"
@@ -144,8 +170,7 @@ install_remote_dependencies() {
         echo "Installing dependencies..."
         sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq \
             build-essential cmake make git python3 pkg-config \
-            libmicrohttpd-dev libcurl4-openssl-dev net-tools \
-            || exit 1
+            libmicrohttpd-dev libcurl4-openssl-dev net-tools
         
         echo "Dependencies installed successfully"
 EOF
@@ -153,7 +178,7 @@ EOF
     if [ $? -eq 0 ]; then
         log "Remote dependencies satisfied"
     else
-        error "Failed to install dependencies on Pi"
+        error "Failed to install dependencies on Pi. You may need to configure passwordless sudo or run with PI_USER=root"
     fi
 }
 
