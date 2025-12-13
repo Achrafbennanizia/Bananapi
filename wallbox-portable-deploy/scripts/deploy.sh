@@ -3,6 +3,8 @@
 # Wallbox Controller - Deploy to Remote Pi
 # Usage: ./deploy.sh <pi_hostname_or_ip> [ssh_user]
 #
+# Version: 4.1 (with CP Signal System)
+# Date: December 13, 2025
 
 set -e
 
@@ -10,13 +12,15 @@ set -e
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
 NC='\033[0m'
 
 # Configuration
 PI_HOST="${1}"
-SSH_USER="${2:-pi}"
-REMOTE_DIR="/home/$SSH_USER/wallbox"
+SSH_USER="${PI_USER:-${2:-pi}}"
+REMOTE_DIR="/home/$SSH_USER/wallbox-src"
 LOCAL_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+BUILD_MODE="${BUILD_MODE:-production}"
 
 # Functions
 log() {
@@ -36,12 +40,28 @@ check_args() {
     if [ -z "$PI_HOST" ]; then
         echo "Usage: $0 <pi_hostname_or_ip> [ssh_user]"
         echo ""
+        echo "Environment variables:"
+        echo "  PI_USER=<user>       - SSH user (default: pi)"
+        echo "  BUILD_MODE=<mode>    - production or development (default: production)"
+        echo ""
         echo "Examples:"
         echo "  $0 192.168.178.34"
-        echo "  $0 192.168.178.34 root"
-        echo "  $0 bananapi pi"
+        echo "  PI_USER=root $0 192.168.178.34"
+        echo "  BUILD_MODE=development $0 bananapi"
         exit 1
     fi
+}
+
+check_requirements() {
+    log "Checking local requirements..."
+    
+    for cmd in ssh scp tar; do
+        if ! command -v $cmd &> /dev/null; then
+            error "Required command not found: $cmd"
+        fi
+    done
+    
+    log "Requirements satisfied"
 }
 
 test_connection() {
@@ -65,12 +85,25 @@ package_project() {
     
     PACKAGE_NAME="wallbox-deploy-$(date +%Y%m%d_%H%M%S).tar.gz"
     
+    # Package all source files including CP signal system
     tar -czf "/tmp/$PACKAGE_NAME" \
         --exclude='build' \
         --exclude='.git' \
         --exclude='*.o' \
         --exclude='*.log' \
-        src/ include/ config/ scripts/ CMakeLists.txt Makefile README.md 2>/dev/null || true
+        --exclude='__pycache__' \
+        --exclude='.DS_Store' \
+        src/ include/ config/ scripts/ \
+        CMakeLists.txt Makefile \
+        README.md QUICK_START.md BUILD_METHODS.md \
+        docs/ 2>/dev/null || true
+    
+    if [ ! -f "/tmp/$PACKAGE_NAME" ]; then
+        error "Failed to create package"
+    fi
+    
+    SIZE=$(du -h "/tmp/$PACKAGE_NAME" | cut -f1)
+    log "Package created: $PACKAGE_NAME ($SIZE)"
     
     echo "/tmp/$PACKAGE_NAME"
 }
@@ -99,43 +132,75 @@ deploy_to_pi() {
 }
 
 build_on_pi() {
-    log "Building on Pi..."
+    log "Building on Pi (mode: $BUILD_MODE)..."
     
-    ssh "$SSH_USER@$PI_HOST" "cd $REMOTE_DIR && bash scripts/install.sh" || error "Build failed"
+    ssh "$SSH_USER@$PI_HOST" "cd $REMOTE_DIR && BUILD_MODE=$BUILD_MODE bash scripts/install.sh" || error "Build failed"
     
     log "Build completed on Pi"
 }
 
-configure_network() {
-    log "Configuring network settings..."
+configure_system() {
+    log "Configuring system..."
     
     # Get local machine IP
-    LOCAL_IP=$(ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | head -1)
+    LOCAL_IP=$(ifconfig 2>/dev/null | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | head -1)
     
-    log "Detected local IP: $LOCAL_IP"
+    if [ -z "$LOCAL_IP" ]; then
+        LOCAL_IP=$(ip addr 2>/dev/null | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | cut -d'/' -f1 | head -1)
+    fi
     
-    # Update config.json on remote
+    log "Detected local IP: ${LOCAL_IP:-unknown}"
+    
+    # Update config.json on remote with proper mode
     ssh "$SSH_USER@$PI_HOST" "cd $REMOTE_DIR/build && \
-        sed -i 's/\"udp_send_address\": \".*\"/\"udp_send_address\": \"$LOCAL_IP\"/' config.json"
+        python3 -c \"
+import json
+with open('config.json', 'r') as f:
+    config = json.load(f)
+config['mode'] = '$BUILD_MODE'
+if '$LOCAL_IP':
+    config['network']['udp_send_address'] = '$LOCAL_IP'
+with open('config.json', 'w') as f:
+    json.dump(config, f, indent=2)
+print('Configuration updated')
+\" || sed -i 's/\"mode\": \".*\"/\"mode\": \"$BUILD_MODE\"/' config.json"
     
-    log "Network configured"
+    log "System configured for $BUILD_MODE mode"
+}
+
+check_gpio_permissions() {
+    log "Checking GPIO permissions..."
+    
+    if [ "$BUILD_MODE" = "production" ]; then
+        ssh "$SSH_USER@$PI_HOST" "test -w /sys/class/gpio/export" && \
+            log "GPIO permissions OK" || \
+            warn "GPIO may not be accessible. Run with sudo or add user to gpio group"
+    else
+        log "Development mode - GPIO permissions not required"
+    fi
 }
 
 start_service() {
     log "Starting wallbox service..."
     
-    ssh "$SSH_USER@$PI_HOST" "cd $REMOTE_DIR/build && \
-        pkill -9 wallbox_control || true && \
-        ./wallbox_control_v3 </dev/null >/tmp/wallbox.log 2>&1 &"
+    # Stop any existing instances
+    ssh "$SSH_USER@$PI_HOST" "pkill -9 wallbox_control || true"
+    sleep 1
     
-    sleep 2
+    # Start service
+    ssh "$SSH_USER@$PI_HOST" "cd $REMOTE_DIR/build && \
+        nohup ./wallbox_control_v3 </dev/null >/tmp/wallbox.log 2>&1 &"
+    
+    sleep 3
     
     # Check if running
     if ssh "$SSH_USER@$PI_HOST" "pgrep wallbox_control" &> /dev/null; then
-        log "Wallbox service started successfully"
+        PID=$(ssh "$SSH_USER@$PI_HOST" "pgrep wallbox_control")
+        log "Wallbox service started (PID: $PID)"
     else
         warn "Wallbox may not have started. Check logs with:"
-        echo "    ssh $SSH_USER@$PI_HOST 'cat /tmp/wallbox.log'"
+        echo "    ssh $SSH_USER@$PI_HOST 'tail -50 /tmp/wallbox.log'"
+        return 1
     fi
 }
 
@@ -144,13 +209,36 @@ test_api() {
     
     sleep 2
     
-    RESPONSE=$(curl -s -m 5 "http://$PI_HOST:8080/api/status" || echo "FAILED")
+    # Test health endpoint
+    RESPONSE=$(curl -s -m 10 "http://$PI_HOST:8080/health" 2>/dev/null || echo "")
     
-    if [[ "$RESPONSE" == *"state"* ]]; then
-        log "API test successful!"
-        echo "Response: $RESPONSE"
+    if [[ "$RESPONSE" == *"status"* ]]; then
+        log "API health check successful!"
+        
+        # Get full status
+        STATUS=$(curl -s -m 5 "http://$PI_HOST:8080/api/status" 2>/dev/null || echo "")
+        if [[ "$STATUS" == *"state"* ]]; then
+            echo -e "${BLUE}Status:${NC} $STATUS"
+        fi
     else
         warn "API test failed. Service may still be starting..."
+        warn "Manual test: curl http://$PI_HOST:8080/api/status"
+    fi
+}
+
+test_cp_signal() {
+    log "Testing CP signal system..."
+    
+    if [ "$BUILD_MODE" = "production" ]; then
+        log "Production mode - CP signal reading from hardware GPIO pin"
+        ssh "$SSH_USER@$PI_HOST" "grep -i 'HardwareCpSignalReader' /tmp/wallbox.log" && \
+            log "Hardware CP reader initialized" || \
+            warn "CP reader may not be initialized"
+    else
+        log "Development mode - CP signal via simulator"
+        ssh "$SSH_USER@$PI_HOST" "grep -i 'SimulatorCpSignalReader' /tmp/wallbox.log" && \
+            log "Simulator CP reader initialized" || \
+            warn "CP reader may not be initialized"
     fi
 }
 
@@ -162,6 +250,12 @@ print_summary() {
     echo ""
     echo "Remote: $SSH_USER@$PI_HOST"
     echo "Directory: $REMOTE_DIR"
+    echo "Mode: $BUILD_MODE"
+    echo ""
+    echo "Services:"
+    echo "  • HTTP API: http://$PI_HOST:8080"
+    echo "  • UDP Ports: 50010 (RX), 50011 (TX)"
+    echo "  • CP Signal: $([ "$BUILD_MODE" = "production" ] && echo "Hardware GPIO" || echo "UDP Simulator")"
     echo ""
     echo "Useful commands:"
     echo ""
@@ -171,27 +265,46 @@ print_summary() {
     echo "  View logs:"
     echo "    ssh $SSH_USER@$PI_HOST 'tail -f /tmp/wallbox.log'"
     echo ""
+    echo "  Check process:"
+    echo "    ssh $SSH_USER@$PI_HOST 'ps aux | grep wallbox_control'"
+    echo ""
     echo "  Stop service:"
     echo "    ssh $SSH_USER@$PI_HOST 'pkill wallbox_control'"
     echo ""
     echo "  Restart service:"
-    echo "    ssh $SSH_USER@$PI_HOST 'cd $REMOTE_DIR/build && ./wallbox_control_v3 </dev/null >/tmp/wallbox.log 2>&1 &'"
+    echo "    ssh $SSH_USER@$PI_HOST 'cd $REMOTE_DIR/build && nohup ./wallbox_control_v3 </dev/null >/tmp/wallbox.log 2>&1 &'"
     echo ""
+    echo "  Enable systemd service:"
+    echo "    ssh $SSH_USER@$PI_HOST 'sudo systemctl enable wallbox && sudo systemctl start wallbox'"
+    echo ""
+    
+    if [ "$BUILD_MODE" = "development" ]; then
+        echo "Development Mode Notes:"
+        echo "  • Run simulator locally: cd WallboxCtrl/build && ./simulator"
+        echo "  • Simulator sends CP states via UDP to port 50010"
+        echo "  • GPIO operations are simulated (no hardware access)"
+        echo ""
+    fi
 }
 
 # Main deployment process
 main() {
     echo "======================================"
     echo "  Wallbox Controller Deployment"
+    echo "  Version 4.1 (CP Signal System)"
     echo "======================================"
     echo ""
     
     check_args
+    check_requirements
     test_connection
     deploy_to_pi
-    configure_network
+    build_on_pi
+    configure_system
+    check_gpio_permissions
     start_service
     test_api
+    test_cp_signal
     
     print_summary
 }

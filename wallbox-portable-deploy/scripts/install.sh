@@ -3,6 +3,8 @@
 # Wallbox Controller - Installation Script
 # Compatible with: Raspberry Pi, Banana Pi, Orange Pi, and other ARM SBCs
 #
+# Version: 4.1 (with CP Signal System)
+# Date: December 13, 2025
 
 set -e
 
@@ -10,10 +12,12 @@ set -e
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-INSTALL_DIR="${HOME}/wallbox"
+INSTALL_DIR="${INSTALL_DIR:-${HOME}/wallbox-src}"
+BUILD_MODE="${BUILD_MODE:-production}"
 LOG_FILE="/tmp/wallbox_install.log"
 
 # Functions
@@ -44,12 +48,34 @@ detect_platform() {
             echo "Raspberry Pi"
         elif grep -q "sun" /proc/cpuinfo; then
             echo "Banana Pi / Orange Pi"
-        else
+        elif grep -q "ARM" /proc/cpuinfo; then
             echo "Generic ARM"
+        else
+            echo "Unknown ARM"
         fi
+    elif [ -f /proc/device-tree/model ]; then
+        MODEL=$(cat /proc/device-tree/model 2>/dev/null || echo "Unknown")
+        echo "$MODEL"
     else
         echo "Unknown"
     fi
+}
+
+check_architecture() {
+    ARCH=$(uname -m)
+    log "Architecture: $ARCH"
+    
+    case "$ARCH" in
+        armv7l|armv6l|aarch64|arm64)
+            log "ARM architecture detected - compatible"
+            ;;
+        x86_64|amd64)
+            warn "x86_64 architecture - development mode recommended"
+            ;;
+        *)
+            warn "Unknown architecture: $ARCH"
+            ;;
+    esac
 }
 
 check_dependencies() {
@@ -57,17 +83,27 @@ check_dependencies() {
     
     MISSING_DEPS=()
     
-    for cmd in gcc g++ cmake make git; do
+    for cmd in gcc g++ cmake make git python3; do
         if ! command -v $cmd &> /dev/null; then
             MISSING_DEPS+=($cmd)
         fi
     done
+    
+    # Check for required libraries
+    if ! pkg-config --exists libmicrohttpd 2>/dev/null; then
+        MISSING_DEPS+=(libmicrohttpd-dev)
+    fi
+    
+    if ! pkg-config --exists libcurl 2>/dev/null; then
+        MISSING_DEPS+=(libcurl-dev)
+    fi
     
     if [ ${#MISSING_DEPS[@]} -ne 0 ]; then
         warn "Missing dependencies: ${MISSING_DEPS[*]}"
         return 1
     fi
     
+    log "All dependencies satisfied"
     return 0
 }
 
@@ -80,12 +116,29 @@ install_dependencies() {
         build-essential \
         cmake \
         git \
+        python3 \
         pkg-config \
         libmicrohttpd-dev \
         libcurl4-openssl-dev \
         || error "Failed to install dependencies"
     
     log "Dependencies installed successfully"
+}
+
+setup_gpio_permissions() {
+    log "Setting up GPIO permissions..."
+    
+    if [ "$BUILD_MODE" = "production" ]; then
+        # Add user to gpio group if it exists
+        if getent group gpio > /dev/null 2>&1; then
+            sudo usermod -a -G gpio $USER || warn "Failed to add user to gpio group"
+            log "User added to gpio group (logout/login required)"
+        else
+            warn "GPIO group not found - you may need sudo for GPIO access"
+        fi
+    else
+        log "Development mode - GPIO permissions not required"
+    fi
 }
 
 create_directories() {
@@ -110,11 +163,12 @@ copy_files() {
 }
 
 build_project() {
-    log "Building project..."
+    log "Building project (mode: $BUILD_MODE)..."
     
     cd "$INSTALL_DIR"
     
     if [ -d "build" ]; then
+        log "Cleaning previous build..."
         rm -rf build/*
     fi
     mkdir -p build
@@ -124,14 +178,33 @@ build_project() {
     cmake .. || error "CMake configuration failed"
     
     log "Compiling (this may take a few minutes)..."
-    make -j$(nproc) || error "Compilation failed"
+    CPU_CORES=$(nproc 2>/dev/null || echo 2)
+    make -j${CPU_CORES} || error "Compilation failed"
     
-    # Copy config
+    # Copy and configure config file
     if [ ! -f config.json ] && [ -f ../config/config.json ]; then
         cp ../config/config.json .
+        
+        # Set mode in config
+        if command -v python3 &> /dev/null; then
+            python3 -c "
+import json
+with open('config.json', 'r') as f:
+    config = json.load(f)
+config['mode'] = '$BUILD_MODE'
+with open('config.json', 'w') as f:
+    json.dump(config, f, indent=2)
+print('Config mode set to: $BUILD_MODE')
+" || log "Config copied (mode: $BUILD_MODE)"
+        else
+            log "Config copied - manually set mode in config.json"
+        fi
     fi
     
+    # List built executables
     log "Build completed successfully"
+    log "Executables:"
+    ls -lh wallbox_control_v3 simulator 2>/dev/null | awk '{print "  - " $9 " (" $5 ")"}'
 }
 
 configure_firewall() {
@@ -152,7 +225,7 @@ create_service() {
     
     cat > /tmp/wallbox.service <<EOF
 [Unit]
-Description=Wallbox Controller Service
+Description=Wallbox Controller Service v4.1 (CP Signal System)
 After=network.target
 Wants=network-online.target
 
@@ -167,6 +240,12 @@ RestartSec=10
 StandardOutput=journal
 StandardError=journal
 
+# Environment
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+
+# Resource limits
+LimitNOFILE=4096
+
 [Install]
 WantedBy=multi-user.target
 EOF
@@ -175,6 +254,38 @@ EOF
     sudo systemctl daemon-reload
     
     log "Systemd service created (not enabled yet)"
+    log "To enable: sudo systemctl enable wallbox"
+    log "To start: sudo systemctl start wallbox"
+}
+
+verify_installation() {
+    log "Verifying installation..."
+    
+    cd "$INSTALL_DIR/build"
+    
+    ISSUES=()
+    
+    # Check executables
+    [ -x "wallbox_control_v3" ] || ISSUES+=("wallbox_control_v3 not found or not executable")
+    [ -x "simulator" ] || ISSUES+=("simulator not found or not executable")
+    
+    # Check config
+    [ -f "config.json" ] || ISSUES+=("config.json not found")
+    
+    # Check includes
+    [ -d "../include" ] || ISSUES+=("include directory not found")
+    [ -f "../include/ICpSignalReader.h" ] || ISSUES+=("CP signal headers not found")
+    
+    if [ ${#ISSUES[@]} -eq 0 ]; then
+        log "Installation verified successfully"
+        return 0
+    else
+        warn "Installation issues found:"
+        for issue in "${ISSUES[@]}"; do
+            echo "  - $issue"
+        done
+        return 1
+    fi
 }
 
 print_summary() {
@@ -184,34 +295,71 @@ print_summary() {
     echo "======================================"
     echo ""
     echo "Installation directory: $INSTALL_DIR"
+    echo "Build mode: $BUILD_MODE"
     echo "Executables: $INSTALL_DIR/build/"
     echo "Configuration: $INSTALL_DIR/build/config.json"
     echo ""
     echo "Next steps:"
     echo ""
-    echo "1. Edit configuration:"
+    echo "1. Review/edit configuration:"
     echo "   nano $INSTALL_DIR/build/config.json"
     echo ""
-    echo "2. Test run:"
-    echo "   cd $INSTALL_DIR/build"
-    echo "   ./wallbox_control_v3"
+    
+    if [ "$BUILD_MODE" = "production" ]; then
+        echo "2. Test run (production mode - requires GPIO access):"
+        echo "   cd $INSTALL_DIR/build"
+        echo "   sudo ./wallbox_control_v3"
+    else
+        echo "2. Test run (development mode):"
+        echo "   cd $INSTALL_DIR/build"
+        echo "   ./wallbox_control_v3"
+        echo ""
+        echo "   Start simulator in another terminal:"
+        echo "   ./simulator"
+    fi
     echo ""
-    echo "3. Enable service (optional):"
+    echo "3. Enable systemd service (optional):"
     echo "   sudo systemctl enable wallbox"
     echo "   sudo systemctl start wallbox"
     echo ""
     echo "4. Check status:"
     echo "   curl http://localhost:8080/api/status"
     echo ""
-    echo "For more information, see:"
-    echo "   $INSTALL_DIR/docs/INSTALLATION_GUIDE.md"
+    echo "5. View logs:"
+    echo "   sudo journalctl -u wallbox -f"
+    echo "   or: tail -f /tmp/wallbox.log"
     echo ""
+    
+    if [ "$BUILD_MODE" = "production" ]; then
+        echo "Production Mode Features:"
+        echo "  • Hardware GPIO control (pins 2-7, 17, 21-23, 27)"
+        echo "  • CP signal reading from hardware (GPIO pin 7)"
+        echo "  • Real relay and LED control"
+        echo "  • Requires proper GPIO permissions"
+        echo ""
+    else
+        echo "Development Mode Features:"
+        echo "  • Simulated GPIO (no hardware access)"
+        echo "  • CP signal via UDP simulator"
+        echo "  • Safe for testing without hardware"
+        echo "  • Can run on any platform"
+        echo ""
+    fi
+    
+    echo "Documentation:"
+    echo "  • Quick Start: $INSTALL_DIR/QUICK_START.md"
+    echo "  • Build Methods: $INSTALL_DIR/BUILD_METHODS.md"
+    echo "  • Architecture: $INSTALL_DIR/PORTABLE_ARCHITECTURE.md"
+    echo ""
+    
+    log "Log file saved: $LOG_FILE"
 }
 
 # Main installation process
 main() {
     echo "======================================"
     echo "  Wallbox Controller Installation"
+    echo "  Version 4.1 (CP Signal System)"
     echo "======================================"
     echo ""
     
@@ -219,6 +367,10 @@ main() {
     
     PLATFORM=$(detect_platform)
     log "Platform detected: $PLATFORM"
+    
+    check_architecture
+    
+    log "Build mode: $BUILD_MODE"
     
     if ! check_dependencies; then
         read -p "Install missing dependencies? (y/n) " -n 1 -r
@@ -233,8 +385,10 @@ main() {
     create_directories
     copy_files
     build_project
+    setup_gpio_permissions
     configure_firewall
     create_service
+    verify_installation
     
     print_summary
 }
