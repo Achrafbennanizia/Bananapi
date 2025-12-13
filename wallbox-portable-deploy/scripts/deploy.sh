@@ -131,6 +131,32 @@ deploy_to_pi() {
     log "Files deployed successfully"
 }
 
+install_remote_dependencies() {
+    log "Checking and installing dependencies on Pi..."
+    
+    ssh "$SSH_USER@$PI_HOST" "bash -s" << 'EOF'
+        echo "Updating package lists..."
+        sudo apt-get update -qq || exit 1
+        
+        echo "Upgrading packages..."
+        sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y -qq || echo "Warning: Upgrade had issues"
+        
+        echo "Installing dependencies..."
+        sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq \
+            build-essential cmake make git python3 pkg-config \
+            libmicrohttpd-dev libcurl4-openssl-dev net-tools \
+            || exit 1
+        
+        echo "Dependencies installed successfully"
+EOF
+    
+    if [ $? -eq 0 ]; then
+        log "Remote dependencies satisfied"
+    else
+        error "Failed to install dependencies on Pi"
+    fi
+}
+
 build_on_pi() {
     log "Building on Pi (mode: $BUILD_MODE)..."
     
@@ -298,6 +324,7 @@ main() {
     check_args
     check_requirements
     test_connection
+    install_remote_dependencies
     deploy_to_pi
     build_on_pi
     configure_system

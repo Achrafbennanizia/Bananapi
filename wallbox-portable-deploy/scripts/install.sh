@@ -100,7 +100,9 @@ check_dependencies() {
     
     if [ ${#MISSING_DEPS[@]} -ne 0 ]; then
         warn "Missing dependencies: ${MISSING_DEPS[*]}"
-        return 1
+        log "Auto-installing missing packages..."
+        install_dependencies
+        return 0
     fi
     
     log "All dependencies satisfied"
@@ -110,16 +112,26 @@ check_dependencies() {
 install_dependencies() {
     log "Installing dependencies..."
     
-    sudo apt update || error "Failed to update package list"
+    # Update package list first
+    log "Updating package lists..."
+    sudo apt-get update -qq || error "Failed to update package list"
     
-    sudo apt install -y \
+    # Upgrade existing packages
+    log "Upgrading existing packages..."
+    sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y -qq || warn "Package upgrade had issues"
+    
+    # Install required packages
+    log "Installing required packages..."
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq \
         build-essential \
         cmake \
+        make \
         git \
         python3 \
         pkg-config \
         libmicrohttpd-dev \
         libcurl4-openssl-dev \
+        net-tools \
         || error "Failed to install dependencies"
     
     log "Dependencies installed successfully"
