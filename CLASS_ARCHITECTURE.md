@@ -29,29 +29,29 @@ The Wallbox Controller is a modular, SOLID-principle-based C++ application for m
 ```
 ┌─────────────────────────────────────────────────────────┐
 │                   Application Layer                     │
-│  (main_v3.cpp, main_v4.cpp - Entry Points)            │
+│        (main_v3.cpp, main_v4.cpp - Entry Points)        │
 └─────────────────────────────────────────────────────────┘
                            │
 ┌─────────────────────────────────────────────────────────┐
 │                   Controller Layer                      │
-│  WallboxController, SimpleWallboxController            │
-│  HttpApiServer, Application                            │
+│   WallboxController, SimpleWallboxController            │
+│   HttpApiServer, Application                            │
 └─────────────────────────────────────────────────────────┘
                            │
 ┌─────────────────────────────────────────────────────────┐
 │                  Business Logic Layer                   │
-│  ChargingStateMachine, Configuration                   │
+│   ChargingStateMachine, Configuration                   │
 └─────────────────────────────────────────────────────────┘
                            │
 ┌─────────────────────────────────────────────────────────┐
 │               Hardware Abstraction Layer                │
-│  IGpioController → BananaPiGpio / StubGpio            │
-│  INetworkCommunicator → UdpCommunicator               │
+│    IGpioController → BananaPiGpio / StubGpio            │
+│    INetworkCommunicator → UdpCommunicator               │
 └─────────────────────────────────────────────────────────┘
                            │
 ┌─────────────────────────────────────────────────────────┐
 │                    System Layer                         │
-│  Linux GPIO (sysfs), UDP Sockets, ISO 15118           │
+│    Linux GPIO (sysfs), UDP Sockets, ISO 15118           │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -149,13 +149,15 @@ bool isRelayEnabled() // Check relay status
 
 ```cpp
 enum class ChargingState {
-    IDLE,       // Ready, no vehicle
-    PREPARING,  // Vehicle detected, preparing
-    CHARGING,   // Active charging
-    PAUSED,     // Temporarily paused
-    FINISHING,  // Session completing
-    ERROR,      // Error condition
-    DISABLED    // Maintenance mode
+    OFF,            // 0: No input power supply or severe error
+    IDLE,           // 1: No plug connected to charging socket
+    CONNECTED,      // 2: ISO message exchange executing
+    IDENTIFICATION, // 3: Awaits identification confirmation
+    READY,          // 4: Session set up, awaiting power transfer request
+    CHARGING,       // 5: Power is being transferred
+    STOP,           // 6: Power transfer interrupted, finishing
+    FINISHED,       // 7: Charging shut down, plug still connected
+    ERROR           // 8: Resettable error, plug must be disconnected
 };
 
 class ChargingStateMachine {
@@ -175,12 +177,12 @@ private:
 #### State Transition Rules:
 
 ```
-IDLE → PREPARING → CHARGING ⇄ PAUSED
-                     ↓
-                 FINISHING → IDLE
+OFF → IDLE → CONNECTED → IDENTIFICATION → READY → CHARGING
+                                                     ↓
+                                                   STOP → FINISHED → IDLE
 
-Any State → ERROR → IDLE (after reset)
-Any State → DISABLED
+Any State → ERROR → IDLE → OFF (shutdown)
+CHARGING ⇄ READY (pause/resume)
 ```
 
 #### Key Methods:
@@ -188,9 +190,10 @@ Any State → DISABLED
 ```cpp
 bool transitionTo(ChargingState newState)  // Execute transition
 bool canTransitionTo(ChargingState) const  // Check if valid
-bool startCharging()                       // IDLE → PREPARING → CHARGING
-bool stopCharging()                        // CHARGING → FINISHING → IDLE
-bool pauseCharging()                       // CHARGING → PAUSED
+bool startCharging()                       // IDLE → CONNECTED → IDENTIFICATION → READY → CHARGING
+bool stopCharging()                        // CHARGING/READY → STOP → FINISHED → IDLE
+bool pauseCharging()                       // CHARGING → READY
+bool resumeCharging()                      // READY → CHARGING
 bool resumeCharging()                      // PAUSED → CHARGING
 void addStateChangeListener(callback)      // Register observer
 ```
@@ -812,73 +815,108 @@ class GpioFactory {
 
 ## 🔐 State Management
 
-### Charging State Machine Detailed States
+### Charging State Machine Detailed States (ISO 15118 Standard)
 
 ```
 ┌──────────────────────────────────────────────────────┐
-│                    IDLE STATE                        │
-│  • Wallbox ready                                     │
-│  • No vehicle connected                              │
+│                    OFF STATE (0)                     │
+│  • No input power supply or severe error             │
+│  • Communication may have separate supply            │
+│  • System shutdown state                             │
+│  • Valid transitions: → IDLE, → ERROR                │
+└────────────────┬─────────────────────────────────────┘
+                 │ Power restored
+                 ▼
+┌──────────────────────────────────────────────────────┐
+│                    IDLE STATE (1)                    │
+│  • No plug connected to charging socket              │
+│  • Wallbox ready and waiting                         │
 │  • Relay OFF                                         │
-│  • Waiting for vehicle                               │
-│  • Valid transitions: → PREPARING, → DISABLED        │
+│  • Valid transitions: → CONNECTED, → OFF, → ERROR    │
 └────────────────┬─────────────────────────────────────┘
-                 │ Vehicle detected
+                 │ Vehicle plug connected
                  ▼
 ┌──────────────────────────────────────────────────────┐
-│                 PREPARING STATE                      │
-│  • Vehicle detected                                  │
-│  • Performing safety checks                          │
-│  • Establishing communication                        │
+│                 CONNECTED STATE (2)                  │
+│  • ISO 15118 message exchange executing              │
+│  • Collecting charging session relevant data         │
+│  • Establishing communication protocol               │
 │  • Relay still OFF                                   │
-│  • Valid transitions: → CHARGING, → ERROR            │
+│  • Valid transitions: → IDENTIFICATION, → IDLE, → ERROR│
 └────────────────┬─────────────────────────────────────┘
-                 │ Safety checks passed
+                 │ Protocol established
                  ▼
 ┌──────────────────────────────────────────────────────┐
-│                 CHARGING STATE                       │
-│  • Active power transfer                             │
+│              IDENTIFICATION STATE (3)                │
+│  • Stack awaits identification confirmation          │
+│  • Verifying vehicle credentials                     │
+│  • Authentication in progress                        │
+│  • Valid transitions: → READY, → IDLE, → ERROR       │
+└────────────────┬─────────────────────────────────────┘
+                 │ Identification confirmed
+                 ▼
+┌──────────────────────────────────────────────────────┐
+│                  READY STATE (4)                     │
+│  • Charging session is set up                        │
+│  • Vehicle not yet requested power transfer          │
+│  • Waiting for pilot pin signal                      │
+│  • Relay ready but OFF                               │
+│  • Valid transitions: → CHARGING, → STOP, → IDLE, → ERROR│
+└────────────────┬─────────────────────────────────────┘
+                 │ Power transfer requested
+                 ▼
+┌──────────────────────────────────────────────────────┐
+│                 CHARGING STATE (5)                   │
+│  • Power is being actively transferred               │
 │  • Relay ON                                          │
-│  • Monitoring current/voltage                        │
+│  • Monitoring current/voltage (may be zero)          │
 │  • ISO 15118 communication active                    │
-│  • Valid transitions: → PAUSED, → FINISHING, → ERROR│
+│  • Valid transitions: → READY, → STOP, → ERROR       │
 └──────┬──────────────────────────────────────┬────────┘
-       │ User pause                            │ Complete
+       │ Pause (to READY)                      │ Stop requested
        ▼                                       ▼
 ┌──────────────────┐                  ┌──────────────────┐
-│  PAUSED STATE    │                  │ FINISHING STATE  │
-│  • Relay OFF     │                  │  • Stopping      │
-│  • Session       │                  │  • Final checks  │
-│    maintained    │                  │  • Relay OFF     │
-│  • Can resume    │                  └────────┬─────────┘
-└──────┬───────────┘                           │
-       │ Resume                                 │
+│  READY STATE (4) │                  │  STOP STATE (6)  │
+│  • Paused but    │                  │  • Power transfer│
+│    session alive │                  │    interrupted   │
+│  • Can resume    │                  │  • Session       │
+│  • Relay OFF     │                  │    finishing     │
+└──────┬───────────┘                  │  • Relay OFF     │
+       │ Resume                        └────────┬─────────┘
        └────────────────┬──────────────────────┘
+                        │
                         ▼
+                ┌──────────────────┐
+                │ FINISHED STATE(7)│
+                │  • Charging done │
+                │  • Plug still    │
+                │    connected     │
+                │  • Session closed│
+                └────────┬─────────┘
+                         │ Unplug
+                         ▼
 ┌──────────────────────────────────────────────────────┐
-│                   IDLE STATE                         │
+│                   IDLE STATE (1)                     │
 │  • Ready for next session                            │
 └──────────────────────────────────────────────────────┘
 
                     ┌──────────────────┐
-                    │   ERROR STATE    │
-                    │  • Fault         │
-Any State ─────────→│  • Relay OFF     │
-                    │  • Needs reset   │
+                    │  ERROR STATE (8) │
+                    │  • Resettable    │
+Any State ─────────→│    error         │
+                    │  • Relay OFF     │
+                    │  • Plug must be  │
+                    │    disconnected  │
+                    │    to reset      │
                     └────────┬─────────┘
                              │ Reset
                              ▼
                     ┌──────────────────┐
-                    │   IDLE STATE     │
-                    └──────────────────┘
-
-                    ┌──────────────────┐
-                    │ DISABLED STATE   │
-Any State ─────────→│  • Maintenance   │
-(Admin)             │  • All functions │
-                    │    disabled      │
+                    │   IDLE STATE (1) │
                     └──────────────────┘
 ```
+
+**State Numbers**: Following ISO 15118 enIsoChargingState enumeration (0-8)
 
 ### Thread-Safe State Access
 

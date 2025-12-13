@@ -24,20 +24,24 @@ namespace Wallbox
     {
         switch (state)
         {
+        case ChargingState::OFF:
+            return "OFF";
         case ChargingState::IDLE:
             return "IDLE";
-        case ChargingState::PREPARING:
-            return "PREPARING";
+        case ChargingState::CONNECTED:
+            return "CONNECTED";
+        case ChargingState::IDENTIFICATION:
+            return "IDENTIFICATION";
+        case ChargingState::READY:
+            return "READY";
         case ChargingState::CHARGING:
             return "CHARGING";
-        case ChargingState::PAUSED:
-            return "PAUSED";
-        case ChargingState::FINISHING:
-            return "FINISHING";
+        case ChargingState::STOP:
+            return "STOP";
+        case ChargingState::FINISHED:
+            return "FINISHED";
         case ChargingState::ERROR:
             return "ERROR";
-        case ChargingState::DISABLED:
-            return "DISABLED";
         default:
             return "UNKNOWN";
         }
@@ -82,10 +86,23 @@ namespace Wallbox
     {
         if (m_currentState == ChargingState::IDLE)
         {
-            return transitionTo(ChargingState::PREPARING, reason) &&
+            return transitionTo(ChargingState::CONNECTED, reason) &&
+                   transitionTo(ChargingState::IDENTIFICATION, reason) &&
+                   transitionTo(ChargingState::READY, reason) &&
                    transitionTo(ChargingState::CHARGING, reason);
         }
-        else if (m_currentState == ChargingState::PREPARING)
+        else if (m_currentState == ChargingState::CONNECTED)
+        {
+            return transitionTo(ChargingState::IDENTIFICATION, reason) &&
+                   transitionTo(ChargingState::READY, reason) &&
+                   transitionTo(ChargingState::CHARGING, reason);
+        }
+        else if (m_currentState == ChargingState::IDENTIFICATION)
+        {
+            return transitionTo(ChargingState::READY, reason) &&
+                   transitionTo(ChargingState::CHARGING, reason);
+        }
+        else if (m_currentState == ChargingState::READY)
         {
             return transitionTo(ChargingState::CHARGING, reason);
         }
@@ -95,9 +112,10 @@ namespace Wallbox
     bool ChargingStateMachine::stopCharging(const std::string &reason)
     {
         if (m_currentState == ChargingState::CHARGING ||
-            m_currentState == ChargingState::PAUSED)
+            m_currentState == ChargingState::READY)
         {
-            return transitionTo(ChargingState::FINISHING, reason) &&
+            return transitionTo(ChargingState::STOP, reason) &&
+                   transitionTo(ChargingState::FINISHED, reason) &&
                    transitionTo(ChargingState::IDLE, reason);
         }
         return false;
@@ -107,14 +125,14 @@ namespace Wallbox
     {
         if (m_currentState == ChargingState::CHARGING)
         {
-            return transitionTo(ChargingState::PAUSED, reason);
+            return transitionTo(ChargingState::READY, reason);
         }
         return false;
     }
 
     bool ChargingStateMachine::resumeCharging(const std::string &reason)
     {
-        if (m_currentState == ChargingState::PAUSED)
+        if (m_currentState == ChargingState::READY)
         {
             return transitionTo(ChargingState::CHARGING, reason);
         }
@@ -155,39 +173,50 @@ namespace Wallbox
 
     bool ChargingStateMachine::isValidTransition(ChargingState from, ChargingState to) const
     {
-        // State transition matrix
+        // State transition matrix following ISO 15118 standard
         switch (from)
         {
-        case ChargingState::IDLE:
-            return to == ChargingState::PREPARING ||
-                   to == ChargingState::DISABLED ||
+        case ChargingState::OFF:
+            return to == ChargingState::IDLE ||
                    to == ChargingState::ERROR;
 
-        case ChargingState::PREPARING:
+        case ChargingState::IDLE:
+            return to == ChargingState::CONNECTED ||
+                   to == ChargingState::OFF ||
+                   to == ChargingState::ERROR;
+
+        case ChargingState::CONNECTED:
+            return to == ChargingState::IDENTIFICATION ||
+                   to == ChargingState::IDLE ||
+                   to == ChargingState::ERROR;
+
+        case ChargingState::IDENTIFICATION:
+            return to == ChargingState::READY ||
+                   to == ChargingState::IDLE ||
+                   to == ChargingState::ERROR;
+
+        case ChargingState::READY:
             return to == ChargingState::CHARGING ||
+                   to == ChargingState::STOP ||
                    to == ChargingState::IDLE ||
                    to == ChargingState::ERROR;
 
         case ChargingState::CHARGING:
-            return to == ChargingState::PAUSED ||
-                   to == ChargingState::FINISHING ||
+            return to == ChargingState::READY || // Pause
+                   to == ChargingState::STOP ||
                    to == ChargingState::ERROR;
 
-        case ChargingState::PAUSED:
-            return to == ChargingState::CHARGING ||
-                   to == ChargingState::FINISHING ||
+        case ChargingState::STOP:
+            return to == ChargingState::FINISHED ||
                    to == ChargingState::ERROR;
 
-        case ChargingState::FINISHING:
+        case ChargingState::FINISHED:
             return to == ChargingState::IDLE ||
                    to == ChargingState::ERROR;
 
         case ChargingState::ERROR:
             return to == ChargingState::IDLE ||
-                   to == ChargingState::DISABLED;
-
-        case ChargingState::DISABLED:
-            return to == ChargingState::IDLE;
+                   to == ChargingState::OFF;
 
         default:
             return false;

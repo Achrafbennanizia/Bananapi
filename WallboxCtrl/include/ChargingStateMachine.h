@@ -10,20 +10,23 @@ namespace Wallbox
 {
 
     /**
-     * @brief Charging states for the wallbox (State Pattern)
+     * @brief Charging states for the wallbox (ISO 15118 Standard)
      *
      * Implements the State Pattern to manage charging lifecycle.
+     * States follow ISO 15118 standard: enIsoChargingState
      * Each state has specific behaviors and valid transitions.
      */
     enum class ChargingState
     {
-        IDLE,      ///< Wallbox ready, no vehicle connected
-        PREPARING, ///< Vehicle detected, preparing to charge
-        CHARGING,  ///< Active charging in progress
-        PAUSED,    ///< Charging paused (user request or power limit)
-        FINISHING, ///< Charging complete, finishing session
-        ERROR,     ///< Error state, requires intervention
-        DISABLED   ///< Wallbox disabled for maintenance
+        OFF = 0,            ///< Charging station has no input power supply or severe error
+        IDLE = 1,           ///< No plug connected to the charging socket
+        CONNECTED = 2,      ///< ISO message exchange executing to collect session data
+        IDENTIFICATION = 3, ///< Stack awaits identification confirmation
+        READY = 4,          ///< Session set up but vehicle not yet requested power transfer
+        CHARGING = 5,       ///< Power is being transferred (may also be zero)
+        STOP = 6,           ///< Power transfer interrupted, session finishing
+        FINISHED = 7,       ///< Charging shut down, plug still connected
+        ERROR = 8           ///< Resettable error occurred, plug must be disconnected to reset
     };
 
     /**
@@ -80,8 +83,10 @@ namespace Wallbox
         bool isCharging() const { return m_currentState == ChargingState::CHARGING; }
         bool isIdle() const { return m_currentState == ChargingState::IDLE; }
         bool isError() const { return m_currentState == ChargingState::ERROR; }
-        bool isPaused() const { return m_currentState == ChargingState::PAUSED; }
-        bool isDisabled() const { return m_currentState == ChargingState::DISABLED; }
+        bool isReady() const { return m_currentState == ChargingState::READY; }
+        bool isConnected() const { return m_currentState == ChargingState::CONNECTED; }
+        bool isFinished() const { return m_currentState == ChargingState::FINISHED; }
+        bool isOff() const { return m_currentState == ChargingState::OFF; }
 
     private:
         ChargingState m_currentState;

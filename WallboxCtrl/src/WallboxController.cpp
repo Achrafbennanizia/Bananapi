@@ -294,18 +294,23 @@ namespace Wallbox
 
         switch (m_stateMachine->getCurrentState())
         {
+        case ChargingState::OFF:
+            showErrorLeds(); // OFF state shows as error (no power)
+            break;
         case ChargingState::IDLE:
             showIdleLeds();
             break;
-        case ChargingState::PREPARING:
+        case ChargingState::CONNECTED:
+        case ChargingState::IDENTIFICATION:
+        case ChargingState::READY:
         case ChargingState::CHARGING:
             showChargingLeds();
             break;
-        case ChargingState::PAUSED:
-            showPausedLeds();
+        case ChargingState::STOP:
+        case ChargingState::FINISHED:
+            showIdleLeds(); // Back to idle state
             break;
         case ChargingState::ERROR:
-        case ChargingState::DISABLED:
             showErrorLeds();
             break;
         default:
@@ -327,20 +332,29 @@ namespace Wallbox
         ChargingState currentState = m_stateMachine->getCurrentState();
         switch (currentState)
         {
-        case ChargingState::IDLE:
-            cmd.isoStackCmd.currentDemand = 0; // 0 = idle
+        case ChargingState::OFF:
+            cmd.isoStackCmd.currentDemand = 0; // 0 = off
             break;
-        case ChargingState::PREPARING:
-            cmd.isoStackCmd.currentDemand = 100; // 100 = preparing/ready
+        case ChargingState::IDLE:
+            cmd.isoStackCmd.currentDemand = 10; // 10 = idle
+            break;
+        case ChargingState::CONNECTED:
+            cmd.isoStackCmd.currentDemand = 20; // 20 = connected
+            break;
+        case ChargingState::IDENTIFICATION:
+            cmd.isoStackCmd.currentDemand = 30; // 30 = identification
+            break;
+        case ChargingState::READY:
+            cmd.isoStackCmd.currentDemand = 100; // 100 = ready
             break;
         case ChargingState::CHARGING:
             cmd.isoStackCmd.currentDemand = 160; // 160 = charging (16.0A)
             break;
-        case ChargingState::PAUSED:
-            cmd.isoStackCmd.currentDemand = 50; // 50 = paused
+        case ChargingState::STOP:
+            cmd.isoStackCmd.currentDemand = 5; // 5 = stop
             break;
-        case ChargingState::FINISHING:
-            cmd.isoStackCmd.currentDemand = 10; // 10 = finishing/stop
+        case ChargingState::FINISHED:
+            cmd.isoStackCmd.currentDemand = 1; // 1 = finished
             break;
         default:
             cmd.isoStackCmd.currentDemand = 0;
