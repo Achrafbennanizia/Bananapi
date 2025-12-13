@@ -81,23 +81,23 @@ The wallbox system requires reading Control Pilot (CP) signals from electric veh
         ┌─────────────┴─────────────┐                │
         │                           │                │
         ▼                           ▼                │
-┌──────────────────┐      ┌──────────────────┐      │
-│ Hardware Reader  │      │ Simulator Reader │      │
-│ (Strategy Impl)  │      │ (Strategy Impl)  │      │
-└────────┬─────────┘      └────────┬─────────┘      │
-         │                         │                │
-         │ uses                    │ uses           │
-         ▼                         ▼                │
-┌──────────────────┐      ┌──────────────────┐      │
-│ IGpioController  │      │INetworkComm.     │      │
-│ (GPIO abstraction│      │(UDP abstraction) │      │
-└──────────────────┘      └──────────────────┘      │
+┌──────────────────┐      ┌──────────────────┐       │
+│ Hardware Reader  │      │ Simulator Reader │       │
+│ (Strategy Impl)  │      │ (Strategy Impl)  │       │
+└────────┬─────────┘      └────────┬─────────┘       │
+         │                         │                 │
+         │ uses                    │ uses            │
+         ▼                         ▼                 │
+┌──────────────────┐      ┌──────────────────┐       │
+│ IGpioController  │      │INetworkComm.     │       │
+│ (GPIO abstraction│      │(UDP abstraction) │       │
+└──────────────────┘      └──────────────────┘       │
                                                      │
                                                      │ creates
                                               ┌──────┴─────────┐
                                               │CpSignalReader  │
                                               │Factory         │
-                                              │(Factory Pattern│
+                                              │Factory Pattern │
                                               └────────────────┘
 ```
 
@@ -106,19 +106,19 @@ The wallbox system requires reading Control Pilot (CP) signals from electric veh
 ```
 User/Vehicle    Simulator/HW    CPReader       WallboxController   StateMachine
      │               │              │                  │                │
-     │──Connect──────►│             │                  │                │
-     │               │──UDP/GPIO────►│                 │                │
-     │               │              │──readCpState()───►│               │
+     │──Connect─────►│              │                  │                │
+     │               │──UDP/GPIO───►│                  │                │
+     │               │              │──readCpState()──►│                │
      │               │              │                  │                │
      │               │              │◄─STATE_B─────────│                │
      │               │              │                  │                │
-     │               │              │──onStateChange───►│               │
+     │               │              │──onStateChange──►│                │
      │               │              │  (callback)      │                │
      │               │              │                  │──transition───►│
-     │               │              │                  │  (CONNECTED)  │
-     │               │              │                  │◄──success─────│
+     │               │              │                  │  (CONNECTED)   │
+     │               │              │                  │◄──success─────-│
      │               │              │                  │                │
-     │               │              │                  │──updateLeds──►│
+     │               │              │                  │──updateLeds─-─►│
      │               │              │                  │                │
 ```
 

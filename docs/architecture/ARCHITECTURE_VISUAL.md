@@ -192,8 +192,8 @@ Problems:
 ## Metrics Comparison
 
 ```
-┌────────────────────────────────────────────────────────────────┐
-│                   Code Quality Metrics                         │
+┌───────────────────────────────────────────────────────────────┐
+│                   Code Quality Metrics                        │
 ├────────────────┬──────────┬──────────┬────────────────────────┤
 │ Metric         │   v1.0   │   v2.0   │    Improvement         │
 ├────────────────┼──────────┼──────────┼────────────────────────┤
@@ -281,7 +281,7 @@ Total v2.0: 5,575 lines (1,232% increase)
 │  Example: Add MQTT Support                                      │
 │                                                                 │
 │  v1.0: Rewrite networking code ❌                               │
-│  v2.0: class MqttCommunicator : INetworkCommunicator ✅        │
+│  v2.0: class MqttCommunicator : INetworkCommunicator ✅         │
 │        Swap in factory, done!                                   │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
