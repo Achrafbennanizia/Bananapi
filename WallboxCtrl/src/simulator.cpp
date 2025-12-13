@@ -7,6 +7,7 @@
 #include <string>
 #include <iomanip>
 #include <sstream>
+#include <cstdlib>
 
 #include <arpa/inet.h>
 #include <sys/socket.h>
@@ -51,6 +52,94 @@ void log_msg(const std::string &level, const std::string &message)
 static int UDP_IN_PORT = 50011;  // WallboxCtrl -> Simulator
 static int UDP_OUT_PORT = 50010; // Simulator -> WallboxCtrl
 static std::string WALLBOX_IP = "127.0.0.1";
+
+// Load configuration from config.json
+void load_config()
+{
+    std::ifstream config_file("config.json");
+    if (!config_file.is_open())
+    {
+        std::cout << "⚠️  config.json not found, using defaults" << std::endl;
+        return;
+    }
+
+    std::string line, content;
+    while (std::getline(config_file, line))
+    {
+        content += line;
+    }
+    config_file.close();
+
+    // Simple JSON parsing for udp_send_address
+    size_t pos = content.find("\"udp_send_address\"");
+    if (pos != std::string::npos)
+    {
+        size_t start = content.find("\"", pos + 18);
+        if (start != std::string::npos)
+        {
+            start++; // Move past the opening quote
+            size_t end = content.find("\"", start);
+            if (end != std::string::npos)
+            {
+                WALLBOX_IP = content.substr(start, end - start);
+                std::cout << "✓ Loaded IP from config.json: " << WALLBOX_IP << std::endl;
+            }
+        }
+    }
+
+    // Parse UDP ports
+    pos = content.find("\"udp_listen_port\"");
+    if (pos != std::string::npos)
+    {
+        size_t start = content.find(":", pos);
+        if (start != std::string::npos)
+        {
+            std::string num_str;
+            for (size_t i = start + 1; i < content.length(); i++)
+            {
+                if (isdigit(content[i]))
+                {
+                    num_str += content[i];
+                }
+                else if (!num_str.empty())
+                {
+                    break;
+                }
+            }
+            if (!num_str.empty())
+            {
+                UDP_OUT_PORT = std::stoi(num_str);
+                std::cout << "✓ Loaded UDP listen port: " << UDP_OUT_PORT << std::endl;
+            }
+        }
+    }
+
+    pos = content.find("\"udp_send_port\"");
+    if (pos != std::string::npos)
+    {
+        size_t start = content.find(":", pos);
+        if (start != std::string::npos)
+        {
+            std::string num_str;
+            for (size_t i = start + 1; i < content.length(); i++)
+            {
+                if (isdigit(content[i]))
+                {
+                    num_str += content[i];
+                }
+                else if (!num_str.empty())
+                {
+                    break;
+                }
+            }
+            if (!num_str.empty())
+            {
+                UDP_IN_PORT = std::stoi(num_str);
+                std::cout << "✓ Loaded UDP send port: " << UDP_IN_PORT << std::endl;
+            }
+        }
+    }
+}
 
 // Globale Zustände
 static bool g_run = true;
@@ -391,11 +480,14 @@ int main()
 
     std::signal(SIGINT, on_sigint);
 
+    // Load configuration from config.json
+    load_config();
+
     log_msg("INFO", "ISO 15118 Stack Simulator starting...");
     log_msg("INFO", std::string("Sending to: ") + WALLBOX_IP + ":" + std::to_string(UDP_OUT_PORT));
     log_msg("INFO", std::string("Listening on: *:") + std::to_string(UDP_IN_PORT));
 
-    std::cout << "ISO 15118 Stack Simulator starting...\n";
+    std::cout << "\nISO 15118 Stack Simulator starting...\n";
     std::cout << "Sending to: " << WALLBOX_IP << ":" << UDP_OUT_PORT << "\n";
     std::cout << "Listening on: *:" << UDP_IN_PORT << "\n";
     std::cout << "Log file: /tmp/wallbox_simulator.log\n";
