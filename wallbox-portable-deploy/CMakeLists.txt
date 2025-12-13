@@ -44,6 +44,9 @@ set(WALLBOX_SOURCES
     src/UdpCommunicator.cpp
     src/HttpApiServer.cpp
     src/IsoStackCtrlProtocol_impl.cpp
+    src/HardwareCpSignalReader.cpp
+    src/SimulatorCpSignalReader.cpp
+    src/CpSignalReaderFactory.cpp
 )
 
 # Source files for simulator

@@ -76,6 +76,7 @@ namespace Wallbox
         int getLedYellowPin() const { return m_ledYellowPin; }
         int getLedRedPin() const { return m_ledRedPin; }
         int getButtonPin() const { return m_buttonPin; }
+        int getCpPin() const { return m_cpPin; }
 
         // Setters for runtime configuration
         void setRelayPin(int pin) { m_relayPin = pin; }
@@ -83,6 +84,7 @@ namespace Wallbox
         void setLedYellowPin(int pin) { m_ledYellowPin = pin; }
         void setLedRedPin(int pin) { m_ledRedPin = pin; }
         void setButtonPin(int pin) { m_buttonPin = pin; }
+        void setCpPin(int pin) { m_cpPin = pin; }
 
         // Charging parameters
         int getMaxCurrentAmps() const { return m_maxCurrentAmps; }
@@ -102,6 +104,9 @@ namespace Wallbox
             static constexpr int LED_RED = 22;
             static constexpr int BUTTON = 23;
         };
+
+        // CP (Control Pilot) Pin - for IEC 61851-1 signal reading
+        static constexpr int CP_PIN = 7; // GPIO pin for CP signal (ADC capable)
 
         // Load configuration from environment or defaults
         void loadFromEnvironment()
@@ -159,6 +164,7 @@ namespace Wallbox
               m_ledYellowPin(27),
               m_ledRedPin(22),
               m_buttonPin(23),
+              m_cpPin(7), // CP signal pin (ADC capable)
               m_maxCurrentAmps(16),
               m_voltage(230),
               m_timeoutSeconds(300),
@@ -191,6 +197,7 @@ namespace Wallbox
             m_ledYellowPin = extractJsonInt(content, "led_yellow", m_ledYellowPin);
             m_ledRedPin = extractJsonInt(content, "led_red", m_ledRedPin);
             m_buttonPin = extractJsonInt(content, "button", m_buttonPin);
+            m_cpPin = extractJsonInt(content, "cp_pin", m_cpPin);
 
             // Parse charging parameters
             m_maxCurrentAmps = extractJsonInt(content, "max_current_amps", m_maxCurrentAmps);
@@ -276,6 +283,7 @@ namespace Wallbox
         int m_ledYellowPin;
         int m_ledRedPin;
         int m_buttonPin;
+        int m_cpPin;
 
         // Charging parameters
         int m_maxCurrentAmps;

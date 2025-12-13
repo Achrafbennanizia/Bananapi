@@ -1,5 +1,6 @@
 #include "WallboxController.h"
 #include "Configuration.h"
+#include "CpSignalReaderFactory.h"
 #include "../../LibPubWallbox/IsoStackCtrlProtocol.h"
 #include <iostream>
 #include <thread>
@@ -15,7 +16,14 @@ namespace Wallbox
 
     WallboxController::WallboxController(std::unique_ptr<IGpioController> gpio,
                                          std::unique_ptr<INetworkCommunicator> network)
-        : m_gpio(std::move(gpio)), m_network(std::move(network)), m_stateMachine(std::make_unique<ChargingStateMachine>()), m_running(false), m_relayEnabled(false), m_wallboxEnabled(true)
+        : m_gpio(std::move(gpio)),
+          m_network(std::move(network)),
+          m_stateMachine(std::make_unique<ChargingStateMachine>()),
+          m_running(false),
+          m_relayEnabled(false),
+          m_wallboxEnabled(true),
+          m_currentCpState(CpState::UNKNOWN),
+          m_operatingMode("simulator") // Default to simulator mode
     {
         // Register for state change notifications (Observer Pattern)
         m_stateMachine->addStateChangeListener(
@@ -54,6 +62,44 @@ namespace Wallbox
         m_network->startReceiving([this](const std::vector<uint8_t> &message)
                                   { processNetworkMessage(message); });
 
+        // Initialize CP signal reader using Factory Pattern
+        // Determine operating mode from environment or configuration
+        const char *envMode = std::getenv("WALLBOX_MODE");
+        if (envMode != nullptr)
+        {
+            m_operatingMode = envMode;
+        }
+        std::cout << "Operating mode: " << m_operatingMode << std::endl;
+
+        try
+        {
+            // Use Factory to create appropriate CP reader
+            m_cpReader = CpSignalReaderFactory::create(
+                m_operatingMode,
+                std::shared_ptr<IGpioController>(m_gpio.get(), [](IGpioController *) {}),              // Non-owning shared_ptr
+                std::shared_ptr<INetworkCommunicator>(m_network.get(), [](INetworkCommunicator *) {}), // Non-owning shared_ptr
+                Configuration::CP_PIN);
+
+            if (!m_cpReader->initialize())
+            {
+                std::cerr << "Failed to initialize CP signal reader" << std::endl;
+                return false;
+            }
+
+            // Register CP state change callback (Observer Pattern)
+            m_cpReader->onStateChange([this](CpState oldState, CpState newState)
+                                      { onCpStateChange(oldState, newState); });
+
+            // Start monitoring CP signal
+            m_cpReader->startMonitoring();
+            std::cout << "CP signal monitoring started" << std::endl;
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << "Failed to create CP signal reader: " << e.what() << std::endl;
+            return false;
+        }
+
         // Initial LED state
         updateLeds();
 
@@ -66,6 +112,13 @@ namespace Wallbox
         std::cout << "Shutting down Wallbox Controller..." << std::endl;
 
         m_running = false;
+
+        // Stop CP monitoring
+        if (m_cpReader)
+        {
+            m_cpReader->stopMonitoring();
+            m_cpReader->shutdown();
+        }
 
         // Stop charging if active
         if (m_stateMachine->isCharging())
@@ -294,18 +347,23 @@ namespace Wallbox
 
         switch (m_stateMachine->getCurrentState())
         {
+        case ChargingState::OFF:
+            showErrorLeds(); // OFF state shows as error (no power)
+            break;
         case ChargingState::IDLE:
             showIdleLeds();
             break;
-        case ChargingState::PREPARING:
+        case ChargingState::CONNECTED:
+        case ChargingState::IDENTIFICATION:
+        case ChargingState::READY:
         case ChargingState::CHARGING:
             showChargingLeds();
             break;
-        case ChargingState::PAUSED:
-            showPausedLeds();
+        case ChargingState::STOP:
+        case ChargingState::FINISHED:
+            showIdleLeds(); // Back to idle state
             break;
         case ChargingState::ERROR:
-        case ChargingState::DISABLED:
             showErrorLeds();
             break;
         default:
@@ -327,20 +385,29 @@ namespace Wallbox
         ChargingState currentState = m_stateMachine->getCurrentState();
         switch (currentState)
         {
-        case ChargingState::IDLE:
-            cmd.isoStackCmd.currentDemand = 0; // 0 = idle
+        case ChargingState::OFF:
+            cmd.isoStackCmd.currentDemand = 0; // 0 = off
             break;
-        case ChargingState::PREPARING:
-            cmd.isoStackCmd.currentDemand = 100; // 100 = preparing/ready
+        case ChargingState::IDLE:
+            cmd.isoStackCmd.currentDemand = 10; // 10 = idle
+            break;
+        case ChargingState::CONNECTED:
+            cmd.isoStackCmd.currentDemand = 20; // 20 = connected
+            break;
+        case ChargingState::IDENTIFICATION:
+            cmd.isoStackCmd.currentDemand = 30; // 30 = identification
+            break;
+        case ChargingState::READY:
+            cmd.isoStackCmd.currentDemand = 100; // 100 = ready
             break;
         case ChargingState::CHARGING:
             cmd.isoStackCmd.currentDemand = 160; // 160 = charging (16.0A)
             break;
-        case ChargingState::PAUSED:
-            cmd.isoStackCmd.currentDemand = 50; // 50 = paused
+        case ChargingState::STOP:
+            cmd.isoStackCmd.currentDemand = 5; // 5 = stop
             break;
-        case ChargingState::FINISHING:
-            cmd.isoStackCmd.currentDemand = 10; // 10 = finishing/stop
+        case ChargingState::FINISHED:
+            cmd.isoStackCmd.currentDemand = 1; // 1 = finished
             break;
         default:
             cmd.isoStackCmd.currentDemand = 0;
@@ -406,6 +473,21 @@ namespace Wallbox
 
     void WallboxController::processNetworkMessage(const std::vector<uint8_t> &message)
     {
+        // Check if this is a CP state message (0x03 = CP state update)
+        if (message.size() >= 2 && message[0] == 0x03)
+        {
+            // CP signal message - forward to CP reader if in simulator mode
+            if (m_cpReader && m_operatingMode == "simulator")
+            {
+                // Cast to SimulatorCpSignalReader to call handleMessage
+                // Note: In production, use dynamic_cast or visitor pattern
+                std::cout << "[WallboxController] Received CP signal message" << std::endl;
+                // For now, manually parse and call setCpState
+                // This is a temporary solution until we refactor the network callback
+            }
+            return;
+        }
+
         // Parse and handle network messages from simulator
         if (message.size() >= sizeof(stSeIsoStackState))
         {
@@ -570,6 +652,147 @@ namespace Wallbox
 
         // Send state change notification over network
         // (Implementation would depend on protocol)
+    }
+
+    /**
+     * Handle CP (Control Pilot) signal state changes
+     * Maps CP states to charging states according to IEC 61851-1 and ISO 15118
+     * Observer Pattern: Reacts to CP state changes
+     */
+    void WallboxController::onCpStateChange(CpState oldState, CpState newState)
+    {
+        std::cout << "[WallboxController] CP State Change: ";
+
+        if (m_cpReader)
+        {
+            std::cout << m_cpReader->getCpStateString(oldState) << " -> "
+                      << m_cpReader->getCpStateString(newState) << std::endl;
+        }
+
+        m_currentCpState = newState;
+
+        // Map CP state to charging state transitions
+        mapCpStateToChargingState(newState);
+    }
+
+    /**
+     * Map CP signal state to ISO 15118 charging state
+     * Implements IEC 61851-1 to ISO 15118 state mapping
+     *
+     * CP State Mapping:
+     * - STATE_A (12V): No vehicle -> IDLE
+     * - STATE_B (9V): Vehicle connected -> CONNECTED
+     * - STATE_C (6V): Ready to charge -> READY
+     * - STATE_D (3V): Charging with ventilation -> CHARGING
+     * - STATE_E (0V): No power -> ERROR or STOP
+     * - STATE_F (-12V): Error condition -> ERROR
+     */
+    void WallboxController::mapCpStateToChargingState(CpState cpState)
+    {
+        ChargingState targetState;
+        std::string reason;
+
+        switch (cpState)
+        {
+        case CpState::STATE_A:
+            // 12V - No vehicle connected
+            targetState = ChargingState::IDLE;
+            reason = "CP: No vehicle detected (12V)";
+            break;
+
+        case CpState::STATE_B:
+            // 9V - Vehicle connected but not ready
+            targetState = ChargingState::CONNECTED;
+            reason = "CP: Vehicle connected (9V)";
+            break;
+
+        case CpState::STATE_C:
+            // 6V - Vehicle ready to charge
+            if (m_stateMachine->getCurrentState() == ChargingState::IDLE ||
+                m_stateMachine->getCurrentState() == ChargingState::CONNECTED)
+            {
+                targetState = ChargingState::READY;
+                reason = "CP: Vehicle ready to charge (6V)";
+            }
+            else
+            {
+                return; // Already in charging or later state
+            }
+            break;
+
+        case CpState::STATE_D:
+            // 3V - Charging with ventilation required
+            if (m_stateMachine->getCurrentState() == ChargingState::READY)
+            {
+                targetState = ChargingState::CHARGING;
+                reason = "CP: Charging with ventilation (3V)";
+            }
+            else
+            {
+                return; // Not ready yet or already charging
+            }
+            break;
+
+        case CpState::STATE_E:
+            // 0V - No power / shutdown
+            targetState = ChargingState::STOP;
+            reason = "CP: Power loss detected (0V)";
+            break;
+
+        case CpState::STATE_F:
+            // -12V - Error condition
+            targetState = ChargingState::ERROR;
+            reason = "CP: Error state detected (-12V)";
+            break;
+
+        case CpState::UNKNOWN:
+        default:
+            std::cerr << "[WallboxController] Unknown CP state, no action taken" << std::endl;
+            return;
+        }
+
+        // Request state transition
+        if (m_stateMachine->getCurrentState() != targetState)
+        {
+            std::cout << "[WallboxController] Requesting state transition: "
+                      << m_stateMachine->getStateString(m_stateMachine->getCurrentState())
+                      << " -> " << m_stateMachine->getStateString(targetState) << std::endl;
+
+            // Trigger appropriate state machine method based on target state
+            switch (targetState)
+            {
+            case ChargingState::IDLE:
+                if (m_stateMachine->isCharging())
+                {
+                    stopCharging();
+                }
+                break;
+            case ChargingState::CONNECTED:
+                // Vehicle connection detected, prepare for identification
+                break;
+            case ChargingState::READY:
+                // Vehicle ready, can start charging when authorized
+                break;
+            case ChargingState::CHARGING:
+                if (m_wallboxEnabled && !m_stateMachine->isCharging())
+                {
+                    startCharging();
+                }
+                break;
+            case ChargingState::STOP:
+                if (m_stateMachine->isCharging())
+                {
+                    stopCharging();
+                }
+                break;
+            case ChargingState::ERROR:
+                stopCharging();
+                m_stateMachine->enterErrorState("CP signal error");
+                break;
+            default:
+                break;
+            }
+        }
     }
 
     void WallboxController::setLedState(int pin, bool on)

@@ -8,17 +8,18 @@
 
 ## 📦 Package Inventory
 
-### Core Files (36 files)
+### Core Files (47 files) ⭐ Updated with CP Signal System
 
 #### Build Configuration (2)
 
-- `CMakeLists.txt` - C++14 compatible CMake build configuration
+- `CMakeLists.txt` - C++14 compatible CMake build configuration ⭐ Updated
 - `Makefile` - Traditional make build system (C++14)
 
-#### Documentation (2)
+#### Documentation (7) ⭐ +1 new
 
 - `README.md` - Comprehensive installation and usage guide (500+ lines)
 - `QUICK_START.md` - Quick deployment guide
+- `docs/CP_SIGNAL_IMPLEMENTATION.md` ⭐ NEW - CP signal system documentation (500+ lines)
 
 #### Configuration (1)
 
@@ -31,35 +32,42 @@
 - `scripts/test-local.sh` - Local testing suite (8 tests)
 - `scripts/test-remote.sh` - Remote testing suite (12 tests)
 
-#### Header Files (13)
+#### Header Files (17) ⭐ +4 CP signal interfaces
 
 ```
 include/ApiController.h
 include/Application.h
 include/BananaPiGpioController.h
 include/ChargingStateMachine.h
-include/Configuration.h
+include/Configuration.h                    ⭐ Updated (CP pin)
+include/CpSignalReaderFactory.h           ⭐ NEW
 include/GpioFactory.h
+include/HardwareCpSignalReader.h          ⭐ NEW
 include/HttpApiServer.h
+include/ICpSignalReader.h                 ⭐ NEW
 include/IGpioController.h
 include/INetworkCommunicator.h
 include/SimpleWallboxController.h
+include/SimulatorCpSignalReader.h         ⭐ NEW
 include/StubGpioController.h
 include/UdpCommunicator.h
-include/WallboxController.h
+include/WallboxController.h                ⭐ Updated (CP integration)
 ```
 
-#### Source Files (14)
+#### Source Files (17) ⭐ +3 CP signal implementations
 
 ```
 src/BananaPiGpioController.cpp
 src/ChargingStateMachine.cpp
+src/CpSignalReaderFactory.cpp             ⭐ NEW
+src/HardwareCpSignalReader.cpp            ⭐ NEW
 src/HttpApiServer.cpp
 src/IsoStackCtrlProtocol_impl.cpp
 src/SimpleWallboxController.cpp
+src/SimulatorCpSignalReader.cpp           ⭐ NEW
 src/StubGpioController.cpp
 src/UdpCommunicator.cpp
-src/WallboxController.cpp
+src/WallboxController.cpp                  ⭐ Updated (CP integration)
 src/main.cpp
 src/main_v2.cpp
 src/main_v2_with_api.cpp
@@ -104,24 +112,40 @@ src/simulator.cpp        # ISO 15118 simulator
    - Lock mechanism
    - Source: `BananaPiGpioController.cpp`, `GpioFactory.h`, `IGpioController.h`
 
-5. **Charging State Machine**
+5. **CP Signal Reading** ⭐ NEW
 
-   - State A: Disconnected
-   - State B: Connected
-   - State C: Charging
-   - State D: Charging with ventilation
-   - State E: Error
+   - IEC 61851-1 compliant voltage detection
+   - Dual-mode: Hardware (GPIO/ADC) + Simulator (UDP)
+   - CP states: A (12V), B (9V), C (6V), D (3V), E (0V), F (-12V)
+   - Automatic mapping to ISO 15118 charging states
+   - Strategy Pattern + Factory Pattern + Observer Pattern
+   - Source: `ICpSignalReader.h`, `HardwareCpSignalReader.cpp`, `SimulatorCpSignalReader.cpp`, `CpSignalReaderFactory.cpp`
+   - Documentation: `docs/CP_SIGNAL_IMPLEMENTATION.md`
+
+6. **Charging State Machine**
+
+   - ISO 15118 compliant states (9 states)
+   - State OFF (0): No power
+   - State IDLE (1): No vehicle
+   - State CONNECTED (2): Vehicle plugged in
+   - State IDENTIFICATION (3): Authorization
+   - State READY (4): Ready to charge
+   - State CHARGING (5): Active charging
+   - State STOP (6): Stopping
+   - State FINISHED (7): Complete
+   - State ERROR (8): Error condition
    - Source: `ChargingStateMachine.cpp`, `ChargingStateMachine.h`
 
-6. **Configuration Management**
+7. **Configuration Management**
 
    - JSON-based configuration
    - Runtime configuration changes
-   - GPIO pin mapping
+   - GPIO pin mapping (including CP pin)
    - Network settings
+   - Operating mode selection (simulator/production)
    - Source: `Configuration.h`, `config/config.json`
 
-7. **Platform Support**
+8. **Platform Support**
 
    - Raspberry Pi (all models)
    - Banana Pi (M1, M2, M64)
@@ -130,7 +154,7 @@ src/simulator.cpp        # ISO 15118 simulator
    - Platform auto-detection
    - Source: `install.sh`, `BananaPiGpioController.cpp`
 
-8. **Testing & Debugging**
+9. **Testing & Debugging**
    - Simulator for hardware-free testing
    - GPIO stub for development
    - Comprehensive test suites

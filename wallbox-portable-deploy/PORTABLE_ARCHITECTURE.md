@@ -44,16 +44,17 @@ The wallbox-portable-deploy is a **self-contained, zero-dependency** deployment 
 
 ### Package Statistics
 
-- **Total Files**: 40
-- **Source Files**: 14 (.cpp)
-- **Header Files**: 13 (.h)
+- **Total Files**: 47 (⭐ +7 CP signal files)
+- **Source Files**: 17 (.cpp) ⭐ +3 CP signal implementations
+- **Header Files**: 17 (.h) ⭐ +4 CP signal interfaces
 - **Scripts**: 4 (install, deploy, test-local, test-remote)
-- **Documentation**: 6 files (61 KB)
-- **Lines of Code**: ~8,500 lines
+- **Documentation**: 7 files ⭐ +1 CP_SIGNAL_IMPLEMENTATION.md
+- **Lines of Code**: ~9,400 lines (⭐ +900 CP signal system)
 - **Build Time**: ~2-3 minutes on Pi 3
-- **Binary Size**: ~450 KB (wallbox_control_v3)
-- **Memory Usage**: ~15 MB runtime
+- **Binary Size**: ~500 KB (wallbox_control_v3) ⭐ +50KB CP system
+- **Memory Usage**: ~16 MB runtime
 - **C++ Standard**: C++14 (strict)
+- **New Features**: ⭐ CP Signal Reading (IEC 61851-1 + ISO 15118)
 
 ---
 

@@ -11,8 +11,15 @@ This is a self-contained, portable deployment package for the Wallbox Controller
 - **Dual-Mode Operation**: API mode, Interactive mode, or both simultaneously
 - **HTTP REST API**: Full-featured API on port 8080
 - **UDP Communication**: ISO 15118 protocol support (ports 50010/50011)
+- **CP Signal Reading** ⭐ NEW: IEC 61851-1 compliant Control Pilot detection
+  - Hardware mode: GPIO/ADC voltage reading (production)
+  - Simulator mode: UDP messages (development/testing)
+  - Automatic ISO 15118 state mapping
 - **GPIO Control**: Direct hardware control for charging stations
+- **ISO 15118 State Machine**: 9-state charging control (OFF, IDLE, CONNECTED, IDENTIFICATION, READY, CHARGING, STOP, FINISHED, ERROR)
 - **C++14 Compatible**: Works on older systems and newer platforms
+- **Design Patterns**: Strategy, Factory, Observer, Dependency Injection
+- **SOLID Principles**: Clean, maintainable, extensible architecture
 - **Automated Deployment**: One-command installation and deployment
 - **Comprehensive Testing**: Local and remote test suites included
 - **Systemd Integration**: Run as a system service with auto-restart
