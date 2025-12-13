@@ -38,6 +38,9 @@ add_executable(wallbox_control_v2
     src/StubGpioController.cpp
     src/UdpCommunicator.cpp
     src/IsoStackCtrlProtocol_impl.cpp
+    src/HardwareCpSignalReader.cpp
+    src/SimulatorCpSignalReader.cpp
+    src/CpSignalReaderFactory.cpp
 )
 
 target_link_libraries(wallbox_control_v2 PRIVATE pthread)
@@ -54,6 +57,9 @@ add_executable(wallbox_control_api
     src/UdpCommunicator.cpp
     src/HttpApiServer.cpp
     src/IsoStackCtrlProtocol_impl.cpp
+    src/HardwareCpSignalReader.cpp
+    src/SimulatorCpSignalReader.cpp
+    src/CpSignalReaderFactory.cpp
 )
 
 target_link_libraries(wallbox_control_api PRIVATE pthread)
@@ -70,6 +76,9 @@ add_executable(wallbox_control_v3
     src/UdpCommunicator.cpp
     src/HttpApiServer.cpp
     src/IsoStackCtrlProtocol_impl.cpp
+    src/HardwareCpSignalReader.cpp
+    src/SimulatorCpSignalReader.cpp
+    src/CpSignalReaderFactory.cpp
 )
 
 target_link_libraries(wallbox_control_v3 PRIVATE pthread)

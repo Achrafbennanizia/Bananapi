@@ -4,6 +4,7 @@
 #include "IGpioController.h"
 #include "INetworkCommunicator.h"
 #include "ChargingStateMachine.h"
+#include "ICpSignalReader.h"
 #include "../../LibPubWallbox/IsoStackCtrlProtocol.h"
 #include <memory>
 #include <string>
@@ -76,11 +77,14 @@ namespace Wallbox
         std::unique_ptr<IGpioController> m_gpio;
         std::unique_ptr<INetworkCommunicator> m_network;
         std::unique_ptr<ChargingStateMachine> m_stateMachine;
+        std::unique_ptr<ICpSignalReader> m_cpReader;
 
         // State
         std::atomic<bool> m_running;
         bool m_relayEnabled;
         bool m_wallboxEnabled;
+        CpState m_currentCpState;
+        std::string m_operatingMode;
 
         // Private methods
         void setupGpio();
@@ -88,6 +92,8 @@ namespace Wallbox
         void sendStatusToSimulator();
         void processNetworkMessage(const std::vector<uint8_t> &message);
         void onStateChange(ChargingState oldState, ChargingState newState, const std::string &reason);
+        void onCpStateChange(CpState oldState, CpState newState);
+        void mapCpStateToChargingState(CpState cpState);
 
         // LED control
         void setLedState(int pin, bool on);

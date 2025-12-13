@@ -184,6 +184,48 @@ CMakeFiles/wallbox_control_api.dir/src/IsoStackCtrlProtocol_impl.cpp.s: cmake_fo
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/wallbox_control_api.dir/src/IsoStackCtrlProtocol_impl.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/achraf/pro/PJMT/WallboxCtrl/src/IsoStackCtrlProtocol_impl.cpp -o CMakeFiles/wallbox_control_api.dir/src/IsoStackCtrlProtocol_impl.cpp.s
 
+CMakeFiles/wallbox_control_api.dir/src/HardwareCpSignalReader.cpp.o: CMakeFiles/wallbox_control_api.dir/flags.make
+CMakeFiles/wallbox_control_api.dir/src/HardwareCpSignalReader.cpp.o: /Users/achraf/pro/PJMT/WallboxCtrl/src/HardwareCpSignalReader.cpp
+CMakeFiles/wallbox_control_api.dir/src/HardwareCpSignalReader.cpp.o: CMakeFiles/wallbox_control_api.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/wallbox_control_api.dir/src/HardwareCpSignalReader.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/wallbox_control_api.dir/src/HardwareCpSignalReader.cpp.o -MF CMakeFiles/wallbox_control_api.dir/src/HardwareCpSignalReader.cpp.o.d -o CMakeFiles/wallbox_control_api.dir/src/HardwareCpSignalReader.cpp.o -c /Users/achraf/pro/PJMT/WallboxCtrl/src/HardwareCpSignalReader.cpp
+
+CMakeFiles/wallbox_control_api.dir/src/HardwareCpSignalReader.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/wallbox_control_api.dir/src/HardwareCpSignalReader.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/achraf/pro/PJMT/WallboxCtrl/src/HardwareCpSignalReader.cpp > CMakeFiles/wallbox_control_api.dir/src/HardwareCpSignalReader.cpp.i
+
+CMakeFiles/wallbox_control_api.dir/src/HardwareCpSignalReader.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/wallbox_control_api.dir/src/HardwareCpSignalReader.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/achraf/pro/PJMT/WallboxCtrl/src/HardwareCpSignalReader.cpp -o CMakeFiles/wallbox_control_api.dir/src/HardwareCpSignalReader.cpp.s
+
+CMakeFiles/wallbox_control_api.dir/src/SimulatorCpSignalReader.cpp.o: CMakeFiles/wallbox_control_api.dir/flags.make
+CMakeFiles/wallbox_control_api.dir/src/SimulatorCpSignalReader.cpp.o: /Users/achraf/pro/PJMT/WallboxCtrl/src/SimulatorCpSignalReader.cpp
+CMakeFiles/wallbox_control_api.dir/src/SimulatorCpSignalReader.cpp.o: CMakeFiles/wallbox_control_api.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/wallbox_control_api.dir/src/SimulatorCpSignalReader.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/wallbox_control_api.dir/src/SimulatorCpSignalReader.cpp.o -MF CMakeFiles/wallbox_control_api.dir/src/SimulatorCpSignalReader.cpp.o.d -o CMakeFiles/wallbox_control_api.dir/src/SimulatorCpSignalReader.cpp.o -c /Users/achraf/pro/PJMT/WallboxCtrl/src/SimulatorCpSignalReader.cpp
+
+CMakeFiles/wallbox_control_api.dir/src/SimulatorCpSignalReader.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/wallbox_control_api.dir/src/SimulatorCpSignalReader.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/achraf/pro/PJMT/WallboxCtrl/src/SimulatorCpSignalReader.cpp > CMakeFiles/wallbox_control_api.dir/src/SimulatorCpSignalReader.cpp.i
+
+CMakeFiles/wallbox_control_api.dir/src/SimulatorCpSignalReader.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/wallbox_control_api.dir/src/SimulatorCpSignalReader.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/achraf/pro/PJMT/WallboxCtrl/src/SimulatorCpSignalReader.cpp -o CMakeFiles/wallbox_control_api.dir/src/SimulatorCpSignalReader.cpp.s
+
+CMakeFiles/wallbox_control_api.dir/src/CpSignalReaderFactory.cpp.o: CMakeFiles/wallbox_control_api.dir/flags.make
+CMakeFiles/wallbox_control_api.dir/src/CpSignalReaderFactory.cpp.o: /Users/achraf/pro/PJMT/WallboxCtrl/src/CpSignalReaderFactory.cpp
+CMakeFiles/wallbox_control_api.dir/src/CpSignalReaderFactory.cpp.o: CMakeFiles/wallbox_control_api.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/wallbox_control_api.dir/src/CpSignalReaderFactory.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/wallbox_control_api.dir/src/CpSignalReaderFactory.cpp.o -MF CMakeFiles/wallbox_control_api.dir/src/CpSignalReaderFactory.cpp.o.d -o CMakeFiles/wallbox_control_api.dir/src/CpSignalReaderFactory.cpp.o -c /Users/achraf/pro/PJMT/WallboxCtrl/src/CpSignalReaderFactory.cpp
+
+CMakeFiles/wallbox_control_api.dir/src/CpSignalReaderFactory.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/wallbox_control_api.dir/src/CpSignalReaderFactory.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/achraf/pro/PJMT/WallboxCtrl/src/CpSignalReaderFactory.cpp > CMakeFiles/wallbox_control_api.dir/src/CpSignalReaderFactory.cpp.i
+
+CMakeFiles/wallbox_control_api.dir/src/CpSignalReaderFactory.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/wallbox_control_api.dir/src/CpSignalReaderFactory.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/achraf/pro/PJMT/WallboxCtrl/src/CpSignalReaderFactory.cpp -o CMakeFiles/wallbox_control_api.dir/src/CpSignalReaderFactory.cpp.s
+
 # Object files for target wallbox_control_api
 wallbox_control_api_OBJECTS = \
 "CMakeFiles/wallbox_control_api.dir/src/main_v2_with_api.cpp.o" \
@@ -193,7 +235,10 @@ wallbox_control_api_OBJECTS = \
 "CMakeFiles/wallbox_control_api.dir/src/BananaPiGpioController.cpp.o" \
 "CMakeFiles/wallbox_control_api.dir/src/UdpCommunicator.cpp.o" \
 "CMakeFiles/wallbox_control_api.dir/src/HttpApiServer.cpp.o" \
-"CMakeFiles/wallbox_control_api.dir/src/IsoStackCtrlProtocol_impl.cpp.o"
+"CMakeFiles/wallbox_control_api.dir/src/IsoStackCtrlProtocol_impl.cpp.o" \
+"CMakeFiles/wallbox_control_api.dir/src/HardwareCpSignalReader.cpp.o" \
+"CMakeFiles/wallbox_control_api.dir/src/SimulatorCpSignalReader.cpp.o" \
+"CMakeFiles/wallbox_control_api.dir/src/CpSignalReaderFactory.cpp.o"
 
 # External object files for target wallbox_control_api
 wallbox_control_api_EXTERNAL_OBJECTS =
@@ -206,9 +251,12 @@ wallbox_control_api: CMakeFiles/wallbox_control_api.dir/src/BananaPiGpioControll
 wallbox_control_api: CMakeFiles/wallbox_control_api.dir/src/UdpCommunicator.cpp.o
 wallbox_control_api: CMakeFiles/wallbox_control_api.dir/src/HttpApiServer.cpp.o
 wallbox_control_api: CMakeFiles/wallbox_control_api.dir/src/IsoStackCtrlProtocol_impl.cpp.o
+wallbox_control_api: CMakeFiles/wallbox_control_api.dir/src/HardwareCpSignalReader.cpp.o
+wallbox_control_api: CMakeFiles/wallbox_control_api.dir/src/SimulatorCpSignalReader.cpp.o
+wallbox_control_api: CMakeFiles/wallbox_control_api.dir/src/CpSignalReaderFactory.cpp.o
 wallbox_control_api: CMakeFiles/wallbox_control_api.dir/build.make
 wallbox_control_api: CMakeFiles/wallbox_control_api.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX executable wallbox_control_api"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/achraf/pro/PJMT/WallboxCtrl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Linking CXX executable wallbox_control_api"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/wallbox_control_api.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

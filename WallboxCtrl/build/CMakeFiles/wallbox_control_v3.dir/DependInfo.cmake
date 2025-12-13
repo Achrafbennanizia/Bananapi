@@ -10,8 +10,11 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/Users/achraf/pro/PJMT/WallboxCtrl/src/BananaPiGpioController.cpp" "CMakeFiles/wallbox_control_v3.dir/src/BananaPiGpioController.cpp.o" "gcc" "CMakeFiles/wallbox_control_v3.dir/src/BananaPiGpioController.cpp.o.d"
   "/Users/achraf/pro/PJMT/WallboxCtrl/src/ChargingStateMachine.cpp" "CMakeFiles/wallbox_control_v3.dir/src/ChargingStateMachine.cpp.o" "gcc" "CMakeFiles/wallbox_control_v3.dir/src/ChargingStateMachine.cpp.o.d"
+  "/Users/achraf/pro/PJMT/WallboxCtrl/src/CpSignalReaderFactory.cpp" "CMakeFiles/wallbox_control_v3.dir/src/CpSignalReaderFactory.cpp.o" "gcc" "CMakeFiles/wallbox_control_v3.dir/src/CpSignalReaderFactory.cpp.o.d"
+  "/Users/achraf/pro/PJMT/WallboxCtrl/src/HardwareCpSignalReader.cpp" "CMakeFiles/wallbox_control_v3.dir/src/HardwareCpSignalReader.cpp.o" "gcc" "CMakeFiles/wallbox_control_v3.dir/src/HardwareCpSignalReader.cpp.o.d"
   "/Users/achraf/pro/PJMT/WallboxCtrl/src/HttpApiServer.cpp" "CMakeFiles/wallbox_control_v3.dir/src/HttpApiServer.cpp.o" "gcc" "CMakeFiles/wallbox_control_v3.dir/src/HttpApiServer.cpp.o.d"
   "/Users/achraf/pro/PJMT/WallboxCtrl/src/IsoStackCtrlProtocol_impl.cpp" "CMakeFiles/wallbox_control_v3.dir/src/IsoStackCtrlProtocol_impl.cpp.o" "gcc" "CMakeFiles/wallbox_control_v3.dir/src/IsoStackCtrlProtocol_impl.cpp.o.d"
+  "/Users/achraf/pro/PJMT/WallboxCtrl/src/SimulatorCpSignalReader.cpp" "CMakeFiles/wallbox_control_v3.dir/src/SimulatorCpSignalReader.cpp.o" "gcc" "CMakeFiles/wallbox_control_v3.dir/src/SimulatorCpSignalReader.cpp.o.d"
   "/Users/achraf/pro/PJMT/WallboxCtrl/src/StubGpioController.cpp" "CMakeFiles/wallbox_control_v3.dir/src/StubGpioController.cpp.o" "gcc" "CMakeFiles/wallbox_control_v3.dir/src/StubGpioController.cpp.o.d"
   "/Users/achraf/pro/PJMT/WallboxCtrl/src/UdpCommunicator.cpp" "CMakeFiles/wallbox_control_v3.dir/src/UdpCommunicator.cpp.o" "gcc" "CMakeFiles/wallbox_control_v3.dir/src/UdpCommunicator.cpp.o.d"
   "/Users/achraf/pro/PJMT/WallboxCtrl/src/WallboxController.cpp" "CMakeFiles/wallbox_control_v3.dir/src/WallboxController.cpp.o" "gcc" "CMakeFiles/wallbox_control_v3.dir/src/WallboxController.cpp.o.d"

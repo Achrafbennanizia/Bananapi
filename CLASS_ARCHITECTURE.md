@@ -1,6 +1,6 @@
 # Wallbox Controller - Class Architecture & Interactions
 
-**Version:** 3.0 (Dual Mode with C++14 Support)  
+**Version:** 4.1 (ISO 15118 + CP Signal Reading)  
 **Date:** December 13, 2025  
 **Purpose:** Complete guide to system architecture, class responsibilities, and interactions
 
@@ -11,12 +11,22 @@
 1. [System Overview](#system-overview)
 2. [Core Classes](#core-classes)
 3. [Interface Abstractions](#interface-abstractions)
+   - [IGpioController](#igpiocontroller)
+   - [INetworkCommunicator](#inetworkcommunicator)
+   - [ICpSignalReader](#icpsignalreader) ⭐ NEW
 4. [Concrete Implementations](#concrete-implementations)
+   - [BananaPiGpioController](#bananapigpiocontroller)
+   - [StubGpioController](#stubgpiocontroller)
+   - [UdpCommunicator](#udpcommunicator)
+   - [HardwareCpSignalReader](#hardwarecpsignalreader) ⭐ NEW
+   - [SimulatorCpSignalReader](#simulatorcpsignalreader) ⭐ NEW
+   - [CpSignalReaderFactory](#cpsignalreaderfactory) ⭐ NEW
 5. [Support Classes](#support-classes)
 6. [Class Interaction Diagrams](#class-interaction-diagrams)
 7. [Design Patterns Used](#design-patterns-used)
 8. [Data Flow](#data-flow)
 9. [State Management](#state-management)
+10. [CP Signal System](#cp-signal-system) ⭐ NEW
 
 ---
 
@@ -194,7 +204,7 @@ bool startCharging()                       // IDLE → CONNECTED → IDENTIFICAT
 bool stopCharging()                        // CHARGING/READY → STOP → FINISHED → IDLE
 bool pauseCharging()                       // CHARGING → READY
 bool resumeCharging()                      // READY → CHARGING
-bool resumeCharging()                      // PAUSED → CHARGING
+bool resumeCharging()                      // READY → CHARGING
 void addStateChangeListener(callback)      // Register observer
 ```
 
@@ -355,6 +365,60 @@ public:
 
 ---
 
+### ICpSignalReader
+
+**Location:** `WallboxCtrl/include/ICpSignalReader.h`  
+**Purpose:** CP (Control Pilot) signal reading abstraction (IEC 61851-1)
+
+```cpp
+enum class CpState : uint8_t {
+    STATE_A = 0,  // 12V - No vehicle connected
+    STATE_B = 1,  // 9V - Vehicle connected, not ready
+    STATE_C = 2,  // 6V - Vehicle ready to charge
+    STATE_D = 3,  // 3V - Charging with ventilation
+    STATE_E = 4,  // 0V - No power / shutdown
+    STATE_F = 5,  // -12V - Error condition
+    UNKNOWN = 255
+};
+
+class ICpSignalReader {
+public:
+    virtual bool initialize() = 0;
+    virtual void shutdown() = 0;
+    virtual CpState readCpState() = 0;
+    virtual std::string getCpStateString(CpState state) const = 0;
+    virtual void onStateChange(std::function<void(CpState, CpState)> callback) = 0;
+    virtual void startMonitoring() = 0;
+    virtual void stopMonitoring() = 0;
+};
+```
+
+#### Why Interface?
+
+- ✅ **Dual-Mode Support**: Hardware GPIO vs Simulator UDP
+- ✅ **IEC 61851-1 Compliance**: Standard CP signal states
+- ✅ **ISO 15118 Integration**: Maps to charging states
+- ✅ **Strategy Pattern**: Runtime mode selection
+- ✅ **Observer Pattern**: State change notifications
+
+#### CP State to ISO 15118 Mapping:
+
+| CP State | Voltage | IEC 61851-1       | ISO 15118 State |
+| -------- | ------- | ----------------- | --------------- |
+| STATE_A  | +12V    | No vehicle        | IDLE            |
+| STATE_B  | +9V     | Vehicle connected | CONNECTED       |
+| STATE_C  | +6V     | Ready to charge   | READY           |
+| STATE_D  | +3V     | Charging          | CHARGING        |
+| STATE_E  | 0V      | Shutdown          | STOP            |
+| STATE_F  | -12V    | Error             | ERROR           |
+
+#### Implementations:
+
+1. **HardwareCpSignalReader** - Reads from GPIO pin with ADC
+2. **SimulatorCpSignalReader** - Receives from simulator via UDP
+
+---
+
 ## 🛠️ Concrete Implementations
 
 ### BananaPiGpioController
@@ -450,6 +514,195 @@ Receive commands         Send state updates
 - State information (IDLE, CHARGING, etc.)
 - Command messages (START, STOP, PAUSE)
 - Synchronization packets
+
+---
+
+### HardwareCpSignalReader
+
+**Location:** `WallboxCtrl/src/HardwareCpSignalReader.cpp`  
+**Purpose:** Read CP signal from physical GPIO pin (production mode)
+
+```cpp
+class HardwareCpSignalReader : public ICpSignalReader {
+private:
+    std::shared_ptr<IGpioController> m_gpio;
+    int m_cpPin;
+    CpState m_currentState;
+    std::thread m_monitorThread;
+    std::atomic<bool> m_monitoring;
+    std::vector<std::function<void(CpState, CpState)>> m_callbacks;
+    std::mutex m_mutex;
+
+    void monitorLoop();                    // 100ms polling loop
+    CpState voltageToState(int voltage);   // IEC 61851-1 mapping
+    int readVoltage();                     // ADC voltage reading
+    void notifyStateChange(CpState old, CpState new);
+};
+```
+
+#### IEC 61851-1 Voltage Mapping:
+
+```cpp
+CpState voltageToState(int millivolts) {
+    if (millivolts > 11000)  return STATE_A;  // 12V - No vehicle
+    if (millivolts > 8000)   return STATE_B;  // 9V - Connected
+    if (millivolts > 5000)   return STATE_C;  // 6V - Ready
+    if (millivolts > 2000)   return STATE_D;  // 3V - Charging
+    if (millivolts > 500)    return STATE_E;  // 0V - No power
+    if (millivolts < -10000) return STATE_F;  // -12V - Error
+    return UNKNOWN;
+}
+```
+
+#### Monitoring Thread:
+
+- **Polling Rate**: 100ms (10 Hz)
+- **State Detection**: Compares voltage to thresholds
+- **Change Notification**: Observer callbacks triggered
+- **Thread Safety**: Mutex-protected state access
+
+#### Design Patterns:
+
+- **Strategy Pattern**: Concrete implementation of ICpSignalReader
+- **Observer Pattern**: State change callbacks
+- **Dependency Injection**: GPIO controller injected
+
+---
+
+### SimulatorCpSignalReader
+
+**Location:** `WallboxCtrl/src/SimulatorCpSignalReader.cpp`  
+**Purpose:** Receive CP state from simulator via UDP (development mode)
+
+```cpp
+class SimulatorCpSignalReader : public ICpSignalReader {
+private:
+    std::shared_ptr<INetworkCommunicator> m_network;
+    CpState m_currentState;
+    bool m_initialized;
+    std::vector<std::function<void(CpState, CpState)>> m_callbacks;
+    std::mutex m_mutex;
+
+    void handleMessage(const std::vector<uint8_t>& data);
+    CpState parseStateFromMessage(const std::vector<uint8_t>& data);
+    void notifyStateChange(CpState old, CpState new);
+};
+```
+
+#### UDP Message Protocol:
+
+```
+Byte Layout:
+┌────────┬──────────┐
+│ Byte 0 │ Byte 1   │
+├────────┼──────────┤
+│ 0x03   │ CP State │
+│(Type)  │ (0-6)    │
+└────────┴──────────┘
+
+Message Type: 0x03 = CP State Update
+CP State Values:
+  0 = STATE_A (12V)
+  1 = STATE_B (9V)
+  2 = STATE_C (6V)
+  3 = STATE_D (3V)
+  4 = STATE_E (0V)
+  5 = STATE_F (-12V)
+```
+
+#### Message Parsing:
+
+```cpp
+CpState parseStateFromMessage(const std::vector<uint8_t>& data) {
+    if (data.size() < 2 || data[0] != 0x03) {
+        return CpState::UNKNOWN;  // Invalid message
+    }
+
+    uint8_t stateValue = data[1];
+    return static_cast<CpState>(stateValue);
+}
+```
+
+#### Features:
+
+- **Event-Driven**: No polling, reacts to UDP messages
+- **Manual Testing**: `setCpState()` for unit tests
+- **Asynchronous**: Non-blocking message handling
+- **Thread-Safe**: Mutex-protected state updates
+
+#### Design Patterns:
+
+- **Strategy Pattern**: Alternative CP reading strategy
+- **Observer Pattern**: Network message callbacks
+- **Dependency Injection**: Network communicator injected
+
+---
+
+### CpSignalReaderFactory
+
+**Location:** `WallboxCtrl/src/CpSignalReaderFactory.cpp`  
+**Purpose:** Create appropriate CP reader based on operating mode
+
+```cpp
+class CpSignalReaderFactory {
+public:
+    // Create simulator-based reader
+    static std::unique_ptr<ICpSignalReader> createSimulatorReader(
+        std::shared_ptr<INetworkCommunicator> network
+    );
+
+    // Create hardware-based reader
+    static std::unique_ptr<ICpSignalReader> createHardwareReader(
+        std::shared_ptr<IGpioController> gpio,
+        int cpPin = 7
+    );
+
+    // Smart factory: mode-based creation
+    static std::unique_ptr<ICpSignalReader> create(
+        const std::string& mode,
+        std::shared_ptr<IGpioController> gpio,
+        std::shared_ptr<INetworkCommunicator> network,
+        int cpPin = 7
+    );
+};
+```
+
+#### Mode Selection:
+
+```cpp
+// Development modes
+"simulator", "sim", "development", "dev" → SimulatorCpSignalReader
+
+// Production modes
+"hardware", "hw", "production", "prod" → HardwareCpSignalReader
+```
+
+#### Usage Example:
+
+```cpp
+// In WallboxController::initialize()
+const char* envMode = std::getenv("WALLBOX_MODE");
+std::string mode = envMode ? envMode : "simulator";
+
+m_cpReader = CpSignalReaderFactory::create(
+    mode,                    // "simulator" or "hardware"
+    m_gpio,                  // GPIO controller (for hardware)
+    m_network,               // Network comm (for simulator)
+    Configuration::CP_PIN    // GPIO pin 7
+);
+
+m_cpReader->onStateChange([this](CpState old, CpState new) {
+    onCpStateChange(old, new);
+});
+
+m_cpReader->startMonitoring();
+```
+
+#### Design Patterns:
+
+- **Factory Pattern**: Object creation abstraction
+- **Strategy Pattern**: Returns interface, not concrete class
+- **SOLID**: Open/Closed Principle (extensible)
 
 ---
 
@@ -579,7 +832,102 @@ Simulator                 Wallbox
     │                        │
 ```
 
-### 5. Dual Mode Architecture
+### 5. CP Signal Reading Flow (Dual Mode)
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    CP Signal Reading Flow                    │
+└─────────────────────────────────────────────────────────────┘
+
+HARDWARE MODE (Production):                SIMULATOR MODE (Development):
+
+Vehicle CP Signal                          Simulator
+    │ (12V/9V/6V/3V)                          │
+    ▼                                         │ UDP Message
+GPIO Pin 7 (ADC)                              │ [0x03, state]
+    │                                         ▼
+    ▼                                    INetworkCommunicator
+IGpioController                               │
+    │                                         ▼
+    ▼                                    SimulatorCpSignalReader
+HardwareCpSignalReader                        │ parseMessage()
+    │ readVoltage()                           │
+    │ voltageToState()                        ▼
+    │ (IEC 61851-1 mapping)              CpState Update
+    ▼                                         │
+CpState Update                                │
+    │                                         │
+    └─────────────┬───────────────────────────┘
+                  │
+                  ▼
+          ICpSignalReader Interface
+                  │
+                  ▼
+          onStateChange() callbacks
+                  │
+    ┌─────────────┼─────────────┐
+    │             │             │
+    ▼             ▼             ▼
+WallboxController  Logger   API Cache
+    │
+    ▼
+mapCpStateToChargingState()
+    │
+    ├─→ STATE_A (12V) → IDLE
+    ├─→ STATE_B (9V)  → CONNECTED
+    ├─→ STATE_C (6V)  → READY
+    ├─→ STATE_D (3V)  → CHARGING
+    ├─→ STATE_E (0V)  → STOP
+    └─→ STATE_F (-12V)→ ERROR
+        │
+        ▼
+ChargingStateMachine
+    │ requestTransition()
+    ▼
+State Machine Execution
+    │
+    ├─→ Update LEDs
+    ├─→ Control Relay
+    ├─→ Send UDP status
+    └─→ Log transition
+```
+
+### 6. Factory Pattern: CP Reader Creation
+
+```
+WallboxController::initialize()
+    │
+    ├─→ Get WALLBOX_MODE from environment
+    │   ("simulator" or "production")
+    │
+    ▼
+CpSignalReaderFactory::create(mode, gpio, network, cpPin)
+    │
+    ├─────────────┬─────────────┐
+    │             │             │
+mode=="simulator" mode=="hardware"  mode=="unknown"
+    │             │             │
+    ▼             ▼             ▼
+createSimulator   createHardware  throw exception
+    │             │
+    ▼             ▼
+new Simulator    new Hardware
+CpSignalReader   CpSignalReader
+    │             │
+    └──────┬──────┘
+           │
+           ▼
+    unique_ptr<ICpSignalReader>
+           │
+           ▼
+    WallboxController::m_cpReader
+           │
+           ├─→ initialize()
+           ├─→ onStateChange(callback)
+           └─→ startMonitoring()
+```
+
+### 7. Dual Mode Architecture
 
 ```
 ┌────────────────────────────────────────┐
@@ -1035,18 +1383,22 @@ protected:
 
 ## 📚 Class Responsibilities Summary
 
-| Class                      | Primary Responsibility | Design Pattern   | SOLID Principle |
-| -------------------------- | ---------------------- | ---------------- | --------------- |
-| **WallboxController**      | System orchestration   | Facade, Observer | SRP, DIP        |
-| **ChargingStateMachine**   | State management       | State, Observer  | SRP, OCP        |
-| **HttpApiServer**          | REST API               | Command, Facade  | SRP, ISP        |
-| **IGpioController**        | GPIO abstraction       | Strategy         | DIP, ISP        |
-| **INetworkCommunicator**   | Network abstraction    | Strategy         | DIP, ISP        |
-| **BananaPiGpioController** | Real GPIO impl.        | Strategy         | LSP             |
-| **StubGpioController**     | Mock GPIO impl.        | Strategy         | LSP             |
-| **UdpCommunicator**        | UDP networking         | Strategy         | LSP             |
-| **Application**            | App lifecycle          | Facade           | SRP             |
-| **Configuration**          | Settings management    | Singleton        | SRP             |
+| Class                          | Primary Responsibility | Design Pattern     | SOLID Principle |
+| ------------------------------ | ---------------------- | ------------------ | --------------- |
+| **WallboxController**          | System orchestration   | Facade, Observer   | SRP, DIP        |
+| **ChargingStateMachine**       | State management       | State, Observer    | SRP, OCP        |
+| **HttpApiServer**              | REST API               | Command, Facade    | SRP, ISP        |
+| **IGpioController**            | GPIO abstraction       | Strategy           | DIP, ISP        |
+| **INetworkCommunicator**       | Network abstraction    | Strategy           | DIP, ISP        |
+| **ICpSignalReader** ⭐         | CP signal abstraction  | Strategy, Observer | DIP, ISP        |
+| **BananaPiGpioController**     | Real GPIO impl.        | Strategy           | LSP             |
+| **StubGpioController**         | Mock GPIO impl.        | Strategy           | LSP             |
+| **UdpCommunicator**            | UDP networking         | Strategy           | LSP             |
+| **HardwareCpSignalReader** ⭐  | CP from GPIO pins      | Strategy           | LSP             |
+| **SimulatorCpSignalReader** ⭐ | CP from UDP simulator  | Strategy           | LSP             |
+| **CpSignalReaderFactory** ⭐   | CP reader creation     | Factory            | OCP, DIP        |
+| **Application**                | App lifecycle          | Facade             | SRP             |
+| **Configuration**              | Settings management    | Singleton          | SRP             |
 
 **Legend:**
 
@@ -1055,6 +1407,203 @@ protected:
 - **LSP**: Liskov Substitution Principle
 - **ISP**: Interface Segregation Principle
 - **DIP**: Dependency Inversion Principle
+
+---
+
+## 🔌 CP Signal System
+
+### Overview
+
+The CP (Control Pilot) Signal System enables the wallbox to detect vehicle connection status and charging readiness according to **IEC 61851-1** standard. The system operates in two modes:
+
+1. **Hardware Mode**: Reads CP signal from GPIO pin 7 (ADC-capable) in production
+2. **Simulator Mode**: Receives CP state from simulator via UDP in development
+
+### Architecture
+
+```
+┌───────────────────────────────────────────────────────┐
+│              ICpSignalReader Interface                │
+│  (Strategy Pattern - Abstract CP signal reading)      │
+└───────────────────┬───────────────────────────────────┘
+                    │
+        ┌───────────┴───────────┐
+        │                       │
+        ▼                       ▼
+┌──────────────────┐    ┌──────────────────┐
+│   Hardware       │    │   Simulator      │
+│  CpSignalReader  │    │  CpSignalReader  │
+│                  │    │                  │
+│ Uses: GPIO       │    │ Uses: Network    │
+│ Mode: Production │    │ Mode: Dev        │
+└──────────────────┘    └──────────────────┘
+```
+
+### IEC 61851-1 State Mapping
+
+| CP Voltage | CP State | Meaning                | ISO 15118 State |
+| ---------- | -------- | ---------------------- | --------------- |
+| +12V       | STATE_A  | No vehicle             | IDLE            |
+| +9V        | STATE_B  | Vehicle connected      | CONNECTED       |
+| +6V        | STATE_C  | Ready to charge        | READY           |
+| +3V        | STATE_D  | Charging + ventilation | CHARGING        |
+| 0V         | STATE_E  | No power               | STOP            |
+| -12V       | STATE_F  | Error condition        | ERROR           |
+
+### State Transition Flow
+
+```
+Vehicle Connection Sequence:
+
+STATE_A (12V)     →    IDLE
+   ↓ (Vehicle plugged in)
+STATE_B (9V)      →    CONNECTED
+   ↓ (Vehicle ready)
+STATE_C (6V)      →    READY
+   ↓ (Charging authorized)
+STATE_D (3V)      →    CHARGING
+   ↓ (Charging complete)
+STATE_C (6V)      →    STOP
+   ↓ (Vehicle disconnected)
+STATE_A (12V)     →    IDLE
+
+Error Condition:
+STATE_F (-12V)    →    ERROR
+```
+
+### Factory Pattern Usage
+
+```cpp
+// Mode determined from environment variable
+const char* mode = std::getenv("WALLBOX_MODE");
+
+// Factory creates appropriate reader
+auto cpReader = CpSignalReaderFactory::create(
+    mode,           // "simulator" or "hardware"
+    gpio,           // For hardware mode
+    network,        // For simulator mode
+    7               // GPIO pin number
+);
+
+// Interface used polymorphically
+cpReader->initialize();
+cpReader->onStateChange(callback);
+cpReader->startMonitoring();
+```
+
+### Observer Pattern Implementation
+
+```cpp
+// WallboxController registers as observer
+m_cpReader->onStateChange([this](CpState oldState, CpState newState) {
+    std::cout << "CP changed: "
+              << m_cpReader->getCpStateString(oldState)
+              << " → "
+              << m_cpReader->getCpStateString(newState)
+              << std::endl;
+
+    // Map CP state to charging state
+    mapCpStateToChargingState(newState);
+});
+```
+
+### Hardware Mode Details
+
+**Hardware:** Banana Pi GPIO with ADC simulation  
+**Pin:** GPIO 7 (configurable)  
+**Polling:** 100ms (10 Hz)  
+**Thread:** Dedicated monitoring thread  
+**Voltage Reading:** Simulated ADC (to be replaced with real ADC)
+
+```cpp
+// Voltage thresholds (IEC 61851-1)
+if (voltage > 11000mV)  return STATE_A;   // 12V
+if (voltage > 8000mV)   return STATE_B;   // 9V
+if (voltage > 5000mV)   return STATE_C;   // 6V
+if (voltage > 2000mV)   return STATE_D;   // 3V
+if (voltage > 500mV)    return STATE_E;   // 0V
+if (voltage < -10000mV) return STATE_F;   // -12V
+```
+
+### Simulator Mode Details
+
+**Protocol:** UDP on ports 50010/50011  
+**Message Format:** `[0x03, CP_STATE]`  
+**Async:** Event-driven (no polling)  
+**Thread:** Uses network receive thread
+
+```cpp
+// Simulator sends CP state updates:
+uint8_t message[2] = {0x03, CP_STATE_B};  // Vehicle connected
+network->send(message, 2);
+
+// SimulatorCpSignalReader receives and parses
+CpState state = parseStateFromMessage(message);
+// → STATE_B (9V - Vehicle connected)
+```
+
+### Design Patterns Summary
+
+1. **Strategy Pattern**: Different CP reading strategies (hardware vs simulator)
+2. **Factory Pattern**: Mode-based reader instantiation
+3. **Observer Pattern**: State change notifications
+4. **Dependency Injection**: GPIO and network dependencies injected
+5. **Interface Segregation**: Minimal, focused interface
+
+### SOLID Principles Applied
+
+- **SRP**: Each reader has single responsibility (read CP)
+- **OCP**: Extensible (add new readers without modification)
+- **LSP**: All readers substitutable via interface
+- **ISP**: Interface contains only CP-related methods
+- **DIP**: Depends on abstractions (IGpio, INetwork)
+
+### Configuration
+
+```json
+{
+  "cp_pin": 7,
+  "mode": "simulator"
+}
+```
+
+Environment variable:
+
+```bash
+export WALLBOX_MODE=simulator  # or "production"
+```
+
+### Testing
+
+```cpp
+// Unit test: Hardware reader voltage mapping
+TEST(HardwareCpReader, VoltageMapping) {
+    EXPECT_EQ(reader.voltageToState(12000), CpState::STATE_A);
+    EXPECT_EQ(reader.voltageToState(9000), CpState::STATE_B);
+}
+
+// Unit test: Simulator message parsing
+TEST(SimulatorCpReader, MessageParsing) {
+    std::vector<uint8_t> msg = {0x03, 0x01};  // STATE_B
+    EXPECT_EQ(reader.parseStateFromMessage(msg), CpState::STATE_B);
+}
+
+// Integration test: State change callback
+TEST(CpReader, StateChangeNotification) {
+    bool called = false;
+    reader.onStateChange([&](auto old, auto new) { called = true; });
+    reader.setCpState(CpState::STATE_B);
+    EXPECT_TRUE(called);
+}
+```
+
+### Future Enhancements
+
+1. **Real ADC Integration**: Replace simulated voltage with actual ADC chip
+2. **PWM Duty Cycle**: Read PWM signal for current limit
+3. **Debouncing**: Filter noisy CP signals
+4. **Diagnostics**: Log voltage anomalies for troubleshooting
+5. **Multi-Connector**: Support multiple CP readers for multi-port chargers
 
 ---
 
@@ -1067,11 +1616,15 @@ protected:
 5. **Maintainable**: Clear separation of concerns
 6. **Thread-Safe**: Designed for concurrent API + Interactive mode
 7. **Platform-Independent**: Works on any Pi via GPIO abstraction
+8. **Dual-Mode CP Reading**: ⭐ Hardware (GPIO) and simulator (UDP) support
+9. **IEC 61851-1 Compliant**: ⭐ Standard CP signal interpretation
+10. **ISO 15118 Integration**: ⭐ CP states mapped to charging states
 
 ---
 
 ## 📖 Related Documentation
 
+- [CP_SIGNAL_IMPLEMENTATION.md](docs/CP_SIGNAL_IMPLEMENTATION.md) - ⭐ CP signal system details
 - [INSTALLATION_GUIDE.md](docs/INSTALLATION_GUIDE.md) - Setup instructions
 - [ARCHITECTURE_V3.md](docs/architecture/ARCHITECTURE_V3.md) - System architecture
 - [API_REFERENCE.md](docs/api/API_REFERENCE.md) - REST API documentation

@@ -299,6 +299,66 @@ src/ChargingStateMachine.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v3.dir/build.make CMakeFiles/wallbox_control_v3.dir/src/ChargingStateMachine.cpp.s
 .PHONY : src/ChargingStateMachine.cpp.s
 
+src/CpSignalReaderFactory.o: src/CpSignalReaderFactory.cpp.o
+.PHONY : src/CpSignalReaderFactory.o
+
+# target to build an object file
+src/CpSignalReaderFactory.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/CpSignalReaderFactory.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/CpSignalReaderFactory.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v3.dir/build.make CMakeFiles/wallbox_control_v3.dir/src/CpSignalReaderFactory.cpp.o
+.PHONY : src/CpSignalReaderFactory.cpp.o
+
+src/CpSignalReaderFactory.i: src/CpSignalReaderFactory.cpp.i
+.PHONY : src/CpSignalReaderFactory.i
+
+# target to preprocess a source file
+src/CpSignalReaderFactory.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/CpSignalReaderFactory.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/CpSignalReaderFactory.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v3.dir/build.make CMakeFiles/wallbox_control_v3.dir/src/CpSignalReaderFactory.cpp.i
+.PHONY : src/CpSignalReaderFactory.cpp.i
+
+src/CpSignalReaderFactory.s: src/CpSignalReaderFactory.cpp.s
+.PHONY : src/CpSignalReaderFactory.s
+
+# target to generate assembly for a file
+src/CpSignalReaderFactory.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/CpSignalReaderFactory.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/CpSignalReaderFactory.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v3.dir/build.make CMakeFiles/wallbox_control_v3.dir/src/CpSignalReaderFactory.cpp.s
+.PHONY : src/CpSignalReaderFactory.cpp.s
+
+src/HardwareCpSignalReader.o: src/HardwareCpSignalReader.cpp.o
+.PHONY : src/HardwareCpSignalReader.o
+
+# target to build an object file
+src/HardwareCpSignalReader.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/HardwareCpSignalReader.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/HardwareCpSignalReader.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v3.dir/build.make CMakeFiles/wallbox_control_v3.dir/src/HardwareCpSignalReader.cpp.o
+.PHONY : src/HardwareCpSignalReader.cpp.o
+
+src/HardwareCpSignalReader.i: src/HardwareCpSignalReader.cpp.i
+.PHONY : src/HardwareCpSignalReader.i
+
+# target to preprocess a source file
+src/HardwareCpSignalReader.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/HardwareCpSignalReader.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/HardwareCpSignalReader.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v3.dir/build.make CMakeFiles/wallbox_control_v3.dir/src/HardwareCpSignalReader.cpp.i
+.PHONY : src/HardwareCpSignalReader.cpp.i
+
+src/HardwareCpSignalReader.s: src/HardwareCpSignalReader.cpp.s
+.PHONY : src/HardwareCpSignalReader.s
+
+# target to generate assembly for a file
+src/HardwareCpSignalReader.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/HardwareCpSignalReader.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/HardwareCpSignalReader.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v3.dir/build.make CMakeFiles/wallbox_control_v3.dir/src/HardwareCpSignalReader.cpp.s
+.PHONY : src/HardwareCpSignalReader.cpp.s
+
 src/HttpApiServer.o: src/HttpApiServer.cpp.o
 .PHONY : src/HttpApiServer.o
 
@@ -385,6 +445,36 @@ src/SimpleWallboxController.s: src/SimpleWallboxController.cpp.s
 src/SimpleWallboxController.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v4.dir/build.make CMakeFiles/wallbox_control_v4.dir/src/SimpleWallboxController.cpp.s
 .PHONY : src/SimpleWallboxController.cpp.s
+
+src/SimulatorCpSignalReader.o: src/SimulatorCpSignalReader.cpp.o
+.PHONY : src/SimulatorCpSignalReader.o
+
+# target to build an object file
+src/SimulatorCpSignalReader.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/SimulatorCpSignalReader.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/SimulatorCpSignalReader.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v3.dir/build.make CMakeFiles/wallbox_control_v3.dir/src/SimulatorCpSignalReader.cpp.o
+.PHONY : src/SimulatorCpSignalReader.cpp.o
+
+src/SimulatorCpSignalReader.i: src/SimulatorCpSignalReader.cpp.i
+.PHONY : src/SimulatorCpSignalReader.i
+
+# target to preprocess a source file
+src/SimulatorCpSignalReader.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/SimulatorCpSignalReader.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/SimulatorCpSignalReader.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v3.dir/build.make CMakeFiles/wallbox_control_v3.dir/src/SimulatorCpSignalReader.cpp.i
+.PHONY : src/SimulatorCpSignalReader.cpp.i
+
+src/SimulatorCpSignalReader.s: src/SimulatorCpSignalReader.cpp.s
+.PHONY : src/SimulatorCpSignalReader.s
+
+# target to generate assembly for a file
+src/SimulatorCpSignalReader.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v2.dir/build.make CMakeFiles/wallbox_control_v2.dir/src/SimulatorCpSignalReader.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_api.dir/build.make CMakeFiles/wallbox_control_api.dir/src/SimulatorCpSignalReader.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wallbox_control_v3.dir/build.make CMakeFiles/wallbox_control_v3.dir/src/SimulatorCpSignalReader.cpp.s
+.PHONY : src/SimulatorCpSignalReader.cpp.s
 
 src/StubGpioController.o: src/StubGpioController.cpp.o
 .PHONY : src/StubGpioController.o
@@ -647,6 +737,12 @@ help:
 	@echo "... src/ChargingStateMachine.o"
 	@echo "... src/ChargingStateMachine.i"
 	@echo "... src/ChargingStateMachine.s"
+	@echo "... src/CpSignalReaderFactory.o"
+	@echo "... src/CpSignalReaderFactory.i"
+	@echo "... src/CpSignalReaderFactory.s"
+	@echo "... src/HardwareCpSignalReader.o"
+	@echo "... src/HardwareCpSignalReader.i"
+	@echo "... src/HardwareCpSignalReader.s"
 	@echo "... src/HttpApiServer.o"
 	@echo "... src/HttpApiServer.i"
 	@echo "... src/HttpApiServer.s"
@@ -656,6 +752,9 @@ help:
 	@echo "... src/SimpleWallboxController.o"
 	@echo "... src/SimpleWallboxController.i"
 	@echo "... src/SimpleWallboxController.s"
+	@echo "... src/SimulatorCpSignalReader.o"
+	@echo "... src/SimulatorCpSignalReader.i"
+	@echo "... src/SimulatorCpSignalReader.s"
 	@echo "... src/StubGpioController.o"
 	@echo "... src/StubGpioController.i"
 	@echo "... src/StubGpioController.s"
