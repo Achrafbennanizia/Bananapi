@@ -193,16 +193,17 @@ build_on_pi() {
 configure_system() {
     log "Configuring system..."
     
-    # Get local machine IP
+    # Get local machine IP (for simulator -> Pi communication)
     LOCAL_IP=$(ifconfig 2>/dev/null | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | head -1)
     
     if [ -z "$LOCAL_IP" ]; then
         LOCAL_IP=$(ip addr 2>/dev/null | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | cut -d'/' -f1 | head -1)
     fi
     
-    log "Detected local IP: ${LOCAL_IP:-unknown}"
+    log "Detected local machine IP: ${LOCAL_IP:-unknown}"
+    log "Pi IP: $PI_HOST"
     
-    # Update config.json on remote with proper mode
+    # Update config.json on remote with proper mode and IPs
     ssh "$SSH_USER@$PI_HOST" "cd $REMOTE_DIR/build && \
         python3 -c \"
 import json
@@ -210,13 +211,17 @@ with open('config.json', 'r') as f:
     config = json.load(f)
 config['mode'] = '$BUILD_MODE'
 if '$LOCAL_IP':
+    # Pi sends UDP responses back to the simulator (Mac)
     config['network']['udp_send_address'] = '$LOCAL_IP'
 with open('config.json', 'w') as f:
     json.dump(config, f, indent=2)
 print('Configuration updated')
+print('  Mode: $BUILD_MODE')
+print('  Pi will send UDP to: $LOCAL_IP')
 \" || sed -i 's/\"mode\": \".*\"/\"mode\": \"$BUILD_MODE\"/' config.json"
     
     log "System configured for $BUILD_MODE mode"
+    log "Pi will send UDP responses to: ${LOCAL_IP}"
 }
 
 check_gpio_permissions() {
