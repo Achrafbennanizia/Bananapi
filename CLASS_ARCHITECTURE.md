@@ -836,10 +836,10 @@ Simulator                 Wallbox
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    CP Signal Reading Flow                    │
+│                    CP Signal Reading Flow                   │
 └─────────────────────────────────────────────────────────────┘
 
-HARDWARE MODE (Production):                SIMULATOR MODE (Development):
+HARDWARE MODE (Production):      SIMULATOR MODE (Development):
 
 Vehicle CP Signal                          Simulator
     │ (12V/9V/6V/3V)                          │
