@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(WallboxController VERSION 3.0 LANGUAGES CXX)
+project(WallboxController VERSION 4.1 LANGUAGES CXX)
 
 # C++14 Standard (for maximum compatibility)
 set(CMAKE_CXX_STANDARD 14)
@@ -91,10 +91,12 @@ configure_file(
 
 # Print configuration
 message(STATUS "===================================")
-message(STATUS "Wallbox Controller Build Configuration")
+message(STATUS "Wallbox Controller v4.1 Build Configuration")
+message(STATUS "with CP Signal System Support")
 message(STATUS "===================================")
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "C++ Standard: C++${CMAKE_CXX_STANDARD}")
 message(STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
 message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
+message(STATUS "Features: ISO 15118, CP Signal (HW+Simulator)")
 message(STATUS "===================================")

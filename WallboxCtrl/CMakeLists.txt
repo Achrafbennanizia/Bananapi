@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(WallboxControl LANGUAGES CXX)
+project(WallboxControl VERSION 4.1 LANGUAGES CXX)
 
 # Use C++14 minimum (C++11 lacks make_unique)
 set(CMAKE_CXX_STANDARD 14)
@@ -143,11 +143,14 @@ endif()
 
 # Print build configuration
 message(STATUS "==========================================")
-message(STATUS "Wallbox Control Build Configuration")
+message(STATUS "Wallbox Control v4.1 Build Configuration")
+message(STATUS "with CP Signal System Support")
 message(STATUS "==========================================")
 message(STATUS "C++ Standard: ${CMAKE_CXX_STANDARD}")
 message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "Build Tests: ${BUILD_TESTS}")
+message(STATUS "Features: ISO 15118, CP Signal (HW+Simulator)")
+message(STATUS "==========================================")
 message(STATUS "==========================================")
 message(STATUS "Targets:")
 message(STATUS "  - wallbox_control (v1.0 legacy)")

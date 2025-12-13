@@ -1,6 +1,7 @@
-# Wallbox Controller - Makefile
-# C++14 Compatible Build System
+# Wallbox Controller - Makefile v4.1
+# C++14 Compatible Build System with CP Signal System
 # Supports: Raspberry Pi, Banana Pi, Orange Pi
+# Features: ISO 15118, HTTP API, UDP Communication, CP Signal (Hardware + Simulator)
 
 # Compiler settings
 CXX = g++
@@ -14,7 +15,7 @@ INC_DIR = include
 BUILD_DIR = build
 CONFIG_DIR = config
 
-# Source files for wallbox_control_v3 (main target)
+# Source files for wallbox_control_v3 (main target with CP Signal System)
 WALLBOX_SOURCES = \
 	$(SRC_DIR)/main_v3.cpp \
 	$(SRC_DIR)/HttpApiServer.cpp \
@@ -24,7 +25,10 @@ WALLBOX_SOURCES = \
 	$(SRC_DIR)/BananaPiGpioController.cpp \
 	$(SRC_DIR)/StubGpioController.cpp \
 	$(SRC_DIR)/SimpleWallboxController.cpp \
-	$(SRC_DIR)/IsoStackCtrlProtocol_impl.cpp
+	$(SRC_DIR)/IsoStackCtrlProtocol_impl.cpp \
+	$(SRC_DIR)/HardwareCpSignalReader.cpp \
+	$(SRC_DIR)/SimulatorCpSignalReader.cpp \
+	$(SRC_DIR)/CpSignalReaderFactory.cpp
 
 # Source files for simulator
 SIMULATOR_SOURCES = \
@@ -116,7 +120,8 @@ test: all
 # Show help
 help:
 	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-	@echo "  Wallbox Controller - Build System"
+	@echo "  Wallbox Controller v4.1 - Build System"
+	@echo "  with CP Signal System Support"
 	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 	@echo ""
 	@echo "📋 Available targets:"
@@ -131,10 +136,12 @@ help:
 	@echo "  make help         - Show this help"
 	@echo ""
 	@echo "🔧 Build configuration:"
+	@echo "  Version:      4.1 (CP Signal System)"
 	@echo "  C++ Standard: C++14"
 	@echo "  Compiler:     $(CXX)"
 	@echo "  Flags:        $(CXXFLAGS)"
 	@echo "  Libraries:    libmicrohttpd, libcurl"
+	@echo "  Features:     ISO 15118, CP Signal (HW+Simulator)"
 	@echo ""
 	@echo "📦 Output files:"
 	@echo "  $(WALLBOX_TARGET)"
