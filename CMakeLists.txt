@@ -138,16 +138,26 @@ endif()
 
 # Main executables
 
-# Version 4 - Latest with CP Signal (no API dependency)
+# Version 4 - Latest with full features (HTTP API, CP Signal, UDP)
 add_executable(wallbox_control_v4
     ${CMAKE_SOURCE_DIR}/src/core/main_v4.cpp
 )
 
 target_link_libraries(wallbox_control_v4
     wallbox_core
+    wallbox_api
 )
 
-# Version 2 (no API)
+# Version 3 - Previous simplified version (relay control only)
+add_executable(wallbox_control_v3
+    ${CMAKE_SOURCE_DIR}/src/core/main_v3.cpp
+)
+
+target_link_libraries(wallbox_control_v3
+    wallbox_core
+)
+
+# Version 2 (SOLID architecture)
 add_executable(wallbox_control_v2
     ${CMAKE_SOURCE_DIR}/src/core/main_v2.cpp
 )

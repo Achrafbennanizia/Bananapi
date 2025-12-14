@@ -1,187 +1,128 @@
-#include "Application.h"
+#include "SimpleWallboxController.h"
+#include "GpioFactory.h"
+#include "Configuration.h"
 #include <csignal>
 #include <memory>
 #include <iostream>
-#include <fstream>
-#include <chrono>
-#include <iomanip>
-#include <sstream>
+#include <string>
+#include <atomic>
 
 using namespace Wallbox;
 
-// Global application instance for signal handling
-static std::unique_ptr<Application> g_application;
-
-// Log file
-static std::ofstream g_logFile;
-
-/**
- * @brief Get formatted timestamp
- */
-std::string getTimestamp()
-{
-    auto now = std::chrono::system_clock::now();
-    auto time_t = std::chrono::system_clock::to_time_t(now);
-    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
-                  now.time_since_epoch()) %
-              1000;
-
-    std::stringstream ss;
-    ss << std::put_time(std::localtime(&time_t), "%Y-%m-%d %H:%M:%S");
-    ss << '.' << std::setfill('0') << std::setw(3) << ms.count();
-    return ss.str();
-}
-
-/**
- * @brief Unified logging function - writes only to file
- */
-void logMessage(const std::string &level, const std::string &message)
-{
-    std::string logLine = "[" + getTimestamp() + "] [" + level + "] " + message;
-
-    // Write to log file only
-    if (g_logFile.is_open())
-    {
-        g_logFile << logLine << std::endl;
-        g_logFile.flush();
-    }
-}
+// Global controller instance for signal handling
+static std::unique_ptr<SimpleWallboxController> g_controller;
+static std::atomic<bool> g_running(true);
 
 /**
  * @brief Signal handler for graceful shutdown
- *
- * Handles SIGINT (Ctrl+C) and SIGTERM for clean application exit.
  */
 void signalHandler(int signal)
 {
-    std::stringstream ss;
-    ss << "Received signal " << signal << ", shutting down...";
-    logMessage("INFO", ss.str());
-
-    if (g_application)
-    {
-        g_application->requestShutdown();
-    }
+    (void)signal;
+    std::cout << "\nShutting down..." << std::endl;
+    g_running = false;
 }
 
 /**
- * @brief Main entry point
+ * @brief Main entry point for Wallbox Controller v3.0
  *
- * Usage:
- *   ./wallbox_control_v3                - Start with HTTP API server only (default)
- *   ./wallbox_control_v3 --interactive  - Start with interactive terminal only
- *   ./wallbox_control_v3 --dual         - Start with both API and interactive (dual mode)
- *
- * Demonstrates clean separation of concerns:
- * - Signal handling
- * - Application lifecycle
- * - Error handling
- *
- * The entire application logic is encapsulated in the Application class,
- * making this main function extremely simple and maintainable.
+ * Version 4.0 Features:
+ * - Simplified - ONLY relay contr * - C++14 standard (minimum for std::make_unique)
+ * - Default relay pin: GPIO 21
+ * - No UDP, no network, no state machine
+ * - Direct GPIO control only
  */
 int main(int argc, char *argv[])
 {
-    // Check for mode flags
-    bool interactiveMode = false;
-    bool dualMode = false;
+    (void)argc;
+    (void)argv;
 
-    if (argc > 1)
-    {
-        std::string arg(argv[1]);
-        if (arg == "--interactive" || arg == "-i")
-        {
-            interactiveMode = true;
-        }
-        else if (arg == "--dual" || arg == "-d")
-        {
-            dualMode = true;
-            interactiveMode = false; // Dual mode will handle both
-        }
-    }
+    std::cout << "==================================================" << std::endl;
+    std::cout << "  Wallbox Controller v3.0 - Simple Relay Control" << std::endl;
+    std::cout << "==================================================" << std::endl;
 
-    // Open log file
-    g_logFile.open("/tmp/wallbox_main.log", std::ios::out | std::ios::app);
-    if (!g_logFile.is_open())
-    {
-        std::cerr << "Warning: Could not open log file /tmp/wallbox_main.log" << std::endl;
-    }
-    else
-    {
-        logMessage("INFO", "Wallbox Controller v3.0 starting...");
-        logMessage("INFO", interactiveMode ? "Mode: Interactive Terminal" : "Mode: HTTP API Server");
-        logMessage("INFO", "Log file: /tmp/wallbox_main.log");
-    }
-
-    // Register signal handlers for graceful shutdown
+    // Register signal handlers
     std::signal(SIGINT, signalHandler);
     std::signal(SIGTERM, signalHandler);
 
+    // Get configuration
+    auto &config = Configuration::getInstance();
+    config.loadFromEnvironment();
+
+    // Set relay pin to 21
+    config.setRelayPin(21);
+
+    std::cout << "Mode: " << config.getModeString() << std::endl;
+    std::cout << "GPIO Type: " << config.getGpioType() << std::endl;
+    std::cout << "Relay Pin: " << config.getRelayPin() << std::endl;
+    std::cout << std::endl;
+
     try
     {
-        // Create application
-        g_application = std::make_unique<Application>();
-        logMessage("INFO", "Application instance created");
+        // Create GPIO controller
+        auto gpio = GpioFactory::create(config.getGpioType());
 
-        // Initialize (pass mode flags)
-        if (!g_application->initialize(interactiveMode, dualMode))
+        // Create simple controller
+        g_controller = std::make_unique<SimpleWallboxController>(
+            std::move(gpio),
+            config.getRelayPin());
+
+        // Initialize
+        if (!g_controller->initialize())
         {
-            logMessage("ERROR", "Failed to initialize application");
-            std::cerr << "Failed to initialize application" << std::endl;
-            if (g_logFile.is_open())
-                g_logFile.close();
+            std::cerr << "Failed to initialize controller" << std::endl;
             return 1;
         }
 
-        logMessage("INFO", "Application initialized successfully");
+        std::cout << "\n=== Wallbox Controller Ready ===" << std::endl;
+        std::cout << "Commands:" << std::endl;
+        std::cout << "  on    - Enable relay" << std::endl;
+        std::cout << "  off   - Disable relay" << std::endl;
+        std::cout << "  status - Show relay status" << std::endl;
+        std::cout << "  quit   - Exit" << std::endl;
+        std::cout << "================================\n"
+                  << std::endl;
 
-        // Run main loop based on mode
-        if (dualMode)
+        // Simple command loop
+        std::string command;
+        while (g_running)
         {
-            logMessage("INFO", "Starting DUAL mode (API + Interactive)");
-            std::cout << "\n=== Starting Wallbox Controller V3 (DUAL MODE) ===" << std::endl;
-            std::cout << "HTTP API server: http://localhost:8080" << std::endl;
-            std::cout << "Interactive Terminal: Type commands below" << std::endl;
-            std::cout << "Type 'help' for commands, 'quit' to stop both.\n"
-                      << std::endl;
-            g_application->runDual();
-        }
-        else if (interactiveMode)
-        {
-            logMessage("INFO", "Starting interactive terminal mode");
-            g_application->runInteractive();
-        }
-        else
-        {
-            logMessage("INFO", "Starting HTTP API server mode");
-            g_application->run();
+            std::cout << "> ";
+            if (!std::getline(std::cin, command))
+            {
+                break;
+            }
+
+            if (command == "on")
+            {
+                g_controller->enableRelay();
+            }
+            else if (command == "off")
+            {
+                g_controller->disableRelay();
+            }
+            else if (command == "status")
+            {
+                std::cout << "Relay status: " << (g_controller->isRelayEnabled() ? "ON" : "OFF") << std::endl;
+            }
+            else if (command == "quit" || command == "exit")
+            {
+                break;
+            }
+            else if (!command.empty())
+            {
+                std::cout << "Unknown command. Type: on, off, status, or quit" << std::endl;
+            }
         }
 
-        // Graceful shutdown
-        logMessage("INFO", "Shutting down application");
-        g_application->shutdown();
-        logMessage("INFO", "Application shutdown complete");
-
-        if (g_logFile.is_open())
-            g_logFile.close();
+        // Shutdown
+        g_controller->shutdown();
+        std::cout << "Goodbye!" << std::endl;
         return 0;
     }
     catch (const std::exception &e)
     {
-        std::stringstream ss;
-        ss << "Fatal error: " << e.what();
-        logMessage("ERROR", ss.str());
-        std::cerr << ss.str() << std::endl;
-        if (g_logFile.is_open())
-            g_logFile.close();
-        return 1;
-    }
-    catch (...)
-    {
-        logMessage("ERROR", "Unknown fatal error occurred");
-        std::cerr << "Unknown fatal error occurred" << std::endl;
-        if (g_logFile.is_open())
-            g_logFile.close();
+        std::cerr << "Error: " << e.what() << std::endl;
         return 1;
     }
 }

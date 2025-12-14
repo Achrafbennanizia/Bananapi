@@ -36,18 +36,20 @@ BUILD_MODE=development ./scripts/build.sh
 
 ## 🎯 Running the System
 
-### Terminal 1 - Wallbox Controller (v3.0 - Latest)
+### Terminal 1 - Wallbox Controller (v4.0 - Latest)
 
 ```bash
 cd <PROJECT_ROOT>/build/bin
-./wallbox_control_v3
+./wallbox_control_v4
 ```
 
 **Features:**
 
 - ✅ HTTP REST API on port 8080
 - ✅ UDP communication on port 50010
+- ✅ CP Signal support (Hardware + Simulator)
 - ✅ Clean terminal output
+- ✅ Full feature set with modular architecture
 - ✅ Production-ready for BananaPi
 
 ### Terminal 2 - ISO 15118 Simulator
@@ -157,13 +159,13 @@ cd <PROJECT_ROOT>
 BUILD_MODE=production cmake -B build && make -C build -j$(nproc)
 
 # Copy to BananaPi
-scp build/bin/wallbox_control_v3 pi@<API_HOST>:~/
+scp build/bin/wallbox_control_v4 pi@<API_HOST>:~/
 scp build/bin/simulator pi@<API_HOST>:~/
 scp config/*.json pi@<API_HOST>:~/
 
 # SSH and run
 ssh pi@<API_HOST>
-./wallbox_control_v3
+./wallbox_control_v4
 ```
 
 ## 📊 View Logs
@@ -177,7 +179,7 @@ tail -f /tmp/wallbox_simulator.log
 ### Wallbox Log
 
 ```bash
-tail -f /tmp/wallbox_v3.log
+tail -f /tmp/wallbox_v4.log
 
 # Or in production with systemd:
 journalctl -u wallbox -f
@@ -261,7 +263,7 @@ cat <PROJECT_ROOT>/config/development.json
 ls -l /sys/class/gpio
 
 # Run with sudo (production)
-sudo ./wallbox_control_v3
+sudo ./wallbox_control_v4
 
 # Use stub GPIO for testing
 # Set "type": "stub" in config.json
@@ -280,10 +282,10 @@ sudo ./wallbox_control_v3
 
 After building, you'll find in `build/bin/`:
 
-- `wallbox_control_v3` - **Latest version** (full features, HTTP API, CP signals)
-- `wallbox_control_v4` - Previous version (simple relay control)
+- `wallbox_control_v4` - **Latest version** (full features: HTTP API, CP signals, UDP)
+- `wallbox_control_v3` - Previous version (simplified relay control)
 - `wallbox_control_v2` - Older version (SOLID architecture)
 - `wallbox_control_v1` - Original version (legacy)
 - `simulator` - ISO 15118 stack simulator
 
-**Recommended**: Use `wallbox_control_v3` for production deployments.
+**Recommended**: Use `wallbox_control_v4` for production deployments.

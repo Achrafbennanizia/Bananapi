@@ -65,10 +65,22 @@ add_executable(wallbox_control_api
 target_link_libraries(wallbox_control_api PRIVATE pthread)
 
 # =============================================================================
-# New v3.0 - Improved Architecture (Clean, modular design)
+# New v3.0 - Simplified: Only relay control, GPIO 21 as default
 # =============================================================================
 add_executable(wallbox_control_v3
     src/main_v3.cpp
+    src/SimpleWallboxController.cpp
+    src/StubGpioController.cpp
+    src/BananaPiGpioController.cpp
+)
+
+target_link_libraries(wallbox_control_v3 PRIVATE pthread)
+
+# =============================================================================
+# New v4.0 - Latest: Full features (HTTP API, CP Signal, improved architecture)
+# =============================================================================
+add_executable(wallbox_control_v4
+    src/main_v4.cpp
     src/WallboxController.cpp
     src/ChargingStateMachine.cpp
     src/StubGpioController.cpp
@@ -79,18 +91,6 @@ add_executable(wallbox_control_v3
     src/HardwareCpSignalReader.cpp
     src/SimulatorCpSignalReader.cpp
     src/CpSignalReaderFactory.cpp
-)
-
-target_link_libraries(wallbox_control_v3 PRIVATE pthread)
-
-# =============================================================================
-# New v4.0 - Simplified: Only relay control, GPIO 21 as default
-# =============================================================================
-add_executable(wallbox_control_v4
-    src/main_v4.cpp
-    src/SimpleWallboxController.cpp
-    src/StubGpioController.cpp
-    src/BananaPiGpioController.cpp
 )
 
 target_link_libraries(wallbox_control_v4 PRIVATE pthread)
@@ -156,7 +156,8 @@ message(STATUS "Targets:")
 message(STATUS "  - wallbox_control (v1.0 legacy)")
 message(STATUS "  - wallbox_control_v2 (v2.0 SOLID)")
 message(STATUS "  - wallbox_control_api (v2.0 with REST API)")
-message(STATUS "  - wallbox_control_v3 (v3.0 improved architecture)")
+message(STATUS "  - wallbox_control_v3 (v3.0 simplified relay control)")
+message(STATUS "  - wallbox_control_v4 (v4.0 LATEST - full features)")
 message(STATUS "  - simulator")
 if(BUILD_TESTS)
     message(STATUS "  - wallbox_tests (unit tests)")
