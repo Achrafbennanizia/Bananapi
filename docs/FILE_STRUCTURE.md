@@ -92,7 +92,7 @@ make -j$(nproc)
 | Root `*.sh`            | `scripts/deploy/`, `scripts/test/` |
 | Root `*.md`            | `docs/`                            |
 | `LibPubWallbox/`       | `external/LibPubWallbox/`          |
-| `wallbox-react-app/`   | `web/react-app/`                   |
+| `web/react-app/`   | `web/react-app/`                   |
 
 ## See Also
 

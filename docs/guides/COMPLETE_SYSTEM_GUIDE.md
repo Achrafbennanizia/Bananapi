@@ -1,5 +1,28 @@
 # Complete System Setup - Quick Start Guide
 
+## 📝 About This Guide
+
+This guide uses placeholders for environment-specific values. Before using any commands, replace them with your actual values:
+
+| Placeholder      | Description                                         | Example                      |
+| ---------------- | --------------------------------------------------- | ---------------------------- |
+| `<API_HOST>`     | IP address of your Banana Pi / target device        | `192.168.1.100`              |
+| `<SIM_HOST>`     | IP address where simulator runs (usually localhost) | `localhost` or `127.0.0.1`   |
+| `<PROJECT_ROOT>` | Full path to project directory                      | `/home/user/wallbox-project` |
+| `<TARGET_IP>`    | General IP address placeholder                      | `192.168.1.50`               |
+
+**Example substitution:**
+
+```bash
+# Documentation shows:
+curl http://<API_HOST>:8080/api/status
+
+# You would use:
+curl http://192.168.1.100:8080/api/status
+```
+
+---
+
 ## 🎉 System is Running!
 
 Your complete wallbox system is now operational with all three components:
@@ -11,13 +34,13 @@ Your complete wallbox system is now operational with all three components:
 │                    Complete Wallbox System                       │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                  │
-│  🌐 React Web App (Mac)          🔧 Simulator (Mac)            │
-│  http://localhost:3000            UDP Port 50011                │
+│  🌐 React Web App (Dev Machine)   🔧 Simulator (Dev Machine)   │
+│  http://localhost:3000             UDP Port 50011               │
 │           │                              │                       │
 │           └────────── HTTP API ──────────┘                      │
 │                          │                                       │
 │                          ↓                                       │
-│              🖥️  Banana Pi (192.168.178.34)                    │
+│              🖥️  Target Device (<API_HOST>)                    │
 │                 Wallbox Control API                             │
 │                 Port 8080 (HTTP)                                │
 │                 Port 50010 (UDP)                                │
@@ -30,7 +53,7 @@ Your complete wallbox system is now operational with all three components:
 ### 🌐 React Web Interface
 
 **URL:** http://localhost:3000  
-**API Target:** http://192.168.178.34:8080  
+**API Target:** http://<API_HOST>:8080  
 **Features:**
 
 - Real-time status monitoring
@@ -40,7 +63,7 @@ Your complete wallbox system is now operational with all three components:
 
 ### 🔧 Simulator (Mac)
 
-**Location:** `/path/to/project/WallboxCtrl/build/simulator`  
+**Location:** `/path/to/project/build/bin/simulator`  
 **Ports:** Listen 50011, Send to 192.168.178.34:50010  
 **Log:** `/tmp/wallbox_simulator.log`
 
@@ -181,7 +204,7 @@ curl http://192.168.178.34:8080/api/status | python3 -m json.tool
 
 # Restart React only
 lsof -ti:3000 | xargs kill -9
-cd wallbox-react-app && BROWSER=none npm start &
+cd web/react-app && BROWSER=none npm start &
 ```
 
 ### Banana Pi (Remote)
@@ -244,7 +267,7 @@ lsof -i:50011
 
 # Restart
 pkill -f simulator
-cd /path/to/project/WallboxCtrl/build
+cd /path/to/project/build/bin
 ./simulator > /tmp/wallbox_simulator.log 2>&1 &
 ```
 
@@ -309,7 +332,7 @@ pkill -f simulator
 
 ### React App Environment
 
-**File:** `/path/to/project/wallbox-react-app/.env`
+**File:** `/path/to/project/web/react-app/.env`
 
 ```env
 REACT_APP_API_BASE_URL=http://192.168.178.34:8080

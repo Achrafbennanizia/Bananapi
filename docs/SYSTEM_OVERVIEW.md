@@ -1,5 +1,17 @@
 # Wallbox Controller - Complete System Overview
 
+## 📝 Environment Configuration
+
+This guide uses placeholders for system-specific values. Replace them with your actual configuration:
+
+| Placeholder      | Description                                            | Example                      |
+| ---------------- | ------------------------------------------------------ | ---------------------------- |
+| `<API_HOST>`     | IP address of target device (Banana Pi / Raspberry Pi) | `192.168.1.100`              |
+| `<SIM_HOST>`     | Simulator host (usually localhost for development)     | `localhost` or `127.0.0.1`   |
+| `<PROJECT_ROOT>` | Full path to project directory                         | `/home/user/wallbox-project` |
+
+---
+
 ## System Architecture
 
 This project provides a complete wallbox charging controller with two operational modes and a React web interface.
@@ -42,7 +54,7 @@ cd ../..
 ./start-dev.sh
 
 # 3. In a new terminal, start React app
-cd wallbox-react-app
+cd web/react-app
 npm install  # First time only
 npm start
 
@@ -229,7 +241,7 @@ PJMT/
 │       ├── wallbox_control_api     # Main executable
 │       └── simulator               # UDP simulator
 │
-├── wallbox-react-app/        # React web interface
+├── web/react-app/        # React web interface
 │   ├── package.json
 │   ├── public/
 │   │   └── index.html
@@ -252,7 +264,7 @@ PJMT/
 ```bash
 # Use development mode
 ./start-dev.sh
-cd wallbox-react-app && npm start
+cd web/react-app && npm start
 
 # Develop and test features safely
 # No hardware required
@@ -273,7 +285,7 @@ cd wallbox-react-app && npm start
 ```bash
 # Run in dev mode
 export WALLBOX_MODE=dev
-cd WallboxCtrl/build
+cd build/bin
 ./wallbox_control_api
 
 # Your mobile app connects to:
@@ -297,7 +309,7 @@ curl http://localhost:8080/api/status
 
 ```bash
 # Terminal 1: Simulator
-cd WallboxCtrl/build
+cd build/bin
 ./simulator
 
 # Terminal 2: Controller
@@ -404,14 +416,14 @@ export WALLBOX_MODE=prod
 
 ### React App API URL
 
-Edit `wallbox-react-app/src/api/wallboxApi.js`:
+Edit `web/react-app/src/api/wallboxApi.js`:
 
 ```javascript
 // For local development
 const API_BASE_URL = "http://localhost:8080";
 
 // For remote Banana Pi
-const API_BASE_URL = "http://192.168.1.100:8080";
+const API_BASE_URL = "http://<REMOTE_API_HOST>:8080";
 ```
 
 ### Port Configuration
@@ -495,7 +507,7 @@ curl -X POST http://localhost:8080/api/charging/stop
 ./start-dev.sh
 
 # Start React app
-cd wallbox-react-app && npm start
+cd web/react-app && npm start
 
 # Open browser: http://localhost:3000
 # Click buttons, verify status updates
@@ -534,7 +546,7 @@ See [MODES_GUIDE.md](MODES_GUIDE.md) for detailed troubleshooting.
 - **MODES_GUIDE.md** - Comprehensive mode documentation
 - **REACT_APP_API.md** - API reference and integration guide
 - **README_V2.md** - v2.0 architecture documentation
-- **wallbox-react-app/README.md** - React app documentation
+- **web/react-app/README.md** - React app documentation
 
 ---
 
@@ -560,6 +572,6 @@ This project provides:
 
 ```bash
 ./start-dev.sh
-cd wallbox-react-app && npm start
+cd web/react-app && npm start
 # Open http://localhost:3000
 ```

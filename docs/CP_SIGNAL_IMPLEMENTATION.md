@@ -768,7 +768,7 @@ export WALLBOX_MODE=production
 1. **Rebuild the project**:
 
 ```bash
-cd WallboxCtrl/build
+cd build/bin
 cmake ..
 make -j4
 ```

@@ -1,6 +1,14 @@
-# Installation Guide
+# Installation Guide (LEGACY)
 
-Complete installation instructions for the ISO 15118 Wallbox Control System.
+> **⚠️ LEGACY DOCUMENT - FOR HISTORICAL REFERENCE ONLY**
+>
+> **This document is outdated and retained only for historical purposes.**
+>
+> **👉 Please use the [Complete Installation Guide](INSTALLATION_GUIDE.md) instead.**
+>
+> The canonical installation guide contains up-to-date instructions for the current project structure.
+
+---
 
 ## Table of Contents
 

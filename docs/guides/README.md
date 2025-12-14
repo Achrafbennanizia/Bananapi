@@ -9,7 +9,7 @@ Comprehensive guides for installing, using, and developing the Wallbox Control S
 | Guide                                 | Description                        | Time      | Difficulty    |
 | ------------------------------------- | ---------------------------------- | --------- | ------------- |
 | [Quick Start](QUICK_START.md)         | Get up and running in 5 minutes    | 5 min     | ⭐ Easy       |
-| [Installation Guide](INSTALLATION.md) | Complete installation instructions | 15-30 min | ⭐⭐ Moderate |
+| [Installation Guide](INSTALLATION_GUIDE.md) | Complete installation instructions | 15-30 min | ⭐⭐ Moderate |
 
 ### User Guides
 
@@ -34,7 +34,7 @@ Comprehensive guides for installing, using, and developing the Wallbox Control S
 → Start with [Quick Start Guide](QUICK_START.md)
 
 **...deploy to Raspberry Pi/Banana Pi**
-→ See [Installation Guide - Deployment Section](INSTALLATION.md#deployment-to-embedded-systems)
+→ See [Installation Guide - Deployment Section](INSTALLATION_GUIDE.md#deployment-to-embedded-systems)
 
 **...contribute code**
 → Read [Development Guide](DEVELOPMENT.md) and [Contributing Guidelines](../../CONTRIBUTING.md)
@@ -179,7 +179,7 @@ See: [Quick Start Guide](QUICK_START.md#running-the-system)
 ./scripts/deploy/install.sh --interactive
 ```
 
-See: [Installation Guide](INSTALLATION.md#deployment-to-embedded-systems)
+See: [Installation Guide](INSTALLATION_GUIDE.md#deployment-to-embedded-systems)
 
 ### Run Tests
 
@@ -210,7 +210,7 @@ See: [Modes Guide](MODES_GUIDE.md)
 ### Path 1: User/Operator
 
 1. [Quick Start Guide](QUICK_START.md) - Get familiar with the system
-2. [Installation Guide](INSTALLATION.md) - Learn installation process
+2. [Installation Guide](INSTALLATION_GUIDE.md) - Learn installation process
 3. [Modes Guide](MODES_GUIDE.md) - Understand different modes
 4. [UDP Sync Guide](UDP_SYNC_GUIDE.md) - Configure networking
 
@@ -229,7 +229,7 @@ See: [Modes Guide](MODES_GUIDE.md)
 
 ### Path 3: DevOps/System Administrator
 
-1. [Installation Guide](INSTALLATION.md) - Deployment procedures
+1. [Installation Guide](INSTALLATION_GUIDE.md) - Deployment procedures
 2. [SSH Setup Guide](SSH_SETUP.md) - Secure authentication
 3. [Modes Guide](MODES_GUIDE.md) - Environment configuration
 4. [UDP Sync Guide](UDP_SYNC_GUIDE.md) - Network setup
@@ -246,7 +246,7 @@ See: [Modes Guide](MODES_GUIDE.md)
 
 ### Technical Support
 
-- Check [Troubleshooting sections](INSTALLATION.md#troubleshooting) in guides
+- Check [Troubleshooting sections](INSTALLATION_GUIDE.md#troubleshooting) in guides
 - Search [existing issues](https://github.com/Achrafbennanizia/Bananapi/issues)
 - Ask in [GitHub Discussions](https://github.com/Achrafbennanizia/Bananapi/discussions)
 

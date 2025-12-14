@@ -340,7 +340,7 @@ const int UDP_OUT_PORT_SIMULATOR = 50010; // Simulator sends
 
 // IP addresses
 const char* LOCALHOST = "127.0.0.1";      // Local testing
-const char* REMOTE_IP = "192.168.1.100";  // Remote deployment
+const char* REMOTE_IP = "<REMOTE_API_HOST>";  // Remote deployment
 ```
 
 ### Message Transmission
@@ -583,6 +583,6 @@ while (running) {
 ## See Also
 
 - [Main README](README.md)
-- [Installation Guide](INSTALLATION.md)
+- [Installation Guide](INSTALLATION_GUIDE.md)
 - [User Guide](WallboxCtrl/README.md)
 - [ISO 15118 Standard](https://www.iso.org/standard/55366.html)

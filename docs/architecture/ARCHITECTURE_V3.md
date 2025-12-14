@@ -675,7 +675,7 @@ WALLBOX_MODE=prod ./wallbox_control_v3
 ./wallbox_control_v3
 
 # Terminal 2: Start React app
-cd wallbox-react-app && npm start
+cd web/react-app && npm start
 
 # Terminal 3: Start simulator
 ./simulator

@@ -62,14 +62,14 @@
 ### Variable Check
 
 ```bash
-grep "g_last" /Users/achraf/pro/PJMT/WallboxCtrl/src/simulator.cpp
+grep "g_last" <PROJECT_ROOT>/WallboxCtrl/src/simulator.cpp
 # Result: No matches ✓
 ```
 
 ### Function Check
 
 ```bash
-grep "print_wallbox_status\|ensure_wallbox_enabled" /Users/achraf/pro/PJMT/WallboxCtrl/src/simulator.cpp
+grep "print_wallbox_status\|ensure_wallbox_enabled" <PROJECT_ROOT>/WallboxCtrl/src/simulator.cpp
 # Result: No matches ✓
 ```
 
@@ -154,7 +154,7 @@ All wallbox status variables and tracking logic have been successfully removed f
 ### Start Simulator
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/build
+cd <PROJECT_ROOT>/build/bin
 ./simulator
 ```
 
@@ -175,14 +175,14 @@ cd /Users/achraf/pro/PJMT/WallboxCtrl/build
 
 ### Files Modified
 
-- `/Users/achraf/pro/PJMT/WallboxCtrl/src/simulator.cpp` (main changes)
+- `<PROJECT_ROOT>/WallboxCtrl/src/simulator.cpp` (main changes)
 
 ### Files Created
 
-- `/Users/achraf/pro/PJMT/docs/SIMULATOR_INDEPENDENCE.md`
-- `/Users/achraf/pro/PJMT/docs/REMOVAL_SUMMARY.md`
-- `/Users/achraf/pro/PJMT/docs/COMPLETE.md`
-- `/Users/achraf/pro/PJMT/docs/CHECKLIST.md`
+- `<PROJECT_ROOT>/docs/SIMULATOR_INDEPENDENCE.md`
+- `<PROJECT_ROOT>/docs/REMOVAL_SUMMARY.md`
+- `<PROJECT_ROOT>/docs/COMPLETE.md`
+- `<PROJECT_ROOT>/docs/CHECKLIST.md`
 
 ---
 

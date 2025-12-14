@@ -1,5 +1,28 @@
 # Complete Installation Guide for Wallbox Controller
 
+## 📝 Placeholder Substitution Guide
+
+Throughout this guide, you'll see placeholders that need to be replaced with your actual values:
+
+| Placeholder      | Description                                                | Example                      |
+| ---------------- | ---------------------------------------------------------- | ---------------------------- |
+| `<API_HOST>`     | IP address of your target device (Banana Pi, Raspberry Pi) | `192.168.1.100`              |
+| `<SIM_HOST>`     | IP address where simulator runs (usually localhost)        | `localhost` or `127.0.0.1`   |
+| `<PROJECT_ROOT>` | Full path to project directory on your machine             | `/home/user/wallbox-project` |
+| `<PI_USER>`      | Username on target device                                  | `pi`, `root`, `bananapi`     |
+
+**Example substitution:**
+
+```bash
+# Documentation shows:
+ssh <PI_USER>@<API_HOST>
+
+# You would use:
+ssh pi@192.168.1.100
+```
+
+---
+
 ## Overview
 
 This guide provides detailed instructions for installing, building, and deploying the Wallbox Controller system on any ARM-based single-board computer (Raspberry Pi, Banana Pi, Orange Pi, etc.).
@@ -110,7 +133,7 @@ sudo dd if=Armbian_*.img of=/dev/sdX bs=4M status=progress
 
 ```bash
 # SSH into your Pi
-ssh pi@192.168.1.XXX
+ssh pi@<SSH_TARGET_SUBNET>
 # Default password: raspberry (Raspberry Pi) or 1234 (Armbian)
 
 # Change default password immediately
@@ -135,7 +158,7 @@ sudo nano /etc/dhcpcd.conf
 
 # Add at the end:
 interface eth0
-static ip_address=192.168.178.34/24
+static ip_address=<API_HOST>/24
 static routers=192.168.178.1
 static domain_name_servers=192.168.178.1 8.8.8.8
 
@@ -285,12 +308,12 @@ git clone -b main https://github.com/yourusername/wallbox-controller.git .
 cd /path/to/your/project
 
 # Copy entire WallboxCtrl directory
-scp -r WallboxCtrl pi@192.168.178.34:~/wallbox-project/
+scp -r WallboxCtrl pi@<API_HOST>:~/wallbox-project/
 
 # Or copy specific directories
-scp -r WallboxCtrl/src pi@192.168.178.34:~/wallbox-project/
-scp -r WallboxCtrl/include pi@192.168.178.34:~/wallbox-project/
-scp -r WallboxCtrl/build pi@192.168.178.34:~/wallbox-project/
+scp -r WallboxCtrl/src pi@<API_HOST>:~/wallbox-project/
+scp -r WallboxCtrl/include pi@<API_HOST>:~/wallbox-project/
+scp -r build/bin pi@<API_HOST>:~/wallbox-project/
 ```
 
 #### Option C: Manual File Creation
@@ -488,7 +511,7 @@ nano config.json
   "network": {
     "udp_listen_port": 50010,
     "udp_send_port": 50011,
-    "udp_send_address": "192.168.178.23",
+    "udp_send_address": "<SIM_HOST>",
     "api_port": 8080
   },
   "gpio_pins": {
@@ -519,7 +542,7 @@ nano config.json
   "network": {
     "udp_listen_port": 50010,
     "udp_send_port": 50011,
-    "udp_send_address": "192.168.178.23",
+    "udp_send_address": "<SIM_HOST>",
     "api_port": 8080
   },
   "gpio_pins": {
@@ -635,7 +658,7 @@ Configuration:
   GPIO Type: stub (simulator)
   UDP Listen Port: 50010
   UDP Send Port: 50011
-  UDP Send Address: 192.168.178.23
+  UDP Send Address: <SIM_HOST>
   REST API Port: 8080
 
 [GPIO Factory] Creating stub GPIO controller (development mode)
@@ -767,7 +790,7 @@ sudo systemctl restart wallbox
 curl http://localhost:8080/api/status
 
 # From development machine
-curl http://192.168.178.34:8080/api/status
+curl http://<API_HOST>:8080/api/status
 
 # Expected response:
 # {"state":"IDLE","wallboxEnabled":true,"relayEnabled":false,"charging":false,"timestamp":1234567890}
@@ -777,31 +800,31 @@ curl http://192.168.178.34:8080/api/status
 
 ```bash
 # Health check
-curl http://192.168.178.34:8080/health
+curl http://<API_HOST>:8080/health
 
 # Get status
-curl http://192.168.178.34:8080/api/status
+curl http://<API_HOST>:8080/api/status
 
 # Get relay status
-curl http://192.168.178.34:8080/api/relay
+curl http://<API_HOST>:8080/api/relay
 
 # Enable wallbox
-curl -X POST http://192.168.178.34:8080/api/wallbox/enable
+curl -X POST http://<API_HOST>:8080/api/wallbox/enable
 
 # Disable wallbox
-curl -X POST http://192.168.178.34:8080/api/wallbox/disable
+curl -X POST http://<API_HOST>:8080/api/wallbox/disable
 
 # Start charging
-curl -X POST http://192.168.178.34:8080/api/charging/start
+curl -X POST http://<API_HOST>:8080/api/charging/start
 
 # Stop charging
-curl -X POST http://192.168.178.34:8080/api/charging/stop
+curl -X POST http://<API_HOST>:8080/api/charging/stop
 
 # Pause charging
-curl -X POST http://192.168.178.34:8080/api/charging/pause
+curl -X POST http://<API_HOST>:8080/api/charging/pause
 
 # Resume charging
-curl -X POST http://192.168.178.34:8080/api/charging/resume
+curl -X POST http://<API_HOST>:8080/api/charging/resume
 ```
 
 ### 2. Test UDP Communication
@@ -810,12 +833,12 @@ curl -X POST http://192.168.178.34:8080/api/charging/resume
 
 ```bash
 # Build and run simulator
-cd /path/to/project/WallboxCtrl/build
+cd /path/to/project/build/bin
 make simulator
 ./simulator
 
 # Configure UDP
-> setudp 192.168.178.34 50011 50010
+> setudp <API_HOST> 50011 50010
 
 # Test commands
 > on
@@ -851,7 +874,7 @@ cd ~/wallbox-project/build
 sudo apt install apache2-utils -y
 
 # Test API performance
-ab -n 1000 -c 10 http://192.168.178.34:8080/api/status
+ab -n 1000 -c 10 http://<API_HOST>:8080/api/status
 
 # Results show:
 # - Requests per second
@@ -1039,7 +1062,7 @@ crontab -e
 sudo apt install wireguard -y
 
 # Or use SSH tunneling
-ssh -L 8080:localhost:8080 pi@192.168.178.34
+ssh -L 8080:localhost:8080 pi@<API_HOST>
 
 # Now access from local machine:
 curl http://localhost:8080/api/status
@@ -1129,10 +1152,10 @@ cat config.json | grep -A5 network
 
 ```bash
 # Ping simulator machine
-ping 192.168.178.23
+ping <SIM_HOST>
 
 # Test UDP port is open
-nc -u -z -v 192.168.178.34 50010
+nc -u -z -v <API_HOST> 50010
 ```
 
 #### 5. Wallbox Crashes on Startup

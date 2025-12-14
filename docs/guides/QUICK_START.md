@@ -27,7 +27,7 @@ cd /path/to/project/WallboxCtrl
 ### Terminal 1 - Wallbox Controller
 
 ```bash
-cd /path/to/project/WallboxCtrl/build
+cd /path/to/project/build/bin
 ./wallbox_control_v3
 ```
 
@@ -41,7 +41,7 @@ cd /path/to/project/WallboxCtrl/build
 ### Terminal 2 - ISO 15118 Simulator
 
 ```bash
-cd /path/to/project/WallboxCtrl/build
+cd /path/to/project/build/bin
 ./simulator
 ```
 
@@ -123,17 +123,17 @@ curl -X POST http://localhost:8080/api/disable
 
 ```bash
 cd /path/to/project/WallboxCtrl
-./scripts/deploy.sh 192.168.178.34 --interactive
+./scripts/deploy.sh <API_HOST> --interactive
 ```
 
 ### Direct Deployment
 
 ```bash
 # Production mode
-./scripts/deploy.sh 192.168.178.34 --mode production
+./scripts/deploy.sh <API_HOST> --mode production
 
 # Development mode with custom user
-PI_USER=admin ./scripts/deploy.sh 192.168.178.34 --mode development
+PI_USER=admin ./scripts/deploy.sh <API_HOST> --mode development
 ```
 
 ## 📊 View Logs
@@ -244,7 +244,7 @@ tail -f /tmp/wallbox_simulator.log
 
 ```bash
 bash scripts/start-dev.sh
-cd wallbox-react-app && npm start
+cd web/react-app && npm start
 ```
 
 Control everything through the web interface.
@@ -263,7 +263,7 @@ bash scripts/start-api-only.sh
 **Terminal 2 - Interactive Simulator:**
 
 ```bash
-cd /path/to/project/WallboxCtrl/build
+cd /path/to/project/build/bin
 ./simulator
 ```
 

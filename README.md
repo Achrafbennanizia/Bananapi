@@ -406,7 +406,7 @@ PJMT/
 │   ├── 📂 libmicrohttpd/              # HTTP server library
 │   └── 📂 Dox/                        # Doxygen documentation
 │
-├── 📂 wallbox-react-app/              # 🌐 Presentation Layer (React)
+├── 📂 web/react-app/              # 🌐 Presentation Layer (React)
 │   ├── 📂 public/
 │   │   └── index.html                 # HTML template
 │   │

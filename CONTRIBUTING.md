@@ -69,13 +69,11 @@ git remote add upstream https://github.com/Achrafbennanizia/Bananapi.git
 
 ```bash
 # Build
-mkdir build && cd build
-cmake -DBUILD_MODE=development ..
-make -j$(nproc)
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+cmake --build build -j$(nproc)
 
 # Run tests
-cd ..
-./scripts/test/test_wallbox.sh
+./scripts/test/run_all_tests.sh
 ```
 
 ## Development Workflow

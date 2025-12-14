@@ -21,7 +21,7 @@ docs/
 
 1. [Project README](../README.md) - Overview and features
 2. [Quick Start Guide](guides/QUICK_START.md) - Get up and running in 5 minutes
-3. [Installation Guide](guides/INSTALLATION.md) - Detailed installation instructions
+3. [Installation Guide](guides/INSTALLATION_GUIDE.md) - Detailed installation instructions
 4. [File Structure](FILE_STRUCTURE.md) - Understand the project layout
 
 ## 📖 Main Documentation
@@ -31,7 +31,7 @@ docs/
 | Document                                     | Description                        |
 | -------------------------------------------- | ---------------------------------- |
 | [Quick Start](guides/QUICK_START.md)         | 5-minute setup and first run       |
-| [Installation Guide](guides/INSTALLATION.md) | Complete installation instructions |
+| [Installation Guide](guides/INSTALLATION_GUIDE.md) | Complete installation instructions |
 | [System Overview](SYSTEM_OVERVIEW.md)        | High-level system architecture     |
 | [File Structure](FILE_STRUCTURE.md)          | Project organization explained     |
 
@@ -93,7 +93,7 @@ docs/
 
 **Installation & Setup**
 
-- [Installation Guide](guides/INSTALLATION.md)
+- [Installation Guide](guides/INSTALLATION_GUIDE.md)
 - [Quick Start](guides/QUICK_START.md)
 - [SSH Setup](guides/SSH_SETUP.md)
 
@@ -126,7 +126,7 @@ docs/
 **Users / Operators**
 
 - Start: [Quick Start Guide](guides/QUICK_START.md)
-- Install: [Installation Guide](guides/INSTALLATION.md)
+- Install: [Installation Guide](guides/INSTALLATION_GUIDE.md)
 - Configure: [Modes Guide](guides/MODES_GUIDE.md)
 - Deploy: [SSH Setup](guides/SSH_SETUP.md)
 

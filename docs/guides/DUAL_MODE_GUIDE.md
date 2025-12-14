@@ -31,7 +31,7 @@ cd ~/wallbox-src/build
 ./wallbox_control_v3 > /tmp/wallbox_api.log 2>&1 &
 ```
 
-Access API at: `http://192.168.178.34:8080`
+Access API at: `http://<API_HOST>:8080`
 
 ### Interactive Mode (Testing)
 
@@ -184,7 +184,7 @@ lsof -i :50010
 
 ```bash
 # In simulator:
-setudp 192.168.178.34 50011 50010
+setudp <API_HOST> 50011 50010
 ```
 
 ### Problem: Can't run dual mode in background
@@ -229,7 +229,7 @@ cd ~/wallbox-src/build
 ./wallbox_control_v3 --dual
 
 # In terminal 2 (on Mac):
-curl http://192.168.178.34:8080/api/status
+curl http://<API_HOST>:8080/api/status
 ```
 
 ### Test 2: Verify Interactive Terminal Works
@@ -253,7 +253,7 @@ curl http://192.168.178.34:8080/api/status
 ./wallbox_control_v3 --dual
 
 # In simulator (on Mac):
-setudp 192.168.178.34 50011 50010
+setudp <API_HOST> 50011 50010
 on
 status
 # Should show "State 2" (ON)
@@ -266,7 +266,7 @@ status
 ./wallbox_control_v3 --dual
 
 # Via API (from Mac):
-curl http://192.168.178.34:8080/api/start
+curl http://<API_HOST>:8080/api/start
 
 # Via terminal (in dual mode):
 > status
@@ -277,7 +277,7 @@ pause
 # Should pause charging
 
 # Via API (check state changed):
-curl http://192.168.178.34:8080/api/status
+curl http://<API_HOST>:8080/api/status
 # Should show PAUSED
 ```
 

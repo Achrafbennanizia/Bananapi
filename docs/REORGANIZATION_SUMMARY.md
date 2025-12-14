@@ -18,7 +18,7 @@ Successfully reorganized the entire project to follow **industry-standard C++ pr
 PJMT/
 ├── WallboxCtrl/          # Main source directory
 ├── LibPubWallbox/        # ISO protocol library
-├── wallbox-react-app/    # React app
+├── web/react-app/    # React app
 ├── *.md (scattered)      # Documentation at root
 ├── *.sh (scattered)      # Scripts at root
 └── Mixed organization
@@ -153,7 +153,7 @@ Split single `config.json` into environment-specific files:
 ✅ **Build Verification**:
 
 ```bash
-cd /Users/achraf/pro/PJMT
+cd <PROJECT_ROOT>
 rm -rf build && mkdir build && cd build
 cmake -DBUILD_MODE=production ..
 make -j10
@@ -184,7 +184,8 @@ make -j10
 - 10 new source files in `src/`
 - 2 new test files in `tests/integration/`
 - New: CMakeLists.txt, CHANGELOG.md, VERSION
-- Preserved legacy directories for compatibility
+
+**Note**: Legacy directories (`WallboxCtrl/`, `wallbox-portable-deploy/`) were **retained** for backward compatibility and are not removed in v4.1.0.
 
 ## Benefits Achieved
 
@@ -233,7 +234,7 @@ cd WallboxCtrl
 mkdir build && cd build
 cmake ..
 make
-./wallbox_control_v4  # In WallboxCtrl/build/
+./wallbox_control_v4  # In build/bin/
 ```
 
 **New Way (v4.1)**:
@@ -321,7 +322,7 @@ config/test.json
 ### Moved
 
 - LibPubWallbox/ → external/LibPubWallbox/
-- wallbox-react-app/ → web/react-app/
+- web/react-app/ → web/react-app/
 - \*.md files → docs/
 - Scripts → scripts/{deploy,test}/
 - WallboxCtrl/include/ → include/wallbox/

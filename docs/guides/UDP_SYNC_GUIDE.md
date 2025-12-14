@@ -15,7 +15,7 @@ UDP communication between wallbox and simulator not working? Ports likely revers
   "network": {
     "udp_listen_port": 50010,           ← Wallbox receives commands here
     "udp_send_port": 50011,              ← Wallbox sends responses here
-    "udp_send_address": "192.168.178.23" ← Mac IP address
+    "udp_send_address": "<SIM_HOST>" ← Mac IP address
   }
 }
 ```
@@ -24,27 +24,27 @@ UDP communication between wallbox and simulator not working? Ports likely revers
 
 ```bash
 ./simulator
-> setudp 192.168.178.34 50011 50010
+> setudp <API_HOST> 50011 50010
 #        ^^^^^^^^^^^^^^^^ ^^^^^ ^^^^^
 #        Banana Pi IP     send  receive
 ```
 
 The simulator will:
 
-- Send commands to `192.168.178.34:50010`
+- Send commands to `<API_HOST>:50010`
 - Receive responses on local port `50011`
 
 ## Understanding the Port Mapping
 
 Think of it like a **phone call**:
 
-- Wallbox phone number: `192.168.178.34:50010`
-- Simulator phone number: `192.168.178.23:50011`
+- Wallbox phone number: `<API_HOST>:50010`
+- Simulator phone number: `<SIM_HOST>:50011`
 
 ```
 ┌─────────────────────┐              ┌─────────────────────┐
 │   Simulator (Mac)   │              │ Wallbox (Banana Pi) │
-│  192.168.178.23     │              │  192.168.178.34     │
+│  <SIM_HOST>     │              │  <API_HOST>     │
 │                     │              │                     │
 │  Listen: 50011  ◄───┼──────────────┼─── Send: 50011      │
 │  Send:   50010  ───-┼──────────────┼───► Listen: 50010   │
@@ -56,14 +56,14 @@ Think of it like a **phone call**:
 
 ### 1. Configure Wallbox (One-Time Setup)
 
-Edit `/path/to/project/WallboxCtrl/build/config.json`:
+Edit `/path/to/project/build/bin/config.json`:
 
 ```json
 {
   "network": {
     "udp_listen_port": 50010,
     "udp_send_port": 50011,
-    "udp_send_address": "192.168.178.23",
+    "udp_send_address": "<SIM_HOST>",
     "api_port": 8080
   }
 }
@@ -72,7 +72,7 @@ Edit `/path/to/project/WallboxCtrl/build/config.json`:
 Copy to Banana Pi:
 
 ```bash
-scp /path/to/project/WallboxCtrl/build/config.json bananapi:~/wallbox-src/build/
+scp /path/to/project/build/bin/config.json bananapi:~/wallbox-src/build/
 ```
 
 ### 2. Start Wallbox
@@ -88,18 +88,18 @@ You should see:
 ```
 UDP Listen Port: 50010
 UDP Send Port: 50011
-UDP Send Address: 192.168.178.23
+UDP Send Address: <SIM_HOST>
 ```
 
 ### 3. Configure Simulator (Every Time)
 
 ```bash
-cd /path/to/project/WallboxCtrl/build
+cd /path/to/project/build/bin
 ./simulator
 
 # In simulator:
-> setudp 192.168.178.34 50011 50010
-✓ UDP configuration updated to: 192.168.178.34 50011 -> 50010
+> setudp <API_HOST> 50011 50010
+✓ UDP configuration updated to: <API_HOST> 50011 -> 50010
 
 > status
 ```
@@ -121,13 +121,13 @@ Charging State: idle
 ### ❌ Mistake 1: Wrong IP in config.json
 
 ```json
-"udp_send_address": "192.168.178.34"  // WRONG - This is wallbox's own IP!
+"udp_send_address": "<API_HOST>"  // WRONG - This is wallbox's own IP!
 ```
 
 ✅ Should be:
 
 ```json
-"udp_send_address": "192.168.178.23"  // CORRECT - Simulator's IP
+"udp_send_address": "<SIM_HOST>"  // CORRECT - Simulator's IP
 ```
 
 ### ❌ Mistake 2: Ports Reversed in config.json
@@ -147,13 +147,13 @@ Charging State: idle
 ### ❌ Mistake 3: Wrong simulator setudp command
 
 ```bash
-> setudp 192.168.178.23 50010 50011  # WRONG - Using Mac's IP
+> setudp <SIM_HOST> 50010 50011  # WRONG - Using Mac's IP
 ```
 
 ✅ Should be:
 
 ```bash
-> setudp 192.168.178.34 50011 50010  # CORRECT - Using Banana Pi's IP
+> setudp <API_HOST> 50011 50010  # CORRECT - Using Banana Pi's IP
 ```
 
 ## Troubleshooting
@@ -197,14 +197,14 @@ ssh bananapi 'hostname -I'
 ```bash
 # In simulator:
 > getudp
-UDP Address: 192.168.178.34
+UDP Address: <API_HOST>
 UDP In Port: 50011
 UDP Out Port: 50010
 ```
 
 Should match:
 
-- Address: `192.168.178.34` (Banana Pi)
+- Address: `<API_HOST>` (Banana Pi)
 - In Port: `50011` (where simulator listens)
 - Out Port: `50010` (where wallbox listens)
 
@@ -225,8 +225,8 @@ ssh bananapi 'cd ~/wallbox-src/build && ./wallbox_control_v3'
 
 | Component               | Listen Port | Send Port | Send Address               |
 | ----------------------- | ----------- | --------- | -------------------------- |
-| **Wallbox** (Banana Pi) | 50010       | 50011     | 192.168.178.23 (Mac)       |
-| **Simulator** (Mac)     | 50011       | 50010     | 192.168.178.34 (Banana Pi) |
+| **Wallbox** (Banana Pi) | 50010       | 50011     | <SIM_HOST> (Mac)       |
+| **Simulator** (Mac)     | 50011       | 50010     | <API_HOST> (Banana Pi) |
 
 ### Why These Specific Ports?
 
@@ -247,7 +247,7 @@ Edit `config.json`:
   "network": {
     "udp_listen_port": 60010, // Changed from 50010
     "udp_send_port": 60011, // Changed from 50011
-    "udp_send_address": "192.168.178.23"
+    "udp_send_address": "<SIM_HOST>"
   }
 }
 ```
@@ -255,7 +255,7 @@ Edit `config.json`:
 ### Update Simulator
 
 ```bash
-> setudp 192.168.178.34 60011 60010
+> setudp <API_HOST> 60011 60010
 ```
 
 **Important**: Ports must be:
@@ -282,10 +282,10 @@ Always use `setudp` command after starting simulator.
 
 ```bash
 # Ping Banana Pi from Mac:
-ping 192.168.178.34
+ping <API_HOST>
 
 # Ping Mac from Banana Pi:
-ssh bananapi 'ping -c 3 192.168.178.23'
+ssh bananapi 'ping -c 3 <SIM_HOST>'
 ```
 
 ## Quick Test Commands
@@ -297,9 +297,9 @@ ssh bananapi 'ping -c 3 192.168.178.23'
 ssh bananapi 'cd ~/wallbox-src/build && ./wallbox_control_v3'
 
 # Terminal 2 - Test Simulator
-cd /path/to/project/WallboxCtrl/build
+cd /path/to/project/build/bin
 ./simulator
-> setudp 192.168.178.34 50011 50010
+> setudp <API_HOST> 50011 50010
 > on
 > charge
 > status
@@ -309,7 +309,7 @@ cd /path/to/project/WallboxCtrl/build
 Expected output:
 
 ```
-✓ UDP configuration updated to: 192.168.178.34 50011 -> 50010
+✓ UDP configuration updated to: <API_HOST> 50011 -> 50010
 ✓ Main contactor turned ON
 ✓ Charging state changed to: CHARGING
 Main Contactor: ON
@@ -328,7 +328,7 @@ Simulator sends on 50010 → Wallbox listens on 50010 ✓
 When in doubt:
 
 1. Check `config.json` on Banana Pi
-2. Use `setudp 192.168.178.34 50011 50010` in simulator
+2. Use `setudp <API_HOST> 50011 50010` in simulator
 3. Test with `> status` command
 
 ## Related Documentation

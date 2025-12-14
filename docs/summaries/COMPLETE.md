@@ -10,7 +10,7 @@
 
 ### Code Modifications
 
-**File**: `/Users/achraf/pro/PJMT/WallboxCtrl/src/simulator.cpp`
+**File**: `<PROJECT_ROOT>/WallboxCtrl/src/simulator.cpp`
 
 #### Removed Variables (4)
 
@@ -102,7 +102,7 @@
 ### Build Status
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/build
+cd <PROJECT_ROOT>/build/bin
 make clean && make simulator
 ```
 
@@ -235,7 +235,7 @@ if (cmd == "charge") {
 ### Starting Simulator
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/build
+cd <PROJECT_ROOT>/build/bin
 ./simulator
 ```
 

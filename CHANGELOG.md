@@ -33,7 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `src/simulator/` - ISO 15118 simulator
 - **BREAKING**: Moved headers from `WallboxCtrl/include/` to `include/wallbox/`
 - **BREAKING**: Moved `LibPubWallbox/` to `external/LibPubWallbox/`
-- **BREAKING**: Moved `wallbox-react-app/` to `web/react-app/`
+- **BREAKING**: Moved `web/react-app/` to `web/react-app/`
 - **BREAKING**: Split `config.json` into environment-specific files in `config/`
 - **BREAKING**: Updated all include paths to use configured include directories
 - Migrated from relative includes (`../../LibPubWallbox/`) to direct includes
@@ -99,7 +99,7 @@ To migrate from v4.0 to v4.1:
 
 4. **Executables**:
    ```bash
-   # Old: WallboxCtrl/build/wallbox_control_v4
+   # Old: build/bin/wallbox_control_v4
    # New: build/bin/wallbox_control_v4
    ```
 

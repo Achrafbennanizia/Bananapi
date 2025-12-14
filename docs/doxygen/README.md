@@ -63,7 +63,7 @@ python3 -m http.server 8000
 
 ```bash
 # After code changes, regenerate:
-cd /Users/achraf/pro/PJMT
+cd <PROJECT_ROOT>
 doxygen Doxyfile
 ```
 
