@@ -397,7 +397,7 @@ start_service() {
     
     # Start service
     ssh "$SSH_USER@$PI_HOST" "cd $REMOTE_DIR/build && \
-        nohup ./wallbox_control_v3 </dev/null >/tmp/wallbox.log 2>&1 &"
+        nohup ./wallbox_control_v4 </dev/null >/tmp/wallbox.log 2>&1 &"
     
     sleep 3
     
@@ -480,7 +480,7 @@ print_summary() {
     echo "    ssh $SSH_USER@$PI_HOST 'pkill wallbox_control'"
     echo ""
     echo "  Restart service:"
-    echo "    ssh $SSH_USER@$PI_HOST 'cd $REMOTE_DIR/build && nohup ./wallbox_control_v3 </dev/null >/tmp/wallbox.log 2>&1 &'"
+    echo "    ssh $SSH_USER@$PI_HOST 'cd $REMOTE_DIR/build && nohup ./wallbox_control_v4 </dev/null >/tmp/wallbox.log 2>&1 &'"
     echo ""
     echo "  Enable systemd service:"
     echo "    ssh $SSH_USER@$PI_HOST 'sudo systemctl enable wallbox && sudo systemctl start wallbox'"

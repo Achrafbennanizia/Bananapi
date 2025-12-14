@@ -14,7 +14,7 @@ SIM_PID=$!
 sleep 1
 
 echo "Starting wallbox in background..."
-./wallbox_control_v3 > /tmp/wallbox_test.log 2>&1 &
+./wallbox_control_v4 > /tmp/wallbox_test.log 2>&1 &
 WB_PID=$!
 sleep 2
 

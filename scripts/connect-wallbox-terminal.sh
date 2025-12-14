@@ -1,8 +1,8 @@
 #!/bin/bash
-# Direct terminal interface to Banana Pi Wallbox Controller v3
+# Direct terminal interface to Banana Pi Wallbox Controller v4
 
 echo "╔══════════════════════════════════════════════════════════╗"
-echo "║    Wallbox v3 Interactive Terminal - Full Features      ║"
+echo "║    Wallbox v4 Interactive Terminal - Full Features      ║"
 echo "╚══════════════════════════════════════════════════════════╝"
 echo ""
 echo "Available commands:"
@@ -24,5 +24,5 @@ echo ""
 echo "Connecting to bananapi..."
 echo ""
 
-# SSH to Banana Pi and run v3 in interactive mode
-ssh -t bananapi 'cd ~/wallbox-src/build && ./wallbox_control_v3 --interactive'
+# SSH to Banana Pi and run v4 in interactive mode
+ssh -t bananapi 'cd ~/wallbox-src/build && ./wallbox_control_v4 --interactive'

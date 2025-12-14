@@ -203,7 +203,7 @@ echo "  UDP Ports: 50010 (RX), 50011 (TX)"
 echo ""
 
 echo -e "${BLUE}Files:${NC}"
-echo "  Executable: ./build/wallbox_control_v3"
+echo "  Executable: ./build/wallbox_control_v4"
 echo "  Simulator: ./build/simulator"
 echo "  Config: ./config/config.json"
 echo "  Wallbox Log: $WALLBOX_LOG"

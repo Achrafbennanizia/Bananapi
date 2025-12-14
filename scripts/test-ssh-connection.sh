@@ -17,7 +17,7 @@ fi
 echo ""
 
 echo "2. Wallbox status..."
-PROCESSES=$(ssh bananapi 'pgrep -f wallbox_control_v3 | wc -l' 2>&1)
+PROCESSES=$(ssh bananapi 'pgrep -f wallbox_control_v4 | wc -l' 2>&1)
 echo "   Wallbox processes running: $PROCESSES"
 if [ "$PROCESSES" -gt 0 ]; then
     echo "   ✅ Wallbox is running"

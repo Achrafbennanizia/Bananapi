@@ -8,7 +8,7 @@ export WALLBOX_MODE=dev
 echo "🚀 Starting API server in background..."
 
 cd WallboxCtrl/build
-./wallbox_control_v3 > /tmp/wallbox_api.log 2>&1 &
+./wallbox_control_v4 > /tmp/wallbox_api.log 2>&1 &
 PID_API=$!
 
 sleep 2

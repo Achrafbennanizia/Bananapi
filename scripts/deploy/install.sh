@@ -363,7 +363,7 @@ print('Config mode set to: $BUILD_MODE')
     # List built executables
     log "Build completed successfully"
     log "Executables:"
-    ls -lh wallbox_control_v3 simulator 2>/dev/null | awk '{print "  - " $9 " (" $5 ")"}'
+    ls -lh wallbox_control_v4 simulator 2>/dev/null | awk '{print "  - " $9 " (" $5 ")"}'
 }
 
 configure_firewall() {
@@ -393,7 +393,7 @@ Type=simple
 User=$USER
 Group=$USER
 WorkingDirectory=$INSTALL_DIR/build
-ExecStart=$INSTALL_DIR/build/wallbox_control_v3
+ExecStart=$INSTALL_DIR/build/wallbox_control_v4
 Restart=always
 RestartSec=10
 StandardOutput=journal
@@ -425,7 +425,7 @@ verify_installation() {
     ISSUES=()
     
     # Check executables
-    [ -x "wallbox_control_v3" ] || ISSUES+=("wallbox_control_v3 not found or not executable")
+    [ -x "wallbox_control_v4" ] || ISSUES+=("wallbox_control_v4 not found or not executable")
     [ -x "simulator" ] || ISSUES+=("simulator not found or not executable")
     
     # Check config
@@ -467,11 +467,11 @@ print_summary() {
     if [ "$BUILD_MODE" = "production" ]; then
         echo "2. Test run (production mode - requires GPIO access):"
         echo "   cd $INSTALL_DIR/build"
-        echo "   sudo ./wallbox_control_v3"
+        echo "   sudo ./wallbox_control_v4"
     else
         echo "2. Test run (development mode):"
         echo "   cd $INSTALL_DIR/build"
-        echo "   ./wallbox_control_v3"
+        echo "   ./wallbox_control_v4"
         echo ""
         echo "   Start simulator in another terminal:"
         echo "   ./simulator"
