@@ -40,7 +40,7 @@ Your complete wallbox system is now operational with all three components:
 
 ### 🔧 Simulator (Mac)
 
-**Location:** `/Users/achraf/pro/PJMT/WallboxCtrl/build/simulator`  
+**Location:** `/path/to/project/WallboxCtrl/build/simulator`  
 **Ports:** Listen 50011, Send to 192.168.178.34:50010  
 **Log:** `/tmp/wallbox_simulator.log`
 
@@ -216,7 +216,7 @@ tail -f /tmp/react_app.log
 
 # Restart
 lsof -ti:3000 | xargs kill -9
-cd /Users/achraf/pro/PJMT/wallbox-react-app
+cd /path/to/project/wallbox-react-app
 BROWSER=none npm start > /tmp/react_app.log 2>&1 &
 ```
 
@@ -244,7 +244,7 @@ lsof -i:50011
 
 # Restart
 pkill -f simulator
-cd /Users/achraf/pro/PJMT/WallboxCtrl/build
+cd /path/to/project/WallboxCtrl/build
 ./simulator > /tmp/wallbox_simulator.log 2>&1 &
 ```
 
@@ -266,7 +266,7 @@ ipconfig getifaddr en0
 ### Making Changes to React App
 
 ```bash
-cd /Users/achraf/pro/PJMT/wallbox-react-app
+cd /path/to/project/wallbox-react-app
 
 # Edit files in src/
 # Changes auto-reload in browser
@@ -279,10 +279,10 @@ tail -f /tmp/react_app.log
 
 ```bash
 # Edit locally
-cd /Users/achraf/pro/PJMT/WallboxCtrl/src
+cd /path/to/project/WallboxCtrl/src
 
 # Sync to Banana Pi
-rsync -avz /Users/achraf/pro/PJMT/WallboxCtrl/ bananapi:~/wallbox-src/
+rsync -avz /path/to/project/WallboxCtrl/ bananapi:~/wallbox-src/
 
 # Rebuild on Banana Pi
 ssh bananapi 'cd ~/wallbox-src/build && make wallbox_control_api'
@@ -295,7 +295,7 @@ ssh bananapi 'killall wallbox_control_api; cd ~/wallbox-src/build && nohup ./wal
 
 ```bash
 # Edit simulator
-cd /Users/achraf/pro/PJMT/WallboxCtrl/src
+cd /path/to/project/WallboxCtrl/src
 
 # Rebuild
 cd ../build && make simulator
@@ -309,7 +309,7 @@ pkill -f simulator
 
 ### React App Environment
 
-**File:** `/Users/achraf/pro/PJMT/wallbox-react-app/.env`
+**File:** `/path/to/project/wallbox-react-app/.env`
 
 ```env
 REACT_APP_API_BASE_URL=http://192.168.178.34:8080
@@ -396,7 +396,7 @@ Host bananapi
 
 ## Support Scripts Location
 
-All management scripts are in `/Users/achraf/pro/PJMT/`:
+All management scripts are in `/path/to/project/`:
 
 - `start-complete-system.sh` - Start everything
 - `check-system-status.sh` - Check status

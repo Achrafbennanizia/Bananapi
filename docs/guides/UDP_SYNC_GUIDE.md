@@ -56,7 +56,7 @@ Think of it like a **phone call**:
 
 ### 1. Configure Wallbox (One-Time Setup)
 
-Edit `/Users/achraf/pro/PJMT/WallboxCtrl/build/config.json`:
+Edit `/path/to/project/WallboxCtrl/build/config.json`:
 
 ```json
 {
@@ -72,7 +72,7 @@ Edit `/Users/achraf/pro/PJMT/WallboxCtrl/build/config.json`:
 Copy to Banana Pi:
 
 ```bash
-scp /Users/achraf/pro/PJMT/WallboxCtrl/build/config.json bananapi:~/wallbox-src/build/
+scp /path/to/project/WallboxCtrl/build/config.json bananapi:~/wallbox-src/build/
 ```
 
 ### 2. Start Wallbox
@@ -94,7 +94,7 @@ UDP Send Address: 192.168.178.23
 ### 3. Configure Simulator (Every Time)
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/build
+cd /path/to/project/WallboxCtrl/build
 ./simulator
 
 # In simulator:
@@ -297,7 +297,7 @@ ssh bananapi 'ping -c 3 192.168.178.23'
 ssh bananapi 'cd ~/wallbox-src/build && ./wallbox_control_v3'
 
 # Terminal 2 - Test Simulator
-cd /Users/achraf/pro/PJMT/WallboxCtrl/build
+cd /path/to/project/WallboxCtrl/build
 ./simulator
 > setudp 192.168.178.34 50011 50010
 > on

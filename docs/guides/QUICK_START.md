@@ -5,7 +5,7 @@
 ### Option 1: Interactive Installation (Recommended)
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl
+cd /path/to/project/WallboxCtrl
 ./scripts/install.sh --interactive
 ```
 
@@ -27,7 +27,7 @@ cd /Users/achraf/pro/PJMT/WallboxCtrl
 ### Terminal 1 - Wallbox Controller
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/build
+cd /path/to/project/WallboxCtrl/build
 ./wallbox_control_v3
 ```
 
@@ -41,7 +41,7 @@ cd /Users/achraf/pro/PJMT/WallboxCtrl/build
 ### Terminal 2 - ISO 15118 Simulator
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/build
+cd /path/to/project/WallboxCtrl/build
 ./simulator
 ```
 
@@ -122,7 +122,7 @@ curl -X POST http://localhost:8080/api/disable
 ### Interactive Deployment
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl
+cd /path/to/project/WallboxCtrl
 ./scripts/deploy.sh 192.168.178.34 --interactive
 ```
 
@@ -256,14 +256,14 @@ Run these in **separate terminals**:
 **Terminal 1 - API Server:**
 
 ```bash
-cd /Users/achraf/pro/PJMT
+cd /path/to/project
 bash scripts/start-api-only.sh
 ```
 
 **Terminal 2 - Interactive Simulator:**
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/build
+cd /path/to/project/WallboxCtrl/build
 ./simulator
 ```
 
@@ -272,7 +272,7 @@ Now you can type commands like: `on`, `ready`, `charge`, `status`
 **Terminal 3 - React App:**
 
 ```bash
-cd /Users/achraf/pro/PJMT/wallbox-react-app
+cd /path/to/project/wallbox-react-app
 npm start
 ```
 
