@@ -13,7 +13,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-#include "../../LibPubWallbox/IsoStackCtrlProtocol.h"
+#include "IsoStackCtrlProtocol.h"
 
 using namespace Iso15118;
 

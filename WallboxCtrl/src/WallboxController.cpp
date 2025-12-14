@@ -1,7 +1,7 @@
 #include "WallboxController.h"
 #include "Configuration.h"
 #include "CpSignalReaderFactory.h"
-#include "../../LibPubWallbox/IsoStackCtrlProtocol.h"
+#include "IsoStackCtrlProtocol.h"
 #include <iostream>
 #include <thread>
 #include <chrono>

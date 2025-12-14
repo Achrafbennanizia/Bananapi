@@ -5,7 +5,7 @@
 #include "INetworkCommunicator.h"
 #include "ChargingStateMachine.h"
 #include "ICpSignalReader.h"
-#include "../../LibPubWallbox/IsoStackCtrlProtocol.h"
+#include "IsoStackCtrlProtocol.h"
 #include <memory>
 #include <string>
 #include <atomic>

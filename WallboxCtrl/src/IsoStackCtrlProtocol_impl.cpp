@@ -1,5 +1,5 @@
 // Simplified implementation of IsoStackCtrlProtocol methods without external dependencies
-#include "../../LibPubWallbox/IsoStackCtrlProtocol.h"
+#include "IsoStackCtrlProtocol.h"
 #include <cstring>
 
 using namespace Iso15118;
