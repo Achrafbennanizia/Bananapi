@@ -41,21 +41,41 @@ This project implements a **production-ready** wallbox charging controller for e
 
 ## ✨ Features
 
-### Core Functionality
+### Core Functionality (v4.1)
 
 - ✅ **ISO 15118 Protocol Implementation** - Full support for charging state management
+- ✅ **CP Signal System** - IEC 61851-1 compliant hardware and simulator modes
+- ✅ **Clean Terminal Output** - Commands and feedback only, UDP logged to file
+- ✅ **Interactive Deployment** - Mode selection menu for production/development/debug
+- ✅ **Automated Deployment Scripts** - SSH-based deployment to Raspberry Pi/Banana Pi
+- ✅ **Structured Logging** - Timestamped logs with categories (UDP_TX, UDP_RX, STATE, CMD)
 - ✅ **SOLID Architecture** - Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion
 - ✅ **Design Patterns** - Strategy, Observer, Command, State, Factory, Singleton, Dependency Injection
-- ✅ **UDP Communication** - Low-latency bidirectional messaging with interface abstraction
-- ✅ **Interactive Terminal Interface** - Command pattern for extensible commands
+- ✅ **UDP Communication** - Low-latency bidirectional messaging with runtime reconfiguration
+- ✅ **HTTP REST API** - Port 8080 for remote control and monitoring
+- ✅ **Configuration Management** - JSON-based with auto-loading at startup
 - ✅ **Watchdog Safety System** - 2-second timeout protection with Observer pattern
-- ✅ **State Change Optimization** - Efficient logging (only reports changes)
 - ✅ **GPIO Hardware Control** - Strategy pattern for platform-independent hardware access
 - ✅ **Non-blocking I/O** - Concurrent network and terminal input handling
 - ✅ **Dependency Injection** - Constructor injection for testability and flexibility
 - ✅ **Exception Handling** - Comprehensive error handling with custom exceptions
-- ✅ **Configuration Management** - JSON-based configuration (future enhancement)
 - ✅ **Unit Test Support** - Mock implementations for all interfaces
+- ✅ **Comprehensive Test Suite** - 11 automated integration tests
+
+### Build Modes
+
+- **Production** - Optimized (-O3), small binaries (~270 KB wallbox, ~115 KB simulator), best performance
+- **Development** - Debug symbols (-g), verbose logging, fast iteration
+- **Debug** - Maximum debug info, AddressSanitizer, memory error detection
+
+### Deployment Features
+
+- ✅ **Interactive Mode Selection** - User-friendly menu for choosing build mode
+- ✅ **Automatic Dependency Installation** - Packages installed on target automatically
+- ✅ **Remote Compilation** - Build on target device with optimization
+- ✅ **UDP Auto-Configuration** - Bidirectional communication setup
+- ✅ **Systemd Service Support** - Optional service installation
+- ✅ **Help Documentation** - Comprehensive --help for all scripts
 
 ### Charging States
 
@@ -400,22 +420,58 @@ PJMT/
 
 ## 🚀 Installation
 
-### Method 1: Direct Compilation (Recommended)
+### Quick Install (Interactive Mode)
+
+```bash
+cd Bananapi/WallboxCtrl
+./scripts/install.sh --interactive
+```
+
+Select your build mode:
+
+- **Production** (recommended) - Optimized, small binaries
+- **Development** - Debug symbols, verbose logging
+- **Debug** - Maximum debug info, sanitizers
+
+### Method 1: Automated Installation Scripts
 
 ```bash
 # Clone the repository
 git clone https://github.com/Achrafbennanizia/Bananapi.git
-cd Bananapi/WallboxCtrl/src
+cd Bananapi/WallboxCtrl
 
-# Build both programs
-g++ -std=c++17 -O2 main.cpp IsoStackCtrlProtocol_impl.cpp -o wallbox_ctrl
-g++ -std=c++17 -O2 simulator.cpp IsoStackCtrlProtocol_impl.cpp -o simulator
+# Show help and options
+./scripts/install.sh --help
 
-# Verify builds
-ls -lh wallbox_ctrl simulator
+# Install with specific mode
+./scripts/install.sh --mode production
+
+# Install with systemd service
+./scripts/install.sh --mode production --systemd
+
+# Custom installation directory
+INSTALL_DIR=/opt/wallbox ./scripts/install.sh
 ```
 
-### Method 2: Using CMake
+### Method 2: Deploy to Raspberry Pi / Banana Pi
+
+```bash
+cd Bananapi/WallboxCtrl
+
+# Interactive deployment
+./scripts/deploy.sh 192.168.178.34 --interactive
+
+# Direct mode specification
+./scripts/deploy.sh 192.168.178.34 --mode production
+
+# Custom user
+PI_USER=root ./scripts/deploy.sh 192.168.178.34 --mode development
+
+# Show all deployment options
+./scripts/deploy.sh --help
+```
+
+### Method 3: Manual CMake Build
 
 ```bash
 cd Bananapi/WallboxCtrl
@@ -423,9 +479,29 @@ mkdir -p build && cd build
 
 # Configure and build
 cmake ..
-make
+make -j$(nproc)
 
-# Executable will be at: build/wallbox_control
+# Build specific targets
+make wallbox_control_v3 simulator
+
+# Executables in build directory
+ls -lh wallbox_control_v3 simulator config.json
+```
+
+### Method 4: Using Makefile (Portable Deploy)
+
+```bash
+cd Bananapi/wallbox-portable-deploy
+
+# Production build
+make BUILD_MODE=production
+
+# Development build
+make BUILD_MODE=development
+
+# Clean and rebuild
+make clean
+make
 ```
 
 ### Method 3: Using Build Script

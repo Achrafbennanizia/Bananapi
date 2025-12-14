@@ -1,26 +1,47 @@
-# Quick Start Guide - Wallbox Control System
+# Quick Start Guide - Wallbox Control System v4.1
 
-## Simple Manual Mode (Two Terminals)
+## 🚀 Quick Installation
+
+### Option 1: Interactive Installation (Recommended)
+
+```bash
+cd /Users/achraf/pro/PJMT/WallboxCtrl
+./scripts/install.sh --interactive
+```
+
+### Option 2: Direct Mode Selection
+
+```bash
+# Production mode (optimized)
+./scripts/install.sh --mode production
+
+# Development mode (debug symbols)
+./scripts/install.sh --mode development
+
+# Debug mode (sanitizers)
+./scripts/install.sh --mode debug
+```
+
+## 🎯 Running the System
 
 ### Terminal 1 - Wallbox Controller
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/src
-./wallbox_ctrl
+cd /Users/achraf/pro/PJMT/WallboxCtrl/build
+./wallbox_control_v3
 ```
 
-**Available Commands:**
+**Features:**
 
-- `enable` - Enable charging
-- `disable` - Disable charging
-- `status` - Show current status
-- `help` - Show help
-- `quit` - Exit
+- ✅ HTTP REST API on port 8080
+- ✅ UDP communication on port 50010
+- ✅ Clean terminal output
+- ✅ Structured logging to `/tmp/wallbox_v3.log`
 
 ### Terminal 2 - ISO 15118 Simulator
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/src
+cd /Users/achraf/pro/PJMT/WallboxCtrl/build
 ./simulator
 ```
 
@@ -32,27 +53,165 @@ cd /Users/achraf/pro/PJMT/WallboxCtrl/src
 - `ready` - Set state to READY
 - `charge` - Set state to CHARGING
 - `stop` - Set state to STOP
-- `status` - Show status
+- `status` - Show current status
+- `getudp` - Show UDP configuration
+- `setudp <ip> <in> <out>` - Change UDP config
 - `help` - Show help
 - `quit` - Exit
 
-## Test Sequence
+**Features:**
 
-1. **In Wallbox terminal:**
+- ✅ Clean terminal output (commands & wallbox feedback only)
+- ✅ All UDP traffic logged to `/tmp/wallbox_simulator.log`
+- ✅ Auto-loads config from `config.json`
+- ✅ Runtime UDP reconfiguration
 
-   ```
-   > enable
-   > status
-   ```
+## 🧪 Test Sequence
 
-2. **In Simulator terminal:**
+### 1. Check System Status
 
-   ```
-   > on
-   > ready
-   > charge
-   > status
-   ```
+**Wallbox Terminal:**
+
+```
+> (System shows initial state automatically)
+```
+
+**Simulator Terminal:**
+
+```
+> status
+--- Current Status ---
+Main Contactor: OFF
+Charging State: idle
+UDP Address: 127.0.0.1
+UDP In Port: 50011
+UDP Out Port: 50010
+```
+
+### 2. Start Charging Sequence
+
+**Simulator Terminal:**
+
+```
+> on
+✓ Main contactor ON
+
+[WALLBOX] ⚡ Contactor ON
+
+> charge
+✓ State: CHARGING
+```
+
+**Wallbox responds** with feedback messages showing state changes.
+
+### 3. Test API (Optional)
+
+```bash
+# Check status via HTTP API
+curl http://localhost:8080/api/status
+
+# Enable wallbox
+curl -X POST http://localhost:8080/api/enable
+
+# Disable wallbox
+curl -X POST http://localhost:8080/api/disable
+```
+
+## 📦 Deployment to Raspberry Pi
+
+### Interactive Deployment
+
+```bash
+cd /Users/achraf/pro/PJMT/WallboxCtrl
+./scripts/deploy.sh 192.168.178.34 --interactive
+```
+
+### Direct Deployment
+
+```bash
+# Production mode
+./scripts/deploy.sh 192.168.178.34 --mode production
+
+# Development mode with custom user
+PI_USER=admin ./scripts/deploy.sh 192.168.178.34 --mode development
+```
+
+## 📊 View Logs
+
+### Simulator Log (All UDP Traffic)
+
+```bash
+tail -f /tmp/wallbox_simulator.log
+```
+
+### Wallbox Log
+
+```bash
+tail -f /tmp/wallbox_v3.log
+```
+
+## 🔧 Configuration
+
+Edit `config.json` in the build directory:
+
+```json
+{
+  "network": {
+    "udp_listen_port": 50010,
+    "udp_send_port": 50011,
+    "udp_send_address": "127.0.0.1",
+    "api_port": 8080
+  }
+}
+```
+
+## 🆘 Troubleshooting
+
+### Processes Won't Start
+
+```bash
+# Kill existing processes
+pkill -9 wallbox_control; pkill -9 simulator
+
+# Check ports
+lsof -i :8080
+lsof -i :50010
+lsof -i :50011
+```
+
+### UDP Communication Issues
+
+```bash
+# Simulator: check current UDP config
+> getudp
+
+# Simulator: change to localhost
+> setudp 127.0.0.1 50011 50010
+```
+
+### View Help
+
+```bash
+# Deployment help
+./scripts/deploy.sh --help
+
+# Installation help
+./scripts/install.sh --help
+```
+
+## 📚 More Information
+
+- **Full Documentation**: See `/docs` directory
+- **API Reference**: `/docs/api/API_REFERENCE.md`
+- **Deployment Guide**: `WallboxCtrl/scripts/README.md`
+- **Architecture**: `/docs/architecture/ARCHITECTURE.md`
+  > on
+  > ready
+  > charge
+  > status
+  ```
+
+  ```
 
 3. **Watch the interaction - charging should start!**
 
