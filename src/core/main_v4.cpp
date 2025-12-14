@@ -68,9 +68,9 @@ void signalHandler(int signal)
  * @brief Main entry point
  *
  * Usage:
- *   ./wallbox_control_v3                - Start with HTTP API server only (default)
- *   ./wallbox_control_v3 --interactive  - Start with interactive terminal only
- *   ./wallbox_control_v3 --dual         - Start with both API and interactive (dual mode)
+ *   ./wallbox_control_v4                - Start with HTTP API server only (default)
+ *   ./wallbox_control_v4 --interactive  - Start with interactive terminal only
+ *   ./wallbox_control_v4 --dual         - Start with both API and interactive (dual mode)
  *
  * Demonstrates clean separation of concerns:
  * - Signal handling

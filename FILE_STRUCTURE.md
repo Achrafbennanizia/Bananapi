@@ -86,7 +86,8 @@ PJMT/
 │   │   └── SimpleWallboxController.h   # Legacy - v1.0 controller
 │   │
 │   ├── 📂 src/                         # Implementation files
-│   │   ├── main_v3.cpp                 # v3.0 entry point (current)
+│   │   ├── main_v4.cpp                 # ⭐ v4.0 entry point (LATEST)
+│   │   ├── main_v3.cpp                 # v3.0 simplified
 │   │   ├── main_v2_with_api.cpp        # v2.0 with API
 │   │   ├── main_v2.cpp                 # v2.0 SOLID version
 │   │   ├── main.cpp                    # v1.0 legacy
@@ -101,7 +102,8 @@ PJMT/
 │   │   └── IsoStackCtrlProtocol_impl.cpp # Protocol implementation
 │   │
 │   ├── 📂 build/                       # Build artifacts (gitignored)
-│   │   ├── wallbox_control_v3          # ⭐ Current version (v3.0)
+│   │   ├── wallbox_control_v4          # ⭐ v4.0 LATEST (full features)
+│   │   ├── wallbox_control_v3          # v3.0 Simplified
 │   │   ├── wallbox_control_v2          # v2.0 SOLID
 │   │   ├── wallbox_control_api         # v2.0 with API
 │   │   ├── wallbox_control             # v1.0 legacy
@@ -224,8 +226,8 @@ PJMT/
 
 **Key Files:**
 
-- `main_v3.cpp` - ⭐ **Current production version**
-- `wallbox_control_v3` - ⭐ **Current executable**
+- `main_v4.cpp` - ⭐ **Current production version (LATEST)**
+- `wallbox_control_v4` - ⭐ **Current executable**
 - `simulator` - ISO 15118 test simulator
 
 ### 🔌 Protocol Layer (`LibPubWallbox/`)
@@ -288,8 +290,9 @@ WallboxCtrl/
 │   ├── IGpioController.h       # Strategy interface
 │   └── INetworkCommunicator.h  # Strategy interface
 │
-└── src/                        # 🔨 Implementations
-    ├── main_v3.cpp             # ⭐ Current entry point
+├── src/                        # 🔨 Implementations
+    ├── main_v4.cpp             # ⭐ v4.0 LATEST entry point
+    ├── main_v3.cpp             # v3.0 simplified
     ├── WallboxController.cpp   # Main logic
     └── simulator.cpp           # Test simulator
 ```
@@ -298,10 +301,11 @@ WallboxCtrl/
 
 ```
 build/bin/
-├── wallbox_control_v3          # ⭐ Current version (recommended)
-├── wallbox_control_v2          # Legacy v2.0
-├── wallbox_control_api         # Legacy v2.0 with API
-├── wallbox_control             # Legacy v1.0
+├── wallbox_control_v4          # ⭐ v4.0 LATEST (recommended)
+├── wallbox_control_v3          # v3.0 Simplified
+├── wallbox_control_v2          # v2.0 SOLID
+├── wallbox_control_api         # v2.0 with API
+├── wallbox_control             # v1.0 Legacy
 └── simulator                   # ISO 15118 simulator
 ```
 
@@ -314,7 +318,7 @@ build/bin/
 1. **Start**: `README.md` → Overview
 2. **Setup**: `docs/guides/INSTALLATION.md` → Get running
 3. **Learn**: `docs/architecture/ARCHITECTURE_V3.md` → Understand system
-4. **Code**: `WallboxCtrl/src/main_v3.cpp` → See entry point
+4. **Code**: `WallboxCtrl/src/main_v4.cpp` → See v4.0 entry point
 
 ### For Frontend Developers
 
@@ -386,7 +390,7 @@ React App → HTTP API → WallboxController
 
 - **Headers**: `PascalCase.h` (e.g., `WallboxController.h`)
 - **Sources**: `PascalCase.cpp` (e.g., `WallboxController.cpp`)
-- **Executables**: `snake_case` (e.g., `wallbox_control_v3`)
+- **Executables**: `snake_case` (e.g., `wallbox_control_v4`)
 - **Scripts**: `kebab-case.sh` (e.g., `start-dev.sh`)
 - **Docs**: `SCREAMING_SNAKE_CASE.md` (e.g., `README.md`)
 
@@ -412,17 +416,17 @@ React App → HTTP API → WallboxController
 | Start developing        | `docs/guides/INSTALLATION.md`          |
 | Understand architecture | `docs/architecture/ARCHITECTURE_V3.md` |
 | API endpoints           | `docs/api/API_REFERENCE.md`            |
-| Run simulator           | `build/bin/simulator`          |
-| Run wallbox             | `build/bin/wallbox_control_v3` |
+| Run simulator           | `build/bin/simulator`                  |
+| Run wallbox             | `build/bin/wallbox_control_v3`         |
 | Configure system        | `WallboxCtrl/config.json`              |
-| Web interface           | `web/react-app/src/App.js`         |
+| Web interface           | `web/react-app/src/App.js`             |
 
 ### By Role
 
 | Role         | Key Files                           |
 | ------------ | ----------------------------------- |
 | Backend Dev  | `WallboxCtrl/src/*.cpp`             |
-| Frontend Dev | `web/react-app/src/*.js`        |
+| Frontend Dev | `web/react-app/src/*.js`            |
 | Architect    | `docs/architecture/*.md`            |
 | QA/Tester    | `WallboxCtrl/test*.sh`, `simulator` |
 | DevOps       | `scripts/*.sh`, `env/*`             |

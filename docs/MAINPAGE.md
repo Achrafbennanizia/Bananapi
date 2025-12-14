@@ -61,7 +61,7 @@ Features:
 - Stub GPIO for testing
 - BananaPi GPIO support
 
-Build target: `wallbox_control_v3`
+Build target: `wallbox_control_v3` (Note: Build command uses v3, but file is main_v3.cpp which is simplified version)
 
 @subsection v2_older v2.0 - SOLID (141KB)
 **Legacy SOLID architecture**

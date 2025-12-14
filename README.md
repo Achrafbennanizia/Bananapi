@@ -382,7 +382,8 @@ PJMT/
 │   │   └── HttpApiServer.h            # Infrastructure - HTTP server
 │   │
 │   ├── 📂 src/                        # Implementation files
-│   │   ├── main_v3.cpp                # ⭐ v3.0 entry point (current)
+│   │   ├── main_v4.cpp                # ⭐ v4.0 entry point (LATEST)
+│   │   ├── main_v3.cpp                # v3.0 simplified
 │   │   ├── main_v2_with_api.cpp       # v2.0 with API
 │   │   ├── main_v2.cpp                # v2.0 SOLID version
 │   │   ├── main.cpp                   # v1.0 legacy
