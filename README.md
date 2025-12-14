@@ -41,13 +41,31 @@ This project implements a **production-ready** wallbox charging controller for e
 
 ## ✨ Features
 
-### Core Functionality (v4.1)
+### Core Functionality (v4.0 - Latest)
 
-- ✅ **ISO 15118 Protocol Implementation** - Full support for charging state management
-- ✅ **CP Signal System** - IEC 61851-1 compliant hardware and simulator modes
-- ✅ **Clean Terminal Output** - Commands and feedback only, UDP logged to file
+**Production Version - wallbox_control_v4 (270KB)** ⭐
+
+- ✅ **HTTP REST API** - Full API server on port 8080 for remote control
+- ✅ **ISO 15118 Protocol** - Complete charging state management implementation
+- ✅ **CP Signal System** - IEC 61851-1 compliant (Hardware + Simulator modes)
+- ✅ **UDP Communication** - ISO 15118 stack messaging on ports 50010/50011
+- ✅ **ChargingStateMachine** - State pattern for robust state transitions
+- ✅ **WallboxController** - Full modular architecture with dependency injection
+- ✅ **Interactive & API Modes** - Dual mode operation (terminal or HTTP API)
+- ✅ **Clean Terminal Output** - Commands and feedback only, UDP logged to files
+- ✅ **Production Ready** - Comprehensive error handling and logging
+
+### Additional Versions
+
+**v3.0 - Simplified** (80KB) - Basic relay control, minimal footprint
+**v2.0 - SOLID** (141KB) - SOLID architecture, legacy compatibility  
+**v1.0 - Legacy** (61KB) - Original implementation
+
+### Deployment Features
+
 - ✅ **Interactive Deployment** - Mode selection menu for production/development/debug
-- ✅ **Automated Deployment Scripts** - SSH-based deployment to Raspberry Pi/Banana Pi
+- ✅ **Automated Scripts** - SSH-based deployment to Raspberry Pi/Banana Pi
+- ✅ **Build Modes** - Production (optimized), Development (debug), Debug (sanitizers)
 - ✅ **Structured Logging** - Timestamped logs with categories (UDP_TX, UDP_RX, STATE, CMD)
 - ✅ **SOLID Architecture** - Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion
 - ✅ **Design Patterns** - Strategy, Observer, Command, State, Factory, Singleton, Dependency Injection
@@ -377,7 +395,8 @@ PJMT/
 │   │   └── HttpApiServer.cpp          # HTTP server impl
 │   │
 │   ├── 📂 build/                      # Build artifacts (gitignored)
-│   │   ├── wallbox_control_v3         # ⭐ Current executable
+│   │   ├── wallbox_control_v4         # ⭐ v4.0 LATEST (full features)
+│   │   ├── wallbox_control_v3         # v3.0 Simplified
 │   │   ├── wallbox_control_v2         # v2.0 SOLID
 │   │   ├── wallbox_control_api        # v2.0 with API
 │   │   ├── wallbox_control            # v1.0 legacy
@@ -534,10 +553,10 @@ cmake ..
 make -j$(nproc)
 
 # Build specific targets
-make wallbox_control_v3 simulator
+make wallbox_control_v4 simulator
 
 # Executables in build directory
-ls -lh wallbox_control_v3 simulator config.json
+ls -lh wallbox_control_v4 simulator config.json
 ```
 
 ### Method 4: Using Makefile (Portable Deploy)

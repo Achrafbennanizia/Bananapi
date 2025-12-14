@@ -1,18 +1,22 @@
-# Wallbox Controller v3.0 - Modern Architecture
+# Wallbox Controller v4.0 - Modern Architecture
 
-**Last Updated**: December 10, 2025  
-**Version**: 3.0  
+**Last Updated**: December 14, 2025  
+**Version**: 4.0 (Latest)
 **Status**: Production Ready
 
 ## 🎯 Executive Summary
 
-The Wallbox Controller v3.0 implements a modern, industry-standard architecture with:
+The Wallbox Controller v4.0 implements a modern, industry-standard architecture with:
 
+- **HTTP REST API** - Full remote control via port 8080
 - **SOLID principles** throughout the codebase
 - **7 design patterns** working in harmony
 - **Clean architecture** with clear boundaries
+- **CP Signal System** - IEC 61851-1 compliant (Hardware + Simulator)
 - **State machine** with enforced transitions: `idle → ready → charging`
 - **Relay validation** for safety-critical operations
+- **Dual mode operation** - Interactive terminal or HTTP API
+- **UDP Communication** - ISO 15118 stack messaging
 - **Independent simulator** with feedback display
 
 ---
