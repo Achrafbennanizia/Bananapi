@@ -2,46 +2,58 @@
 
 ## 🚀 Quick Installation
 
-### Option 1: Interactive Installation (Recommended)
+### Build from Source
 
 ```bash
-cd /path/to/project/WallboxCtrl
-./scripts/install.sh --interactive
+cd <PROJECT_ROOT>
+
+# Create build directory
+mkdir -p build && cd build
+
+# Configure (choose one):
+cmake ..                              # Production mode (default)
+BUILD_MODE=development cmake ..       # Development mode
+BUILD_MODE=debug cmake ..             # Debug mode with sanitizers
+
+# Build all targets
+make -j$(nproc)                       # Linux
+make -j$(sysctl -n hw.ncpu)          # macOS
+
+# Built executables are in: build/bin/
 ```
 
-### Option 2: Direct Mode Selection
+### Quick Build Script (Alternative)
 
 ```bash
-# Production mode (optimized)
-./scripts/install.sh --mode production
+cd <PROJECT_ROOT>
 
-# Development mode (debug symbols)
-./scripts/install.sh --mode development
+# Production build
+./scripts/build.sh
 
-# Debug mode (sanitizers)
-./scripts/install.sh --mode debug
+# Development build with verbose output
+BUILD_MODE=development ./scripts/build.sh
 ```
 
 ## 🎯 Running the System
 
-### Terminal 1 - Wallbox Controller
+### Terminal 1 - Wallbox Controller (v4.0)
 
 ```bash
-cd /path/to/project/build/bin
-./wallbox_control_v3
+cd <PROJECT_ROOT>/build/bin
+./wallbox_control_v4
 ```
 
 **Features:**
 
-- ✅ HTTP REST API on port 8080
-- ✅ UDP communication on port 50010
+- ✅ Simple relay control on GPIO pin 21
 - ✅ Clean terminal output
-- ✅ Structured logging to `/tmp/wallbox_v3.log`
+- ✅ Automatic stub GPIO in development mode
+- ✅ Production-ready for BananaPi
 
 ### Terminal 2 - ISO 15118 Simulator
 
 ```bash
-cd /path/to/project/build/bin
+cd <PROJECT_ROOT>/build/bin
 ./simulator
 ```
 
@@ -117,23 +129,38 @@ curl -X POST http://localhost:8080/api/enable
 curl -X POST http://localhost:8080/api/disable
 ```
 
-## 📦 Deployment to Raspberry Pi
+## 📦 Deployment to BananaPi
 
-### Interactive Deployment
+### Using Deployment Script
 
 ```bash
-cd /path/to/project/WallboxCtrl
-./scripts/deploy.sh <API_HOST> --interactive
+cd <PROJECT_ROOT>
+
+# Interactive deployment (prompts for mode)
+./scripts/deploy/deploy.sh <API_HOST>
+
+# Direct production deployment
+./scripts/deploy/deploy.sh <API_HOST> --mode production
+
+# Development deployment with custom user
+PI_USER=admin ./scripts/deploy/deploy.sh <API_HOST> --mode development
 ```
 
-### Direct Deployment
+### Manual Deployment
 
 ```bash
-# Production mode
-./scripts/deploy.sh <API_HOST> --mode production
+# Build for production
+cd <PROJECT_ROOT>
+BUILD_MODE=production cmake -B build && make -C build -j$(nproc)
 
-# Development mode with custom user
-PI_USER=admin ./scripts/deploy.sh <API_HOST> --mode development
+# Copy to BananaPi
+scp build/bin/wallbox_control_v4 pi@<API_HOST>:~/
+scp build/bin/simulator pi@<API_HOST>:~/
+scp config/*.json pi@<API_HOST>:~/
+
+# SSH and run
+ssh pi@<API_HOST>
+./wallbox_control_v4
 ```
 
 ## 📊 View Logs
@@ -147,34 +174,65 @@ tail -f /tmp/wallbox_simulator.log
 ### Wallbox Log
 
 ```bash
-tail -f /tmp/wallbox_v3.log
+# v4.0 uses stdout in development mode
+# In production, check systemd journal:
+journalctl -u wallbox -f
 ```
 
 ## 🔧 Configuration
 
-Edit `config.json` in the build directory:
+Edit `config.json` in your preferred location:
 
 ```json
 {
+  "mode": "development",
+  "gpio": {
+    "type": "stub",
+    "relay_pin": 21
+  },
   "network": {
     "udp_listen_port": 50010,
     "udp_send_port": 50011,
-    "udp_send_address": "127.0.0.1",
-    "api_port": 8080
+    "udp_send_address": "127.0.0.1"
   }
 }
 ```
 
+**Modes:**
+
+- `development` - Uses stub GPIO (no hardware required)
+- `production` - Uses real BananaPi GPIO
+
+**GPIO Types:**
+
+- `stub` - Simulated GPIO for testing
+- `bananapi` - Real hardware GPIO access
+
 ## 🆘 Troubleshooting
+
+### Build Issues
+
+```bash
+# Clean build
+cd <PROJECT_ROOT>
+rm -rf build && mkdir build && cd build
+cmake .. && make -j$(sysctl -n hw.ncpu)
+
+# Check dependencies
+cmake .. 2>&1 | grep -i "not found"
+
+# Verify include paths
+cmake .. 2>&1 | grep -i "include"
+```
 
 ### Processes Won't Start
 
 ```bash
 # Kill existing processes
-pkill -9 wallbox_control; pkill -9 simulator
+pkill -9 wallbox_control
+pkill -9 simulator
 
 # Check ports
-lsof -i :8080
 lsof -i :50010
 lsof -i :50011
 ```
@@ -187,103 +245,40 @@ lsof -i :50011
 
 # Simulator: change to localhost
 > setudp 127.0.0.1 50011 50010
+
+# Verify config.json
+cat <PROJECT_ROOT>/config/development.json
 ```
 
-### View Help
+### GPIO Access Issues (BananaPi)
 
 ```bash
-# Deployment help
-./scripts/deploy.sh --help
+# Check GPIO permissions
+ls -l /sys/class/gpio
 
-# Installation help
-./scripts/install.sh --help
+# Run with sudo (production)
+sudo ./wallbox_control_v4
+
+# Use stub GPIO for testing
+# Set "type": "stub" in config.json
 ```
 
 ## 📚 More Information
 
-- **Full Documentation**: See `/docs` directory
-- **API Reference**: `/docs/api/API_REFERENCE.md`
-- **Deployment Guide**: `WallboxCtrl/scripts/README.md`
-- **Architecture**: `/docs/architecture/ARCHITECTURE.md`
-  > on
-  > ready
-  > charge
-  > status
-  ```
+- **Full Documentation**: See `<PROJECT_ROOT>/docs` directory
+- **API Reference**: `docs/api/API_REFERENCE.md`
+- **Installation Guide**: `docs/guides/INSTALLATION_GUIDE.md`
+- **Architecture**: `docs/architecture/ARCHITECTURE_V3.md`
+- **Build System**: Root `CMakeLists.txt` for modern build
+- **Legacy Build**: `WallboxCtrl/CMakeLists.txt` for compatibility
 
-  ```
+## 📋 Available Executables
 
-3. **Watch the interaction - charging should start!**
+After building, you'll find in `build/bin/`:
 
-4. **To stop charging:**
-   ```
-   Simulator: > stop
-   Wallbox: > disable
-   ```
+- `wallbox_control_v4` - Latest version (simple relay control)
+- `wallbox_control_v2` - Previous version (full features)
+- `wallbox_control_v1` - Original version (legacy)
+- `simulator` - ISO 15118 stack simulator
 
-## Log Files
-
-All diagnostic logs are written to files (no terminal clutter):
-
-- **Wallbox logs:** `/tmp/wallbox_main.log`
-- **Simulator logs:** `/tmp/wallbox_simulator.log`
-
-**View logs in real-time (optional, separate terminal):**
-
-```bash
-# View wallbox logs
-tail -f /tmp/wallbox_main.log
-
-# View simulator logs
-tail -f /tmp/wallbox_simulator.log
-```
-
-## Advanced Mode (With React UI)
-
-### Option A: Full Background Mode (Web Control Only)
-
-```bash
-bash scripts/start-dev.sh
-cd web/react-app && npm start
-```
-
-Control everything through the web interface.
-
-### Option B: Interactive Dev Mode (Terminal + Web)
-
-Run these in **separate terminals**:
-
-**Terminal 1 - API Server:**
-
-```bash
-cd /path/to/project
-bash scripts/start-api-only.sh
-```
-
-**Terminal 2 - Interactive Simulator:**
-
-```bash
-cd /path/to/project/build/bin
-./simulator
-```
-
-Now you can type commands like: `on`, `ready`, `charge`, `status`
-
-**Terminal 3 - React App:**
-
-```bash
-cd /path/to/project/wallbox-react-app
-npm start
-```
-
-Open http://localhost:3000
-
-**You now have:**
-
-- ✅ Interactive simulator (type commands in terminal)
-- ✅ React web interface (control via browser)
-- ✅ Both working at the same time!
-
----
-
-**Terminals are clean - just enter commands and see the program reactions!**
+**Recommended**: Use `wallbox_control_v4` for production deployments.
