@@ -134,6 +134,7 @@ FILE_PATTERNS          = *.h \
                          *.md
 RECURSIVE              = YES
 EXCLUDE                = WallboxCtrl/build \
+                         WallboxCtrl/src/tt \
                          WallboxCtrl/src/main.cpp \
                          WallboxCtrl/src/main_v2.cpp \
                          WallboxCtrl/src/main_v2_with_api.cpp \
@@ -158,6 +159,7 @@ EXCLUDE_PATTERNS       = */build/* \
                          */node_modules/* \
                          */.git/* \
                          */CMakeFiles/* \
+                         */tt/* \
                          */main.cpp \
                          */main_v2.cpp \
                          */main_v2_with_api.cpp \
