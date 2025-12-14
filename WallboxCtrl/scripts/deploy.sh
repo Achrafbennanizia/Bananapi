@@ -1,10 +1,10 @@
 #!/bin/bash
 #
 # Wallbox Controller - Deploy to Remote Pi
-# Usage: ./deploy.sh <pi_hostname_or_ip> [ssh_user]
+# Usage: ./deploy.sh <pi_hostname_or_ip> [ssh_user] [options]
 #
 # Version: 4.1 (with CP Signal System)
-# Date: December 13, 2025
+# Date: December 14, 2025
 
 set -e
 
@@ -13,16 +13,150 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
+CYAN='\033[0;36m'
 NC='\033[0m'
 
+# Parse options first
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -h|--help)
+            SHOW_HELP=1
+            shift
+            ;;
+        -m|--mode)
+            BUILD_MODE="$2"
+            shift 2
+            ;;
+        -i|--interactive)
+            INTERACTIVE=1
+            shift
+            ;;
+        -*)
+            echo "Unknown option: $1"
+            SHOW_HELP=1
+            shift
+            ;;
+        *)
+            if [ -z "$PI_HOST" ]; then
+                PI_HOST="$1"
+            elif [ -z "$SSH_USER_ARG" ]; then
+                SSH_USER_ARG="$1"
+            fi
+            shift
+            ;;
+    esac
+done
+
 # Configuration
-PI_HOST="${1}"
-SSH_USER="${PI_USER:-${2:-pi}}"
+SSH_USER="${PI_USER:-${SSH_USER_ARG:-pi}}"
 REMOTE_DIR="/home/$SSH_USER/wallbox-src"
 LOCAL_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 BUILD_MODE="${BUILD_MODE:-production}"
 
 # Functions
+show_help() {
+    cat << EOF
+${CYAN}╔════════════════════════════════════════════════════════════╗
+║          Wallbox Controller - Deployment Script            ║
+║                      Version 4.1                           ║
+╚════════════════════════════════════════════════════════════╝${NC}
+
+${GREEN}USAGE:${NC}
+  $0 <pi_hostname_or_ip> [ssh_user] [options]
+
+${GREEN}ARGUMENTS:${NC}
+  pi_hostname_or_ip    Target Raspberry Pi / Banana Pi IP or hostname
+  ssh_user             SSH user (default: pi)
+
+${GREEN}OPTIONS:${NC}
+  -h, --help           Show this help message
+  -m, --mode <mode>    Deployment mode: production, development, or debug
+  -i, --interactive    Interactive mode selection
+
+${GREEN}DEPLOYMENT MODES:${NC}
+  ${CYAN}production${NC}     - Optimized build (-O3), no debug symbols
+                     - Small binaries (~270 KB wallbox, ~115 KB simulator)
+                     - Best performance, minimal logging
+                     - Recommended for production use
+
+  ${YELLOW}development${NC}    - Debug symbols (-g), detailed logging
+                     - Larger binaries with debug info
+                     - Verbose output for troubleshooting
+                     - Fast iteration during development
+
+  ${RED}debug${NC}          - Maximum debug info, assertions enabled
+                     - AddressSanitizer for memory debugging
+                     - Very verbose logging
+                     - Slowest, largest binaries
+
+${GREEN}ENVIRONMENT VARIABLES:${NC}
+  PI_USER              SSH user (overrides default)
+  BUILD_MODE           Deployment mode (overrides default)
+  REMOTE_DIR           Remote installation directory
+
+${GREEN}EXAMPLES:${NC}
+  # Basic deployment (production mode)
+  $0 192.168.178.34
+
+  # Interactive mode selection
+  $0 192.168.178.34 --interactive
+
+  # Development mode
+  $0 192.168.178.34 --mode development
+
+  # Custom user and debug mode
+  PI_USER=root $0 bananapi.local --mode debug
+
+  # Environment variable mode
+  BUILD_MODE=development PI_USER=admin $0 192.168.178.34
+
+${GREEN}FEATURES:${NC}
+  ✓ Automatic dependency installation
+  ✓ Remote compilation with optimization
+  ✓ UDP network auto-configuration
+  ✓ Optional systemd service setup
+  ✓ Secure SSH-based deployment
+
+EOF
+    exit 0
+}
+
+select_mode() {
+    echo -e "\n${CYAN}╔════════════════════════════════════════╗"
+    echo -e "║    Select Deployment Mode              ║"
+    echo -e "╚════════════════════════════════════════╝${NC}\n"
+    
+    echo -e "${GREEN}Available modes:${NC}"
+    echo -e "  ${CYAN}1)${NC} ${GREEN}production${NC}  - Optimized, small binaries (recommended)"
+    echo -e "  ${CYAN}2)${NC} ${YELLOW}development${NC} - Debug symbols, verbose logging"
+    echo -e "  ${CYAN}3)${NC} ${RED}debug${NC}       - Maximum debug info, sanitizers\n"
+    
+    while true; do
+        read -p "$(echo -e "${CYAN}Enter choice [1-3]:${NC} ")" choice
+        case $choice in
+            1)
+                BUILD_MODE="production"
+                echo -e "${GREEN}✓ Selected: production mode${NC}"
+                break
+                ;;
+            2)
+                BUILD_MODE="development"
+                echo -e "${YELLOW}✓ Selected: development mode${NC}"
+                break
+                ;;
+            3)
+                BUILD_MODE="debug"
+                echo -e "${RED}✓ Selected: debug mode${NC}"
+                break
+                ;;
+            *)
+                echo -e "${RED}Invalid choice. Please enter 1, 2, or 3.${NC}"
+                ;;
+        esac
+    done
+    echo ""
+}
+
 log() {
     echo -e "${GREEN}[INFO]${NC} $1"
 }
@@ -37,19 +171,36 @@ warn() {
 }
 
 check_args() {
+    # Show help if requested
+    if [ -n "$SHOW_HELP" ]; then
+        show_help
+    fi
+    
+    # Check required arguments
     if [ -z "$PI_HOST" ]; then
-        echo "Usage: $0 <pi_hostname_or_ip> [ssh_user]"
+        echo -e "${RED}Error: Missing required argument${NC}"
         echo ""
-        echo "Environment variables:"
-        echo "  PI_USER=<user>       - SSH user (default: pi)"
-        echo "  BUILD_MODE=<mode>    - production or development (default: production)"
-        echo ""
-        echo "Examples:"
-        echo "  $0 192.168.178.34"
-        echo "  PI_USER=root $0 192.168.178.34"
-        echo "  BUILD_MODE=development $0 bananapi"
+        echo "Usage: $0 <pi_hostname_or_ip> [ssh_user] [options]"
+        echo "Try '$0 --help' for more information."
         exit 1
     fi
+    
+    # Interactive mode selection
+    if [ -n "$INTERACTIVE" ]; then
+        select_mode
+    fi
+    
+    # Validate build mode
+    case $BUILD_MODE in
+        production|development|debug)
+            ;;
+        *)
+            warn "Invalid build mode: $BUILD_MODE"
+            warn "Valid modes: production, development, debug"
+            warn "Defaulting to production mode"
+            BUILD_MODE="production"
+            ;;
+    esac
 }
 
 check_requirements() {
