@@ -1,4 +1,4 @@
-˚# ISO 15118 Wallbox Control System
+# ISO 15118 Wallbox Control System
 
 A professional-grade EV charging wallbox control system implementing ISO 15118 standards with **SOLID principles** and **Design Patterns**. Features clean architecture, dependency injection, and comprehensive testing support.
 
