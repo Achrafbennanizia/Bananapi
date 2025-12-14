@@ -77,6 +77,58 @@ This project implements a **production-ready** wallbox charging controller for e
 - ✅ **Systemd Service Support** - Optional service installation
 - ✅ **Help Documentation** - Comprehensive --help for all scripts
 
+## 📁 Project Structure (v4.1 - Industry Standard)
+
+The project follows industry-standard C++ project organization:
+
+```
+PJMT/
+├── src/                  # Source code organized by function
+│   ├── core/             # Core wallbox logic
+│   ├── gpio/             # Hardware GPIO implementations
+│   ├── network/          # UDP communication
+│   ├── signal/           # CP Signal processing (IEC 61851-1)
+│   ├── api/              # HTTP REST API
+│   └── simulator/        # ISO 15118 simulator
+├── include/wallbox/      # Public header files
+├── external/             # Third-party dependencies
+│   └── LibPubWallbox/    # ISO 15118 protocol library
+├── config/               # Environment-specific configurations
+│   ├── production.json   # Production settings
+│   ├── development.json  # Development settings
+│   └── test.json         # Test settings
+├── scripts/              # Build, deploy, and test automation
+│   ├── deploy/           # Deployment to embedded systems
+│   ├── build/            # Build automation
+│   └── test/             # Test execution
+├── docs/                 # Complete documentation
+│   ├── guides/           # User and developer guides
+│   ├── architecture/     # System design documentation
+│   ├── api/              # API reference
+│   └── doxygen/          # Generated API docs (588 pages)
+├── tests/                # Test code
+│   ├── integration/      # Integration tests
+│   ├── unit/             # Unit tests
+│   └── fixtures/         # Test data
+├── build/                # Build output (gitignored)
+│   ├── bin/              # Compiled executables
+│   └── lib/              # Static libraries
+├── web/react-app/        # React dashboard
+├── CMakeLists.txt        # Root build configuration
+└── VERSION               # 4.1.0
+```
+
+**Key Benefits:**
+
+- ✓ Standard C++ project layout
+- ✓ Clear separation of concerns
+- ✓ Easy navigation and maintenance
+- ✓ IDE-friendly structure
+- ✓ Scalable for future growth
+- ✓ CI/CD ready
+
+See [docs/FILE_STRUCTURE.md](docs/FILE_STRUCTURE.md) for detailed explanation.
+
 ### Charging States
 
 - `off` - System powered down or severe error
@@ -701,13 +753,13 @@ make
 ### Testing
 
 ```bash
-# Run interactive test
-cd WallboxCtrl
-chmod +x test_interactive.sh
-./test_interactive.sh
+# Run integration tests
+chmod +x scripts/test/test_wallbox.sh
+./scripts/test/test_wallbox.sh
 
 # Manual testing
-./wallbox_ctrl &
+cd build/bin
+./wallbox_control_v4 &
 ./simulator &
 # Issue commands to both programs
 ```
