@@ -61,10 +61,10 @@ Your complete wallbox system is now operational with all three components:
 - Pause/Resume functionality
 - Visual state indicators
 
-### 🔧 Simulator (Mac)
+### 🔧 Simulator (Development Machine)
 
-**Location:** `/path/to/project/build/bin/simulator`  
-**Ports:** Listen 50011, Send to 192.168.178.34:50010  
+**Location:** `<PROJECT_ROOT>/build/bin/simulator`  
+**Ports:** Listen 50011, Send to <API_HOST>:50010  
 **Log:** `/tmp/wallbox_simulator.log`
 
 **Commands:**
@@ -74,19 +74,19 @@ Your complete wallbox system is now operational with all three components:
 tail -f /tmp/wallbox_simulator.log
 
 # To interact with simulator (if running in foreground):
-> setudp 192.168.178.34 50011 50010  # Configure for Banana Pi
-> status                              # Check status
-> on                                  # Turn contactor on
-> charge                              # Start charging
-> stop                                # Stop charging
+> setudp <API_HOST> 50011 50010  # Configure for target device
+> status                          # Check status
+> on                              # Turn contactor on
+> charge                          # Start charging
+> stop                            # Stop charging
 ```
 
-### 🖥️ Wallbox API (Banana Pi)
+### 🖥️ Wallbox API (Target Device)
 
-**IP:** 192.168.178.34  
+**IP:** <API_HOST>  
 **API Port:** 8080  
 **UDP Port:** 50010  
-**SSH:** `ssh bananapi`  
+**SSH:** `ssh <PI_USER>@<API_HOST>`  
 **Logs:** `/tmp/wallbox_api.out`
 
 ## Management Scripts

@@ -156,11 +156,11 @@ sudo reboot
 # Edit dhcpcd configuration
 sudo nano /etc/dhcpcd.conf
 
-# Add at the end:
+# Add at the end (adjust to match your network):
 interface eth0
 static ip_address=<API_HOST>/24
-static routers=192.168.178.1
-static domain_name_servers=192.168.178.1 8.8.8.8
+static routers=<GATEWAY_IP>
+static domain_name_servers=<GATEWAY_IP> 8.8.8.8
 
 # Save and exit (Ctrl+X, Y, Enter)
 
