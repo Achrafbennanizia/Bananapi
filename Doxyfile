@@ -134,6 +134,12 @@ FILE_PATTERNS          = *.h \
                          *.md
 RECURSIVE              = YES
 EXCLUDE                = WallboxCtrl/build \
+                         WallboxCtrl/src/main.cpp \
+                         WallboxCtrl/src/main_v2.cpp \
+                         WallboxCtrl/src/main_v2_with_api.cpp \
+                         WallboxCtrl/src/main_v3.cpp \
+                         WallboxCtrl/src/SimpleWallboxController.cpp \
+                         WallboxCtrl/include/SimpleWallboxController.h \
                          wallbox-portable-deploy \
                          wallbox-deployment \
                          WallboxCtrl/tests \
@@ -151,7 +157,12 @@ EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = */build/* \
                          */node_modules/* \
                          */.git/* \
-                         */CMakeFiles/*
+                         */CMakeFiles/* \
+                         */main.cpp \
+                         */main_v2.cpp \
+                         */main_v2_with_api.cpp \
+                         */main_v3.cpp \
+                         */SimpleWallboxController.*
 EXCLUDE_SYMBOLS        = 
 EXAMPLE_PATH           = WallboxCtrl \
                          wallbox-portable-deploy
