@@ -119,15 +119,14 @@ WARN_LOGFILE           =
 # Configuration options related to the input files
 #---------------------------------------------------------------------------
 
-INPUT                  = WallboxCtrl/include \
+INPUT                  = README.md \
+                         WallboxCtrl/include \
                          WallboxCtrl/src \
-                         wallbox-portable-deploy/include \
-                         wallbox-portable-deploy/src \
                          LibPubWallbox \
-                         README.md \
-                         QUICK_START.md \
-                         SYSTEM_OVERVIEW.md \
-                         docs
+                         docs/guides/QUICK_START.md \
+                         docs/guides/INSTALLATION_GUIDE.md \
+                         docs/architecture/ARCHITECTURE_V3.md \
+                         docs/api/API_REFERENCE.md
 INPUT_ENCODING         = UTF-8
 INPUT_FILE_ENCODING    = 
 FILE_PATTERNS          = *.h \
@@ -135,9 +134,19 @@ FILE_PATTERNS          = *.h \
                          *.md
 RECURSIVE              = YES
 EXCLUDE                = WallboxCtrl/build \
-                         wallbox-portable-deploy/build \
+                         wallbox-portable-deploy \
+                         wallbox-deployment \
                          WallboxCtrl/tests \
-                         wallbox-react-app/node_modules
+                         web/react-app/node_modules \
+                         docs/history \
+                         docs/summaries \
+                         docs/diagrams \
+                         docs/doxygen \
+                         docs/INTERACTIVE_MODE_IMPLEMENTATION.md \
+                         docs/DOCUMENTATION_UPDATE.md \
+                         docs/DOCUMENTATION_CLEANUP_SUMMARY.md \
+                         docs/REORGANIZATION_SUMMARY.md \
+                         docs/CP_SIGNAL_IMPLEMENTATION.md
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = */build/* \
                          */node_modules/* \
