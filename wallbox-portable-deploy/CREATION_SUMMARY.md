@@ -221,7 +221,7 @@ cd <PROJECT_ROOT>/wallbox-portable-deploy
 ./scripts/deploy.sh <PI_IP> <USER>
 
 # Example:
-./scripts/deploy.sh 192.168.178.34 root
+./scripts/deploy.sh <API_HOST> root
 ```
 
 **What it does:**
@@ -243,10 +243,10 @@ cd <PROJECT_ROOT>/wallbox-portable-deploy
 
 ```bash
 # Copy package to Pi
-scp -r wallbox-portable-deploy root@192.168.178.34:~/
+scp -r wallbox-portable-deploy root@<API_HOST>:~/
 
 # SSH into Pi
-ssh root@192.168.178.34
+ssh root@<API_HOST>
 
 # Install
 cd wallbox-portable-deploy
@@ -311,7 +311,7 @@ cd <PROJECT_ROOT>/wallbox-portable-deploy
 ./scripts/test-remote.sh <PI_IP>
 
 # Example:
-./scripts/test-remote.sh 192.168.178.34
+./scripts/test-remote.sh <API_HOST>
 ```
 
 ---
@@ -322,37 +322,37 @@ cd <PROJECT_ROOT>/wallbox-portable-deploy
 
 ```bash
 cd <PROJECT_ROOT>/wallbox-portable-deploy
-./scripts/deploy.sh 192.168.178.34 root
+./scripts/deploy.sh <API_HOST> root
 ```
 
 ### 2. Verify Deployment
 
 ```bash
 # Run remote tests
-./scripts/test-remote.sh 192.168.178.34
+./scripts/test-remote.sh <API_HOST>
 
 # Test API manually
-curl http://192.168.178.34:8080/api/status
+curl http://<API_HOST>:8080/api/status
 
 # Check logs
-ssh root@192.168.178.34 'journalctl -u wallbox -n 50'
+ssh root@<API_HOST> 'journalctl -u wallbox -n 50'
 ```
 
 ### 3. Test UDP Communication
 
 ```bash
 # On Mac, send UDP message
-echo "START_CHARGING" | nc -u 192.168.178.34 50010
+echo "START_CHARGING" | nc -u <API_HOST> 50010
 
 # Check if wallbox received it
-ssh root@192.168.178.34 'journalctl -u wallbox -n 10'
+ssh root@<API_HOST> 'journalctl -u wallbox -n 10'
 ```
 
 ### 4. Configure Auto-start
 
 ```bash
 # Enable service on boot
-ssh root@192.168.178.34 'systemctl enable wallbox'
+ssh root@<API_HOST> 'systemctl enable wallbox'
 ```
 
 ---
@@ -497,11 +497,11 @@ zip -r wallbox-portable-deploy-v1.0.zip wallbox-portable-deploy/
 
 ### 🎯 Ready for Deployment
 
-The package is **complete and ready**. When your Banana Pi (192.168.178.34) comes online:
+The package is **complete and ready**. When your Banana Pi (<API_HOST>) comes online:
 
 ```bash
-./scripts/deploy.sh 192.168.178.34 root
-./scripts/test-remote.sh 192.168.178.34
+./scripts/deploy.sh <API_HOST> root
+./scripts/test-remote.sh <API_HOST>
 ```
 
 ---
@@ -567,7 +567,7 @@ You now have a **complete, production-ready, C++14-compatible wallbox controller
 
 ```bash
 cd <PROJECT_ROOT>/wallbox-portable-deploy
-./scripts/deploy.sh 192.168.178.34 root
+./scripts/deploy.sh <API_HOST> root
 ```
 
 **That's it!** The deployment is fully automated. 🚀

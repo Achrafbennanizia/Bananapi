@@ -130,7 +130,7 @@ Tests passwordless SSH connection to Banana Pi.
 Get current wallbox status
 
 ```bash
-curl http://192.168.178.34:8080/api/status
+curl http://<API_HOST>:8080/api/status
 ```
 
 Response:
@@ -150,7 +150,7 @@ Response:
 Start charging session
 
 ```bash
-curl -X POST http://192.168.178.34:8080/api/charging/start
+curl -X POST http://<API_HOST>:8080/api/charging/start
 ```
 
 ### POST /api/charging/stop
@@ -158,7 +158,7 @@ curl -X POST http://192.168.178.34:8080/api/charging/start
 Stop charging session
 
 ```bash
-curl -X POST http://192.168.178.34:8080/api/charging/stop
+curl -X POST http://<API_HOST>:8080/api/charging/stop
 ```
 
 ### POST /api/charging/pause
@@ -166,7 +166,7 @@ curl -X POST http://192.168.178.34:8080/api/charging/stop
 Pause charging
 
 ```bash
-curl -X POST http://192.168.178.34:8080/api/charging/pause
+curl -X POST http://<API_HOST>:8080/api/charging/pause
 ```
 
 ### POST /api/charging/resume
@@ -174,7 +174,7 @@ curl -X POST http://192.168.178.34:8080/api/charging/pause
 Resume charging
 
 ```bash
-curl -X POST http://192.168.178.34:8080/api/charging/resume
+curl -X POST http://<API_HOST>:8080/api/charging/resume
 ```
 
 ### GET /health
@@ -182,7 +182,7 @@ curl -X POST http://192.168.178.34:8080/api/charging/resume
 Health check endpoint
 
 ```bash
-curl http://192.168.178.34:8080/health
+curl http://<API_HOST>:8080/health
 ```
 
 ## Quick Commands
@@ -200,7 +200,7 @@ tail -f /tmp/react_app.log
 tail -f /tmp/wallbox_simulator.log
 
 # Test API
-curl http://192.168.178.34:8080/api/status | python3 -m json.tool
+curl http://<API_HOST>:8080/api/status | python3 -m json.tool
 
 # Restart React only
 lsof -ti:3000 | xargs kill -9
@@ -275,10 +275,10 @@ cd /path/to/project/build/bin
 
 ```bash
 # Test Banana Pi connectivity
-ping -c 3 192.168.178.34
+ping -c 3 <API_HOST>
 
 # Test API connectivity
-curl -v --max-time 3 http://192.168.178.34:8080/api/status
+curl -v --max-time 3 http://<API_HOST>:8080/api/status
 
 # Check your Mac's IP
 ipconfig getifaddr en0
@@ -335,7 +335,7 @@ pkill -f simulator
 **File:** `/path/to/project/web/react-app/.env`
 
 ```env
-REACT_APP_API_BASE_URL=http://192.168.178.34:8080
+REACT_APP_API_BASE_URL=http://<API_HOST>:8080
 ```
 
 ### Wallbox Configuration
@@ -348,7 +348,7 @@ REACT_APP_API_BASE_URL=http://192.168.178.34:8080
   "network": {
     "udp_listen_port": 50010,
     "udp_send_port": 50011,
-    "udp_send_address": "192.168.178.23",
+    "udp_send_address": "<API_HOST>",
     "api_port": 8080
   }
 }
@@ -360,7 +360,7 @@ REACT_APP_API_BASE_URL=http://192.168.178.34:8080
 
 ```ssh-config
 Host bananapi
-    HostName 192.168.178.34
+    HostName <API_HOST>
     User root
     IdentityFile ~/.ssh/bananapi_key
 ```
@@ -370,7 +370,7 @@ Host bananapi
 ### Data Flow
 
 1. **User** → React Web App (localhost:3000)
-2. **React App** → HTTP API (192.168.178.34:8080)
+2. **React App** → HTTP API (<API_HOST>:8080)
 3. **Wallbox API** ↔ Simulator (UDP 50010/50011)
 4. **Wallbox** → GPIO Control (Simulated in dev mode)
 
@@ -413,8 +413,8 @@ Host bananapi
 ## Useful Links
 
 - **React App:** http://localhost:3000
-- **API Status:** http://192.168.178.34:8080/api/status
-- **API Health:** http://192.168.178.34:8080/health
+- **API Status:** http://<API_HOST>:8080/api/status
+- **API Health:** http://<API_HOST>:8080/health
 - **Banana Pi SSH:** `ssh bananapi`
 
 ## Support Scripts Location

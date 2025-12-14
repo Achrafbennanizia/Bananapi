@@ -140,7 +140,7 @@
   "network": {
     "udp_listen_port": 50010,
     "udp_send_port": 50011,
-    "udp_send_address": "192.168.178.23",
+    "udp_send_address": "<API_HOST>",
     "api_port": 8080
   },
   "gpio_pins": {

@@ -21,16 +21,16 @@ Automated deployment script for Raspberry Pi, Banana Pi, and other ARM SBCs.
 
 ```bash
 # Basic deployment
-./scripts/deploy.sh 192.168.178.34
+./scripts/deploy.sh <API_HOST>
 
 # Custom user
-PI_USER=root ./scripts/deploy.sh 192.168.178.34
+PI_USER=root ./scripts/deploy.sh <API_HOST>
 
 # Development mode
 BUILD_MODE=development ./scripts/deploy.sh bananapi
 
 # Custom remote directory
-REMOTE_DIR=/opt/wallbox ./scripts/deploy.sh 192.168.178.34
+REMOTE_DIR=/opt/wallbox ./scripts/deploy.sh <API_HOST>
 ```
 
 **Environment Variables:**
@@ -109,10 +109,10 @@ cd ..
 
 ```bash
 # 1. Deploy to Raspberry Pi
-./scripts/deploy.sh 192.168.178.34
+./scripts/deploy.sh <API_HOST>
 
 # 2. SSH to Pi and start services
-ssh pi@192.168.178.34
+ssh pi@<API_HOST>
 cd ~/wallbox-src/build
 ./wallbox_control_v3 &
 
@@ -125,10 +125,10 @@ cd WallboxCtrl/build
 
 ```bash
 # Quick update (code changes only)
-./scripts/deploy.sh 192.168.178.34
+./scripts/deploy.sh <API_HOST>
 
 # Full rebuild
-ssh pi@192.168.178.34 "cd ~/wallbox-src && rm -rf build && BUILD_MODE=production bash scripts/install.sh"
+ssh pi@<API_HOST> "cd ~/wallbox-src && rm -rf build && BUILD_MODE=production bash scripts/install.sh"
 ```
 
 ## 🔧 Configuration
@@ -155,7 +155,7 @@ Edit `config.json` on both sides:
   "network": {
     "udp_listen_port": 50010,
     "udp_send_port": 50011,
-    "udp_send_address": "192.168.178.34",
+    "udp_send_address": "<API_HOST>",
     "api_port": 8080
   }
 }
@@ -180,20 +180,20 @@ sudo journalctl -u wallbox -f
 
 ```bash
 # Check SSH connectivity
-ssh pi@192.168.178.34 "echo Connection OK"
+ssh pi@<API_HOST> "echo Connection OK"
 
 # Check sudo permissions
-ssh pi@192.168.178.34 "sudo -n true" || echo "Sudo requires password"
+ssh pi@<API_HOST> "sudo -n true" || echo "Sudo requires password"
 
 # Use root user if needed
-PI_USER=root ./scripts/deploy.sh 192.168.178.34
+PI_USER=root ./scripts/deploy.sh <API_HOST>
 ```
 
 ### Build Fails on Pi
 
 ```bash
 # Check dependencies manually
-ssh pi@192.168.178.34
+ssh pi@<API_HOST>
 sudo apt-get update
 sudo apt-get install build-essential cmake libmicrohttpd-dev libcurl4-openssl-dev
 
@@ -209,13 +209,13 @@ cmake --version
 
 ```bash
 # Check ports on Pi
-ssh pi@192.168.178.34 "lsof -i :50010"
+ssh pi@<API_HOST> "lsof -i :50010"
 
 # Check firewall
-ssh pi@192.168.178.34 "sudo ufw status"
+ssh pi@<API_HOST> "sudo ufw status"
 
 # Test UDP manually
-echo "test" | nc -u 192.168.178.34 50010
+echo "test" | nc -u <API_HOST> 50010
 ```
 
 ## 📊 Performance

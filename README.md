@@ -511,13 +511,13 @@ INSTALL_DIR=/opt/wallbox ./scripts/install.sh
 cd Bananapi/WallboxCtrl
 
 # Interactive deployment
-./scripts/deploy.sh 192.168.178.34 --interactive
+./scripts/deploy.sh <API_HOST> --interactive
 
 # Direct mode specification
-./scripts/deploy.sh 192.168.178.34 --mode production
+./scripts/deploy.sh <API_HOST> --mode production
 
 # Custom user
-PI_USER=root ./scripts/deploy.sh 192.168.178.34 --mode development
+PI_USER=root ./scripts/deploy.sh <API_HOST> --mode development
 
 # Show all deployment options
 ./scripts/deploy.sh --help

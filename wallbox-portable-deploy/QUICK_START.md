@@ -25,17 +25,17 @@ This directory contains a C++14 compatible, portable version of the Wallbox Cont
 
 ```bash
 # From this directory on your Mac/PC
-./scripts/deploy.sh 192.168.178.34
+./scripts/deploy.sh <API_HOST>
 
 # With custom user
-PI_USER=root ./scripts/deploy.sh 192.168.178.34
+PI_USER=root ./scripts/deploy.sh <API_HOST>
 ```
 
 **Development mode (simulator):**
 
 ```bash
 # Use simulator instead of hardware
-BUILD_MODE=development ./scripts/deploy.sh 192.168.178.34
+BUILD_MODE=development ./scripts/deploy.sh <API_HOST>
 ```
 
 **What the script does:**
@@ -55,10 +55,10 @@ BUILD_MODE=development ./scripts/deploy.sh 192.168.178.34
 
 ```bash
 # Copy to Pi
-scp -r ../wallbox-portable-deploy pi@192.168.178.34:~/
+scp -r ../wallbox-portable-deploy pi@<API_HOST>:~/
 
 # SSH and build
-ssh pi@192.168.178.34
+ssh pi@<API_HOST>
 cd wallbox-portable-deploy
 make              # Build everything
 make install      # Install to system (optional)
@@ -69,10 +69,10 @@ cd build && ./wallbox_control_v3
 
 ```bash
 # Copy this entire folder to your Pi
-scp -r ../wallbox-portable-deploy pi@192.168.178.34:~/
+scp -r ../wallbox-portable-deploy pi@<API_HOST>:~/
 
 # SSH into Pi
-ssh pi@192.168.178.34
+ssh pi@<API_HOST>
 
 # Run installer
 cd wallbox-portable-deploy
@@ -103,7 +103,7 @@ cd wallbox-portable-deploy
 
 ```bash
 # From your computer
-curl http://192.168.178.34:8080/api/status
+curl http://<API_HOST>:8080/api/status
 
 # Expected response:
 {
@@ -119,19 +119,19 @@ curl http://192.168.178.34:8080/api/status
 
 ```bash
 # Health check
-curl http://192.168.178.34:8080/health
+curl http://<API_HOST>:8080/health
 
 # Start charging
-curl -X POST http://192.168.178.34:8080/api/charging/start
+curl -X POST http://<API_HOST>:8080/api/charging/start
 
 # Check relay status
-curl http://192.168.178.34:8080/api/relay
+curl http://<API_HOST>:8080/api/relay
 
 # View logs
-ssh pi@192.168.178.34 'tail -f /tmp/wallbox.log'
+ssh pi@<API_HOST> 'tail -f /tmp/wallbox.log'
 
 # Check service status
-ssh pi@192.168.178.34 'sudo systemctl status wallbox'
+ssh pi@<API_HOST> 'sudo systemctl status wallbox'
 ```
 
 ## 📋 Features
@@ -196,7 +196,7 @@ Default config is in `config/config.json`:
   "network": {
     "udp_listen_port": 50010,
     "udp_send_port": 50011,
-    "udp_send_address": "192.168.178.23",
+    "udp_send_address": "<API_HOST>",
     "api_port": 8080
   },
   "gpio_pins": {
@@ -252,40 +252,40 @@ Comprehensive documentation available:
 
 ```bash
 # Deploy to Pi (production mode)
-./scripts/deploy.sh 192.168.178.34
+./scripts/deploy.sh <API_HOST>
 
 # Deploy in development mode
-BUILD_MODE=development ./scripts/deploy.sh 192.168.178.34
+BUILD_MODE=development ./scripts/deploy.sh <API_HOST>
 
 # Deploy as root user
-PI_USER=root ./scripts/deploy.sh 192.168.178.34
+PI_USER=root ./scripts/deploy.sh <API_HOST>
 
 # Run automated tests
 ./test_portable.sh
 
 # Check API status
-curl http://192.168.178.34:8080/api/status
+curl http://<API_HOST>:8080/api/status
 
 # Start charging
-curl -X POST http://192.168.178.34:8080/api/charging/start
+curl -X POST http://<API_HOST>:8080/api/charging/start
 
 # Stop charging
-curl -X POST http://192.168.178.34:8080/api/charging/stop
+curl -X POST http://<API_HOST>:8080/api/charging/stop
 
 # View logs (journalctl)
-ssh pi@192.168.178.34 'sudo journalctl -u wallbox -f'
+ssh pi@<API_HOST> 'sudo journalctl -u wallbox -f'
 
 # View logs (file)
-ssh pi@192.168.178.34 'tail -f /tmp/wallbox.log'
+ssh pi@<API_HOST> 'tail -f /tmp/wallbox.log'
 
 # Restart service
-ssh pi@192.168.178.34 'sudo systemctl restart wallbox'
+ssh pi@<API_HOST> 'sudo systemctl restart wallbox'
 
 # Check process
-ssh pi@192.168.178.34 'ps aux | grep wallbox_control'
+ssh pi@<API_HOST> 'ps aux | grep wallbox_control'
 
 # Check ports
-ssh pi@192.168.178.34 'lsof -i :8080 -i :50010 -i :50011'
+ssh pi@<API_HOST> 'lsof -i :8080 -i :50010 -i :50011'
 ```
 
 ## ✅ Pre-deployment Checklist
@@ -318,13 +318,13 @@ ssh pi@192.168.178.34 'lsof -i :8080 -i :50010 -i :50011'
 
 ```bash
 # Test SSH manually
-ssh pi@192.168.178.34
+ssh pi@<API_HOST>
 
 # Check SSH service on Pi
-ping 192.168.178.34
+ping <API_HOST>
 
 # Verify SSH keys
-ssh-copy-id pi@192.168.178.34
+ssh-copy-id pi@<API_HOST>
 ```
 
 **Build fails:**
@@ -334,20 +334,20 @@ ssh-copy-id pi@192.168.178.34
 cat /tmp/wallbox_install.log
 
 # Verify dependencies
-ssh pi@192.168.178.34 'dpkg -l | grep -E "cmake|gcc|libmicrohttpd"'
+ssh pi@<API_HOST> 'dpkg -l | grep -E "cmake|gcc|libmicrohttpd"'
 
 # Retry with clean build
-ssh pi@192.168.178.34 'cd ~/wallbox-src && rm -rf build && BUILD_MODE=production ./scripts/install.sh'
+ssh pi@<API_HOST> 'cd ~/wallbox-src && rm -rf build && BUILD_MODE=production ./scripts/install.sh'
 ```
 
 **Port conflicts:**
 
 ```bash
 # Check if ports are in use
-ssh pi@192.168.178.34 'sudo netstat -tulpn | grep -E "8080|50010|50011"'
+ssh pi@<API_HOST> 'sudo netstat -tulpn | grep -E "8080|50010|50011"'
 
 # Kill conflicting processes
-ssh pi@192.168.178.34 'sudo pkill -f wallbox_control'
+ssh pi@<API_HOST> 'sudo pkill -f wallbox_control'
 ```
 
 ### Runtime Issues
@@ -356,52 +356,52 @@ ssh pi@192.168.178.34 'sudo pkill -f wallbox_control'
 
 ```bash
 # View detailed logs
-ssh pi@192.168.178.34 'sudo journalctl -u wallbox -n 100 --no-pager'
+ssh pi@<API_HOST> 'sudo journalctl -u wallbox -n 100 --no-pager'
 
 # Check service status
-ssh pi@192.168.178.34 'sudo systemctl status wallbox'
+ssh pi@<API_HOST> 'sudo systemctl status wallbox'
 
 # Manual start for debugging
-ssh pi@192.168.178.34 'cd ~/wallbox-src/build && ./wallbox_control_v3'
+ssh pi@<API_HOST> 'cd ~/wallbox-src/build && ./wallbox_control_v3'
 ```
 
 **API not responding:**
 
 ```bash
 # Test locally on Pi
-ssh pi@192.168.178.34 'curl http://localhost:8080/api/status'
+ssh pi@<API_HOST> 'curl http://localhost:8080/api/status'
 
 # Check if process is running
-ssh pi@192.168.178.34 'ps aux | grep wallbox_control'
+ssh pi@<API_HOST> 'ps aux | grep wallbox_control'
 
 # Check firewall
-ssh pi@192.168.178.34 'sudo ufw status'
+ssh pi@<API_HOST> 'sudo ufw status'
 ```
 
 **GPIO permission issues (production mode):**
 
 ```bash
 # Add user to gpio group
-ssh pi@192.168.178.34 'sudo usermod -a -G gpio pi'
+ssh pi@<API_HOST> 'sudo usermod -a -G gpio pi'
 
 # Check GPIO access
-ssh pi@192.168.178.34 'test -w /sys/class/gpio/export && echo OK || echo FAIL'
+ssh pi@<API_HOST> 'test -w /sys/class/gpio/export && echo OK || echo FAIL'
 
 # Run with sudo (temporary)
-ssh pi@192.168.178.34 'cd ~/wallbox-src/build && sudo ./wallbox_control_v3'
+ssh pi@<API_HOST> 'cd ~/wallbox-src/build && sudo ./wallbox_control_v3'
 ```
 
 **CP Signal issues:**
 
 ```bash
 # Check CP reader logs
-ssh pi@192.168.178.34 'grep -i "CpSignal" /tmp/wallbox.log'
+ssh pi@<API_HOST> 'grep -i "CpSignal" /tmp/wallbox.log'
 
 # Verify mode in config
-ssh pi@192.168.178.34 'cat ~/wallbox-src/build/config.json | grep mode'
+ssh pi@<API_HOST> 'cat ~/wallbox-src/build/config.json | grep mode'
 
 # Test simulator (development mode)
-ssh pi@192.168.178.34 'cd ~/wallbox-src/build && ./simulator'
+ssh pi@<API_HOST> 'cd ~/wallbox-src/build && ./simulator'
 ```
 
 ## 🎉 Success Indicators
