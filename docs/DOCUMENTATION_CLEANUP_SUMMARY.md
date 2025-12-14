@@ -16,7 +16,7 @@
 | Placeholder      | Replaced                   | Count         | Scope           |
 | ---------------- | -------------------------- | ------------- | --------------- |
 | `<API_HOST>`     | 192.168.178.x IP addresses | 50+ instances | All docs        |
-| `<PROJECT_ROOT>` | /Users/achraf/pro/PJMT     | 30+ instances | All docs        |
+| `<PROJECT_ROOT>` | <PROJECT_ROOT>     | 30+ instances | All docs        |
 | `<SIM_HOST>`     | Simulator host references  | 10+ instances | Guides          |
 | `<PI_USER>`      | Username references        | 5+ instances  | Deployment docs |
 

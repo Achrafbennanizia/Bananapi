@@ -19,7 +19,7 @@ You requested: _"create me a new dir that can i deploy in any pi, this version m
 ### Directory Structure
 
 ```
-/Users/achraf/pro/PJMT/wallbox-portable-deploy/
+<PROJECT_ROOT>/wallbox-portable-deploy/
 ├── CMakeLists.txt             # C++14 build configuration
 ├── README.md                  # 600+ line comprehensive guide
 ├── QUICK_START.md             # Quick deployment guide
@@ -217,7 +217,7 @@ You requested: _"create me a new dir that can i deploy in any pi, this version m
 ### Option 1: Automated Remote Deployment (Easiest) ✅
 
 ```bash
-cd /Users/achraf/pro/PJMT/wallbox-portable-deploy
+cd <PROJECT_ROOT>/wallbox-portable-deploy
 ./scripts/deploy.sh <PI_IP> <USER>
 
 # Example:
@@ -285,7 +285,7 @@ scp wallbox_control_v3 config.json root@<PI2>:~/
 **Usage:**
 
 ```bash
-cd /Users/achraf/pro/PJMT/wallbox-portable-deploy
+cd <PROJECT_ROOT>/wallbox-portable-deploy
 ./scripts/test-local.sh
 ```
 
@@ -307,7 +307,7 @@ cd /Users/achraf/pro/PJMT/wallbox-portable-deploy
 **Usage:**
 
 ```bash
-cd /Users/achraf/pro/PJMT/wallbox-portable-deploy
+cd <PROJECT_ROOT>/wallbox-portable-deploy
 ./scripts/test-remote.sh <PI_IP>
 
 # Example:
@@ -321,7 +321,7 @@ cd /Users/achraf/pro/PJMT/wallbox-portable-deploy
 ### 1. Deploy to Banana Pi
 
 ```bash
-cd /Users/achraf/pro/PJMT/wallbox-portable-deploy
+cd <PROJECT_ROOT>/wallbox-portable-deploy
 ./scripts/deploy.sh 192.168.178.34 root
 ```
 
@@ -451,7 +451,7 @@ ssh root@192.168.178.34 'systemctl enable wallbox'
 ## 📦 Package Location
 
 ```
-/Users/achraf/pro/PJMT/wallbox-portable-deploy/
+<PROJECT_ROOT>/wallbox-portable-deploy/
 ```
 
 **Total Size:** ~2 MB (source code)  
@@ -460,7 +460,7 @@ ssh root@192.168.178.34 'systemctl enable wallbox'
 ### To Package for Distribution
 
 ```bash
-cd /Users/achraf/pro/PJMT
+cd <PROJECT_ROOT>
 tar czf wallbox-portable-deploy-v1.0.tar.gz wallbox-portable-deploy/
 
 # Or create zip
@@ -524,7 +524,7 @@ The package is **complete and ready**. When your Banana Pi (192.168.178.34) come
 ## 📝 Files You Can Review Now
 
 ```bash
-cd /Users/achraf/pro/PJMT/wallbox-portable-deploy
+cd <PROJECT_ROOT>/wallbox-portable-deploy
 
 # View documentation
 cat README.md           # 600+ line comprehensive guide
@@ -566,7 +566,7 @@ You now have a **complete, production-ready, C++14-compatible wallbox controller
 **To deploy when Pi is online:**
 
 ```bash
-cd /Users/achraf/pro/PJMT/wallbox-portable-deploy
+cd <PROJECT_ROOT>/wallbox-portable-deploy
 ./scripts/deploy.sh 192.168.178.34 root
 ```
 
@@ -576,4 +576,4 @@ cd /Users/achraf/pro/PJMT/wallbox-portable-deploy
 
 _Package created: December 12, 2024_  
 _Status: ✅ Complete and ready for deployment_  
-_Location: `/Users/achraf/pro/PJMT/wallbox-portable-deploy/`_
+_Location: `<PROJECT_ROOT>/wallbox-portable-deploy/`_

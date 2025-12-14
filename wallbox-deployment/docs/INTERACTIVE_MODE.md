@@ -7,7 +7,7 @@ This mode gives you full terminal control of both wallbox and simulator.
 ### Terminal 1 - Wallbox Controller
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/src
+cd <PROJECT_ROOT>/WallboxCtrl/src
 ./wallbox_ctrl
 ```
 
@@ -26,7 +26,7 @@ cd /Users/achraf/pro/PJMT/WallboxCtrl/src
 ### Terminal 2 - Simulator
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/src
+cd <PROJECT_ROOT>/WallboxCtrl/src
 ./simulator
 ```
 

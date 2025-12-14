@@ -8,7 +8,7 @@ The `config.json` file allows you to easily configure all aspects of the wallbox
 
 Place the `config.json` file in the same directory where you run `wallbox_control_v3`:
 
-- `/Users/achraf/pro/PJMT/WallboxCtrl/build/config.json` (for running from build/)
+- `<PROJECT_ROOT>/WallboxCtrl/build/config.json` (for running from build/)
 - Or copy it to your working directory
 
 ### Configuration Options
@@ -152,18 +152,18 @@ export WALLBOX_UDP_LISTEN_PORT=50020 # Override UDP listen port
 1. **Copy config file to build directory:**
 
    ```bash
-   cp /Users/achraf/pro/PJMT/WallboxCtrl/config.json /Users/achraf/pro/PJMT/WallboxCtrl/build/
+   cp <PROJECT_ROOT>/WallboxCtrl/config.json <PROJECT_ROOT>/WallboxCtrl/build/
    ```
 
 2. **Edit config.json with your settings:**
 
    ```bash
-   nano /Users/achraf/pro/PJMT/WallboxCtrl/build/config.json
+   nano <PROJECT_ROOT>/WallboxCtrl/build/config.json
    ```
 
 3. **Run wallbox (it will automatically load config.json):**
    ```bash
-   cd /Users/achraf/pro/PJMT/WallboxCtrl/build
+   cd <PROJECT_ROOT>/WallboxCtrl/build
    ./wallbox_control_v3
    ```
 
@@ -199,7 +199,7 @@ To test if your pin configuration is correct:
 
 ```bash
 # In development mode
-cd /Users/achraf/pro/PJMT/WallboxCtrl/build
+cd <PROJECT_ROOT>/WallboxCtrl/build
 ./wallbox_control_v3
 
 # Type these commands:

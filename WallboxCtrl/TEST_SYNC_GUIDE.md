@@ -5,14 +5,14 @@
 **Terminal 1 - Simulator:**
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/build
+cd <PROJECT_ROOT>/WallboxCtrl/build
 ./simulator
 ```
 
 **Terminal 2 - Wallbox:**
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/build
+cd <PROJECT_ROOT>/WallboxCtrl/build
 ./wallbox_control_v3
 ```
 

@@ -5,7 +5,7 @@
 ### Terminal 1 - Wallbox Controller
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/src
+cd <PROJECT_ROOT>/WallboxCtrl/src
 ./wallbox_ctrl
 ```
 
@@ -20,7 +20,7 @@ cd /Users/achraf/pro/PJMT/WallboxCtrl/src
 ### Terminal 2 - ISO 15118 Simulator
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/src
+cd <PROJECT_ROOT>/WallboxCtrl/src
 ./simulator
 ```
 
@@ -97,14 +97,14 @@ Run these in **separate terminals**:
 **Terminal 1 - API Server:**
 
 ```bash
-cd /Users/achraf/pro/PJMT
+cd <PROJECT_ROOT>
 bash scripts/start-api-only.sh
 ```
 
 **Terminal 2 - Interactive Simulator:**
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/build
+cd <PROJECT_ROOT>/WallboxCtrl/build
 ./simulator
 ```
 
@@ -113,7 +113,7 @@ Now you can type commands like: `on`, `ready`, `charge`, `status`
 **Terminal 3 - React App:**
 
 ```bash
-cd /Users/achraf/pro/PJMT/wallbox-react-app
+cd <PROJECT_ROOT>/wallbox-react-app
 npm start
 ```
 

@@ -149,14 +149,14 @@ if (enableState && wallboxDesiredState != g_chargingState)
 **Terminal 1 - Simulator:**
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/build
+cd <PROJECT_ROOT>/WallboxCtrl/build
 ./simulator
 ```
 
 **Terminal 2 - Wallbox:**
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/build
+cd <PROJECT_ROOT>/WallboxCtrl/build
 ./wallbox_control_v3
 ```
 
@@ -305,7 +305,7 @@ Wallbox> enable
 ### Automated Quick Test:
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl
+cd <PROJECT_ROOT>/WallboxCtrl
 ./test_quick_status.sh
 ```
 
@@ -407,7 +407,7 @@ lsof -i :50011
 
 ## Files Modified
 
-1. **`/Users/achraf/pro/PJMT/WallboxCtrl/src/simulator.cpp`**
+1. **`<PROJECT_ROOT>/WallboxCtrl/src/simulator.cpp`**
 
    - Fixed initial relay state: true → false
    - Added first message detection
@@ -417,7 +417,7 @@ lsof -i :50011
    - **Added automatic state synchronization with wallbox** (NEW)
    - **Added state sync request console notifications** (NEW)
 
-2. **`/Users/achraf/pro/PJMT/WallboxCtrl/src/WallboxController.cpp`**
+2. **`<PROJECT_ROOT>/WallboxCtrl/src/WallboxController.cpp`**
 
    - Added first send notification
    - Added relay state change logging
@@ -427,13 +427,13 @@ lsof -i :50011
    - **Added state change transmission to simulator** (NEW)
    - **Added state change debug logging** (NEW)
 
-3. **Created: `/Users/achraf/pro/PJMT/WallboxCtrl/test_quick_status.sh`**
+3. **Created: `<PROJECT_ROOT>/WallboxCtrl/test_quick_status.sh`**
 
    - Automated test script
    - Verifies communication is working
    - Provides diagnostic output
 
-4. **Created: `/Users/achraf/pro/PJMT/WallboxCtrl/test_state_sync.sh`** (NEW)
+4. **Created: `<PROJECT_ROOT>/WallboxCtrl/test_state_sync.sh`** (NEW)
    - Test script for state synchronization
    - Demonstrates wallbox → simulator state control
    - Instructions for all test scenarios

@@ -5,7 +5,7 @@
 ### Development Mode (Simulator - for testing on Mac/PC)
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/build
+cd <PROJECT_ROOT>/WallboxCtrl/build
 export WALLBOX_MODE=dev
 ./wallbox_control_v4
 ```
@@ -13,7 +13,7 @@ export WALLBOX_MODE=dev
 ### Production Mode (Real Hardware - Banana Pi only)
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/build
+cd <PROJECT_ROOT>/WallboxCtrl/build
 export WALLBOX_MODE=prod
 ./wallbox_control_v4
 ```
@@ -21,7 +21,7 @@ export WALLBOX_MODE=prod
 Or use the shortcut:
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/build
+cd <PROJECT_ROOT>/WallboxCtrl/build
 export WALLBOX_MODE=production
 ./wallbox_control_v4
 ```
@@ -141,4 +141,4 @@ make wallbox_control_v4
 ### "File not found"
 
 - **Cause:** Not in build directory
-- **Solution:** `cd /Users/achraf/pro/PJMT/WallboxCtrl/build`
+- **Solution:** `cd <PROJECT_ROOT>/WallboxCtrl/build`

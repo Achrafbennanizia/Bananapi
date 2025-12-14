@@ -47,7 +47,7 @@ See [UDP_CONFIG_GUIDE.md](UDP_CONFIG_GUIDE.md) for detailed examples.
 ## Building
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/src
+cd <PROJECT_ROOT>/WallboxCtrl/src
 
 # Build both programs
 g++ -std=c++17 -O2 main.cpp IsoStackCtrlProtocol_impl.cpp -o wallbox_ctrl
@@ -59,14 +59,14 @@ g++ -std=c++17 -O2 simulator.cpp IsoStackCtrlProtocol_impl.cpp -o simulator
 ### Terminal 1: Start the Wallbox Controller
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/src
+cd <PROJECT_ROOT>/WallboxCtrl/src
 ./wallbox_ctrl
 ```
 
 ### Terminal 2: Start the Simulator
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/src
+cd <PROJECT_ROOT>/WallboxCtrl/src
 ./simulator
 ```
 

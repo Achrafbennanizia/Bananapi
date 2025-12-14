@@ -3,7 +3,7 @@
 **Package:** Wallbox Controller C++14 Portable Edition  
 **Version:** 1.0  
 **Created:** December 12, 2024  
-**Location:** `/Users/achraf/pro/PJMT/wallbox-portable-deploy/`
+**Location:** `<PROJECT_ROOT>/wallbox-portable-deploy/`
 
 ---
 
@@ -222,14 +222,14 @@ wallbox-portable-deploy/
 ### Deploy to Pi (One Command)
 
 ```bash
-cd /Users/achraf/pro/PJMT/wallbox-portable-deploy
+cd <PROJECT_ROOT>/wallbox-portable-deploy
 ./scripts/deploy.sh 192.168.178.34 root
 ```
 
 ### Test Locally (Before Deployment)
 
 ```bash
-cd /Users/achraf/pro/PJMT/wallbox-portable-deploy
+cd <PROJECT_ROOT>/wallbox-portable-deploy
 ./scripts/test-local.sh
 ```
 
@@ -387,7 +387,7 @@ ssh root@192.168.178.34 'netstat -ulpn | grep 50010'
 Everything is prepared for deployment. When your Banana Pi (192.168.178.34) is online:
 
 ```bash
-cd /Users/achraf/pro/PJMT/wallbox-portable-deploy
+cd <PROJECT_ROOT>/wallbox-portable-deploy
 ./scripts/deploy.sh 192.168.178.34 root
 ```
 
