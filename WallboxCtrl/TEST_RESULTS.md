@@ -228,6 +228,6 @@ The system is fully operational with:
 
 ---
 
-**Tested by:** GitHub Copilot  
+**Tested by:** Achraf Bennani  
 **Test Environment:** macOS (development mode)  
 **Next Steps:** Deploy to Banana Pi hardware for production testing

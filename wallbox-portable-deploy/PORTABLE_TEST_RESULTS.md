@@ -399,7 +399,7 @@ The wallbox-portable-deploy package is fully functional:
 
 ---
 
-**Tested by:** GitHub Copilot  
+**Tested by:** Achraf Bennani  
 **Test Environment:** macOS (M1, development mode)  
 **Build System:** CMake 3.x + Make  
 **Dependencies:** libmicrohttpd 1.0.2

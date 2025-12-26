@@ -442,7 +442,7 @@ docs/
 
 ---
 
-_Documentation update completed by: GitHub Copilot_  
-_Date: December 14, 2024_  
+_Documentation update completed by: Achraf Bennani_  
+_Date: December 26, 2025_  
 _Version: 4.1.0_  
 _Commit: f3934ae_
