@@ -28,21 +28,30 @@ docs/
 
 ### Getting Started
 
-| Document                                     | Description                        |
-| -------------------------------------------- | ---------------------------------- |
-| [Quick Start](guides/QUICK_START.md)         | 5-minute setup and first run       |
+| Document                                           | Description                        |
+| -------------------------------------------------- | ---------------------------------- |
+| [Quick Start](guides/QUICK_START.md)               | 5-minute setup and first run       |
 | [Installation Guide](guides/INSTALLATION_GUIDE.md) | Complete installation instructions |
-| [System Overview](SYSTEM_OVERVIEW.md)        | High-level system architecture     |
-| [File Structure](FILE_STRUCTURE.md)          | Project organization explained     |
+| [System Overview](SYSTEM_OVERVIEW.md)              | High-level system architecture     |
+| [File Structure](FILE_STRUCTURE.md)                | Project organization explained     |
 
 ### User Guides
 
 | Document                                   | Description                           |
 | ------------------------------------------ | ------------------------------------- |
 | [Modes Guide](guides/MODES_GUIDE.md)       | Production/Development/Debug modes    |
+| [Mode Guide](MODE_GUIDE.md)                | Interactive vs API mode               |
 | [UDP Sync Guide](guides/UDP_SYNC_GUIDE.md) | Network communication setup           |
-| [Migration Guide](guides/MIGRATION.md)     | Upgrade from previous versions        |
 | [SSH Setup](guides/SSH_SETUP.md)           | SSH key authentication for deployment |
+
+### Hardware Guides
+
+| Document                                                     | Description                      |
+| ------------------------------------------------------------ | -------------------------------- |
+| [BananaPi M5 Setup](BANANAPI_M5_SETUP.md)                    | Complete BananaPi M5 setup guide |
+| [BananaPi M5 GPIO Guide](BANANAPI_M5_GPIO_GUIDE.md)          | GPIO pin configuration and usage |
+| [GPIO Hardware Test Report](GPIO_HARDWARE_TEST_REPORT.md)    | Hardware testing results         |
+| [BananaPi GPIO Test Report](BANANAPI_M5_GPIO_TEST_REPORT.md) | GPIO verification tests          |
 
 ### Developer Guides
 
@@ -221,7 +230,7 @@ Found an error or want to improve the docs? See [Contributing Guidelines](../CON
 
 ## 🔄 Documentation Maintenance
 
-This documentation is maintained by the project team and community contributors. Last major update: v4.1.0 (December 2024).
+This documentation is maintained by the project team and community contributors. Last major update: v4.0 (December 2025).
 
 **Update Frequency**:
 

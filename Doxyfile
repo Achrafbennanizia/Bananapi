@@ -121,13 +121,17 @@ WARN_LOGFILE           =
 
 INPUT                  = docs/MAINPAGE.md \
                          README.md \
+                         include/wallbox \
+                         src \
                          WallboxCtrl/include \
                          WallboxCtrl/src \
-                         LibPubWallbox \
                          docs/guides/QUICK_START.md \
                          docs/guides/INSTALLATION_GUIDE.md \
                          docs/architecture/ARCHITECTURE_V3.md \
-                         docs/api/API_REFERENCE.md
+                         docs/api/API_REFERENCE.md \
+                         docs/SYSTEM_OVERVIEW.md \
+                         docs/BANANAPI_M5_SETUP.md \
+                         docs/MODE_GUIDE.md
 INPUT_ENCODING         = UTF-8
 INPUT_FILE_ENCODING    = 
 FILE_PATTERNS          = *.h \
@@ -136,12 +140,6 @@ FILE_PATTERNS          = *.h \
 RECURSIVE              = YES
 EXCLUDE                = WallboxCtrl/build \
                          WallboxCtrl/src/tt \
-                         WallboxCtrl/src/main.cpp \
-                         WallboxCtrl/src/main_v2.cpp \
-                         WallboxCtrl/src/main_v2_with_api.cpp \
-                         WallboxCtrl/src/main_v3.cpp \
-                         WallboxCtrl/src/SimpleWallboxController.cpp \
-                         WallboxCtrl/include/SimpleWallboxController.h \
                          wallbox-portable-deploy \
                          wallbox-deployment \
                          WallboxCtrl/tests \
@@ -150,26 +148,27 @@ EXCLUDE                = WallboxCtrl/build \
                          docs/summaries \
                          docs/diagrams \
                          docs/doxygen \
+                         docs/backups \
                          docs/INTERACTIVE_MODE_IMPLEMENTATION.md \
                          docs/DOCUMENTATION_UPDATE.md \
                          docs/DOCUMENTATION_CLEANUP_SUMMARY.md \
                          docs/REORGANIZATION_SUMMARY.md \
-                         docs/CP_SIGNAL_IMPLEMENTATION.md
+                         docs/CP_SIGNAL_IMPLEMENTATION.md \
+                         external/LibPubWallbox \
+                         build
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = */build/* \
                          */node_modules/* \
                          */.git/* \
                          */CMakeFiles/* \
-                         */main.cpp \
-                         */main_v2.cpp \
-                         */main_v2_with_api.cpp \
-                         */main_v3.cpp \
-                         */SimpleWallboxController.*
+                         */external/*
 EXCLUDE_SYMBOLS        = 
 EXAMPLE_PATH           = WallboxCtrl \
-                         wallbox-portable-deploy
+                         config \
+                         scripts
 EXAMPLE_PATTERNS       = *.cpp \
-                         *.sh
+                         *.sh \
+                         *.json
 EXAMPLE_RECURSIVE      = NO
 IMAGE_PATH             = docs/diagrams
 INPUT_FILTER           = 
@@ -321,9 +320,9 @@ ENABLE_PREPROCESSING   = YES
 MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = NO
 SEARCH_INCLUDES        = YES
-INCLUDE_PATH           = WallboxCtrl/include \
-                         wallbox-portable-deploy/include \
-                         LibPubWallbox
+INCLUDE_PATH           = include/wallbox \
+                         WallboxCtrl/include \
+                         wallbox-portable-deploy/include
 INCLUDE_FILE_PATTERNS  = *.h
 PREDEFINED             = 
 EXPAND_AS_DEFINED      = 

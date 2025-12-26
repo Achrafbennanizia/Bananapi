@@ -4,7 +4,7 @@
 
 @section intro_sec Introduction
 
-Welcome to the Wallbox Control System v4.0 API documentation. This is the **latest production version** with complete feature set.
+Welcome to the Wallbox Control System v4.0 API documentation. This is the **latest production version** with complete feature set for ISO 15118 EV charging station control.
 
 @section features_sec Key Features
 
@@ -17,7 +17,7 @@ Welcome to the Wallbox Control System v4.0 API documentation. This is the **late
 @subsection cp_signal CP Signal System
 
 - IEC 61851-1 compliant Control Pilot signal handling
-- Hardware mode for BananaPi GPIO integration
+- Hardware mode for BananaPi M5 GPIO integration
 - Simulator mode for development and testing
 
 @subsection iso15118 ISO 15118 Protocol
@@ -33,6 +33,24 @@ Welcome to the Wallbox Control System v4.0 API documentation. This is the **late
 - **HttpApiServer**: REST API server
 - **UdpCommunicator**: ISO 15118 network layer
 - **GPIO Controllers**: Platform abstraction (Stub/BananaPi)
+- **CP Signal Readers**: Hardware/Simulator implementations
+
+@section project_structure Project Structure
+
+```
+├── include/wallbox/       # Main header files
+├── src/
+│   ├── api/               # HTTP API server
+│   ├── core/              # Core logic and controllers
+│   ├── gpio/              # GPIO implementations
+│   ├── network/           # UDP communication
+│   ├── signal/            # CP signal handling
+│   └── simulator/         # Wallbox simulator
+├── config/                # Configuration files
+├── scripts/               # Build, deploy, and test scripts
+├── docs/                  # Documentation
+└── WallboxCtrl/           # Legacy/alternative builds
+```
 
 @section versions_sec Version Information
 
@@ -61,7 +79,7 @@ Features:
 - Stub GPIO for testing
 - BananaPi GPIO support
 
-Build target: `wallbox_control_v3` (Note: Build command uses v3, but file is main_v3.cpp which is simplified version)
+Build target: `wallbox_control_v3`
 
 @subsection v2_older v2.0 - SOLID (141KB)
 **Legacy SOLID architecture**
@@ -73,11 +91,6 @@ Features:
 - Legacy compatibility
 
 Build target: `wallbox_control_v2`
-
-@subsection v1_legacy v1.0 - Original (61KB)
-**Original implementation**
-
-Build target: `wallbox_control_v1`
 
 @section quick_start Quick Start
 
@@ -96,7 +109,7 @@ make -j$(nproc)
 
 ```bash
 cd build/bin
-./wallbox_control_v4
+./wallbox_control_v4 config/development.json
 ```
 
 **Terminal 2 - Simulator:**
@@ -179,7 +192,14 @@ Related files:
 
 @section config Configuration
 
-Edit `config.json`:
+Configuration files are located in `config/` directory:
+
+- `development.json` - Local development with simulator
+- `development_pi.json` - BananaPi development
+- `production.json` - Production deployment
+- `test.json` - Testing configuration
+
+Example configuration:
 
 ```json
 {
@@ -193,21 +213,44 @@ Edit `config.json`:
     "udp_send_port": 50011,
     "udp_send_address": "127.0.0.1",
     "api_port": 8080
+  },
+  "cp_signal": {
+    "mode": "simulator"
   }
 }
 ```
 
 @section deployment Deployment
 
-For BananaPi production deployment:
+For BananaPi M5 production deployment:
 
 ```bash
-cd <PROJECT_ROOT>
-BUILD_MODE=production cmake -B build && make -C build -j$(nproc)
-scp build/bin/wallbox_control_v4 pi@<API_HOST>:~/
-ssh pi@<API_HOST>
-./wallbox_control_v4
+# Build on target
+cd ~/wallbox-src
+mkdir -p build && cd build
+cmake ..
+make wallbox_control_v4 -j4
+
+# Run
+./bin/wallbox_control_v4 ../config/production.json
 ```
+
+Or deploy from development machine:
+
+```bash
+./scripts/deploy/deploy.sh
+```
+
+@section hardware_sec Hardware Setup
+
+For BananaPi M5 GPIO configuration, see @ref BANANAPI_M5_SETUP.md "BananaPi M5 Setup Guide"
+
+GPIO Pins used:
+
+- Pin 579 (GPIOH_4): Relay 1
+- Pin 586 (GPIOH_5): Relay 2
+- Pin 587 (GPIOH_6): Relay 3
+- Pin 590 (GPIOH_7): Relay 4
 
 @section docs_sec Documentation
 
@@ -215,6 +258,8 @@ ssh pi@<API_HOST>
 - @ref INSTALLATION_GUIDE.md "Installation Guide"
 - @ref ARCHITECTURE_V3.md "Architecture Documentation"
 - @ref API_REFERENCE.md "API Reference"
+- @ref MODE_GUIDE.md "Operating Modes Guide"
+- @ref BANANAPI_M5_SETUP.md "BananaPi M5 Setup"
 
 @section license License
 
