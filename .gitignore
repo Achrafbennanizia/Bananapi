@@ -22,3 +22,6 @@ compile_commands.json
 *.swp
 *.swo
 *~
+
+# External libraries
+external/LibPubWallbox/
