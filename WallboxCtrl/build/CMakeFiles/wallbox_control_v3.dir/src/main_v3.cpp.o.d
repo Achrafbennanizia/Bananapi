@@ -793,7 +793,7 @@ CMakeFiles/wallbox_control_v3.dir/src/main_v3.cpp.o: \
   /Users/achraf/pro/PJMT/WallboxCtrl/include/INetworkCommunicator.h \
   /Users/achraf/pro/PJMT/WallboxCtrl/include/ChargingStateMachine.h \
   /Users/achraf/pro/PJMT/WallboxCtrl/include/ICpSignalReader.h \
-  /Users/achraf/pro/PJMT/WallboxCtrl/include/../../LibPubWallbox/IsoStackCtrlProtocol.h \
+  /Users/achraf/pro/PJMT/WallboxCtrl/../external/LibPubWallbox/IsoStackCtrlProtocol.h \
   /Users/achraf/pro/PJMT/WallboxCtrl/include/HttpApiServer.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/thread \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__thread/this_thread.h \

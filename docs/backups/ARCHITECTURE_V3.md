@@ -63,9 +63,9 @@ The Wallbox Controller v4.0 implements a modern, industry-standard architecture 
       ├─────────────────┬──────────────────┬────────────────┐
       ▼                 ▼                  ▼                ▼
 ┌──────────┐   ┌─────────────┐   ┌──────────────┐  ┌──────────┐
-│ State    │   │   GPIO      │   │   Network    │  │   LED    │
-│ Machine  │   │ Controller  │   │Communicator  │  │Controller│
-│(State)   │   │  (Strategy) │   │(Strategy)    │  │          │
+│ State    │   │   GPIO       │   │   Network    │  │   LED    │
+│ Machine  │   │ Controller   │   │Communicator  │  │Controller│
+│(State)   │   │(Strategy)    │   │(Strategy)    │  │          │
 └──────────┘   └─────────────┘   └──────────────┘  └──────────┘
      │
      │ (Observer Pattern)
@@ -136,7 +136,7 @@ Application
           │              │              │
           │              ├─────────┐    │
           │              │         │    │
-          │         (pause)     (stop)  │
+          │         (pause)     (stop) │
           │              │         │    │
           │              ▼         └────┘
           │         ┌─────────┐

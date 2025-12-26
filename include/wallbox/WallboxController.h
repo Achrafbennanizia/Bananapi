@@ -5,7 +5,7 @@
 #include "INetworkCommunicator.h"
 #include "ChargingStateMachine.h"
 #include "ICpSignalReader.h"
-#include "IsoStackCtrlProtocol.h"
+#include "../../external/LibPubWallbox/IsoStackCtrlProtocol.h"
 #include <memory>
 #include <string>
 #include <atomic>
@@ -98,6 +98,8 @@ namespace Wallbox
         // LED control
         void setLedState(int pin, bool on);
         void showIdleLeds();
+        void showConnectedLeds();
+        void showReadyLeds();
         void showChargingLeds();
         void showErrorLeds();
         void showPausedLeds();

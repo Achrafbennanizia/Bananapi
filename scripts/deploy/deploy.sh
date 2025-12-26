@@ -49,9 +49,25 @@ done
 
 # Configuration
 SSH_USER="${PI_USER:-${SSH_USER_ARG:-pi}}"
-REMOTE_DIR="/home/$SSH_USER/wallbox-src"
-LOCAL_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+# Handle root user directory differently
+if [ "$SSH_USER" = "root" ]; then
+    REMOTE_DIR="/root/wallbox-src"
+else
+    REMOTE_DIR="/home/$SSH_USER/wallbox-src"
+fi
+LOCAL_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../.." && pwd )"
 BUILD_MODE="${BUILD_MODE:-production}"
+
+# Set SSH_TARGET based on whether PI_HOST is an SSH config alias
+set_ssh_target() {
+    if [ -n "$PI_HOST" ]; then
+        if grep -q "^Host $PI_HOST$" ~/.ssh/config 2>/dev/null || grep -q "^Host $PI_HOST " ~/.ssh/config 2>/dev/null; then
+            SSH_TARGET="$PI_HOST"
+        else
+            SSH_TARGET="$SSH_USER@$PI_HOST"
+        fi
+    fi
+}
 
 # Functions
 show_help() {
@@ -185,6 +201,9 @@ check_args() {
         exit 1
     fi
     
+    # Set SSH target (handles SSH config aliases)
+    set_ssh_target
+    
     # Interactive mode selection
     if [ -n "$INTERACTIVE" ]; then
         select_mode
@@ -216,10 +235,10 @@ check_requirements() {
 }
 
 test_connection() {
-    log "Testing SSH connection to $SSH_USER@$PI_HOST..."
+    log "Testing SSH connection to $SSH_TARGET..."
     
-    if ! ssh -o ConnectTimeout=5 -o BatchMode=yes "$SSH_USER@$PI_HOST" "echo 'Connection OK'" &> /dev/null; then
-        error "Cannot connect to $SSH_USER@$PI_HOST. Check:"
+    if ! ssh -o ConnectTimeout=5 -o BatchMode=yes "$SSH_TARGET" "echo 'Connection OK'" &> /dev/null; then
+        error "Cannot connect to $SSH_TARGET. Check:"
         echo "  - SSH is enabled on Pi"
         echo "  - Correct IP address/hostname"
         echo "  - SSH keys are set up"
@@ -230,7 +249,7 @@ test_connection() {
     
     # Check sudo permissions
     log "Checking sudo permissions..."
-    if ssh -o ConnectTimeout=5 "$SSH_USER@$PI_HOST" "sudo -n true" &> /dev/null; then
+    if ssh -o ConnectTimeout=5 "$SSH_TARGET" "sudo -n true" &> /dev/null; then
         log "Passwordless sudo is configured"
     else
         warn "Passwordless sudo not configured for user '$SSH_USER'"
@@ -240,7 +259,7 @@ test_connection() {
         echo "     PI_USER=root $0 $PI_HOST"
         echo ""
         echo "  2. Configure passwordless sudo on Pi:"
-        echo "     ssh $SSH_USER@$PI_HOST"
+        echo "     ssh $SSH_TARGET"
         echo "     echo \"$SSH_USER ALL=(ALL) NOPASSWD: ALL\" | sudo tee /etc/sudoers.d/$SSH_USER"
         echo ""
         echo "  3. Enter sudo password when prompted during deployment"
@@ -254,21 +273,23 @@ test_connection() {
 }
 
 package_project() {
-    log "Packaging project..."
+    log "Packaging project..." >&2
     
     cd "$LOCAL_DIR"
     
     PACKAGE_NAME="wallbox-deploy-$(date +%Y%m%d_%H%M%S).tar.gz"
     
     # Package all source files including CP signal system
-    tar -czf "/tmp/$PACKAGE_NAME" \
+    # Exclude macOS AppleDouble files (._*) which cause build errors on Linux
+    COPYFILE_DISABLE=1 tar -czf "/tmp/$PACKAGE_NAME" \
         --exclude='build' \
         --exclude='.git' \
         --exclude='*.o' \
         --exclude='*.log' \
         --exclude='__pycache__' \
         --exclude='.DS_Store' \
-        src/ include/ scripts/ \
+        --exclude='._*' \
+        src/ include/ external/ scripts/ \
         CMakeLists.txt Makefile config.json \
         README.md README_V2.md README_V4.md QUICK_START.md \
         CONFIG_GUIDE.md UDP_CONFIG_GUIDE.md V4_COMMANDS.md \
@@ -279,30 +300,35 @@ package_project() {
     fi
     
     SIZE=$(du -h "/tmp/$PACKAGE_NAME" | cut -f1)
-    log "Package created: $PACKAGE_NAME ($SIZE)"
+    log "Package created: $PACKAGE_NAME ($SIZE)" >&2
     
     echo "/tmp/$PACKAGE_NAME"
 }
 
 deploy_to_pi() {
-    log "Deploying to $SSH_USER@$PI_HOST..."
+    log "Deploying to $SSH_TARGET..."
     
     PACKAGE=$(package_project)
     
     # Create remote directory
-    ssh "$SSH_USER@$PI_HOST" "mkdir -p $REMOTE_DIR" || error "Failed to create remote directory"
+    ssh "$SSH_TARGET" "mkdir -p $REMOTE_DIR" || error "Failed to create remote directory"
     
-    # Copy package
+    # Copy package using rsync (more reliable with SSH config)
     log "Copying files..."
-    scp "$PACKAGE" "$SSH_USER@$PI_HOST:/tmp/" || error "Failed to copy package"
+    if command -v rsync &> /dev/null; then
+        rsync -avz -e ssh "$PACKAGE" "$SSH_TARGET:/tmp/" || error "Failed to copy package"
+    else
+        # Fallback to scp with explicit SSH config
+        scp -F ~/.ssh/config "$PACKAGE" "$SSH_TARGET:/tmp/" || error "Failed to copy package"
+    fi
     
     # Extract on remote
     log "Extracting files on remote..."
-    ssh "$SSH_USER@$PI_HOST" "cd $REMOTE_DIR && tar -xzf /tmp/$(basename $PACKAGE)" || error "Failed to extract package"
+    ssh "$SSH_TARGET" "cd $REMOTE_DIR && tar -xzf /tmp/$(basename $PACKAGE)" || error "Failed to extract package"
     
     # Cleanup
     rm "$PACKAGE"
-    ssh "$SSH_USER@$PI_HOST" "rm /tmp/$(basename $PACKAGE)"
+    ssh "$SSH_TARGET" "rm /tmp/$(basename $PACKAGE)"
     
     log "Files deployed successfully"
 }
@@ -311,7 +337,7 @@ install_remote_dependencies() {
     log "Checking and installing dependencies on Pi..."
     
     # Use -t flag to allocate pseudo-terminal for sudo
-    ssh -t "$SSH_USER@$PI_HOST" "bash -s" << 'EOF'
+    ssh -t "$SSH_TARGET" "bash -s" << 'EOF'
         set -e
         echo "Updating package lists..."
         sudo apt-get update -qq
@@ -337,7 +363,29 @@ EOF
 build_on_pi() {
     log "Building on Pi (mode: $BUILD_MODE)..."
     
-    ssh "$SSH_USER@$PI_HOST" "cd $REMOTE_DIR && BUILD_MODE=$BUILD_MODE bash scripts/install.sh" || error "Build failed"
+    # Determine build type based on mode
+    local CMAKE_BUILD_TYPE="Release"
+    local EXTRA_FLAGS=""
+    case "$BUILD_MODE" in
+        development)
+            CMAKE_BUILD_TYPE="Debug"
+            EXTRA_FLAGS="-DENABLE_VERBOSE_LOGGING=ON"
+            ;;
+        debug)
+            CMAKE_BUILD_TYPE="Debug"
+            EXTRA_FLAGS="-DENABLE_SANITIZER=ON"
+            ;;
+        production)
+            CMAKE_BUILD_TYPE="Release"
+            ;;
+    esac
+    
+    # Build directly using cmake
+    ssh "$SSH_TARGET" "cd $REMOTE_DIR && \
+        mkdir -p build && \
+        cd build && \
+        cmake .. -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE $EXTRA_FLAGS && \
+        make -j\$(nproc)" || error "Build failed"
     
     log "Build completed on Pi"
 }
@@ -356,7 +404,7 @@ configure_system() {
     log "Pi IP: $PI_HOST"
     
     # Update config.json on remote with proper mode and IPs
-    ssh "$SSH_USER@$PI_HOST" "cd $REMOTE_DIR/build && \
+    ssh "$SSH_TARGET" "cd $REMOTE_DIR/build && \
         python3 -c \"
 import json
 with open('config.json', 'r') as f:
@@ -380,7 +428,7 @@ check_gpio_permissions() {
     log "Checking GPIO permissions..."
     
     if [ "$BUILD_MODE" = "production" ]; then
-        ssh "$SSH_USER@$PI_HOST" "test -w /sys/class/gpio/export" && \
+        ssh "$SSH_TARGET" "test -w /sys/class/gpio/export" && \
             log "GPIO permissions OK" || \
             warn "GPIO may not be accessible. Run with sudo or add user to gpio group"
     else
@@ -392,22 +440,22 @@ start_service() {
     log "Starting wallbox service..."
     
     # Stop any existing instances
-    ssh "$SSH_USER@$PI_HOST" "pkill -9 wallbox_control || true"
+    ssh "$SSH_TARGET" "pkill -9 wallbox_control || true"
     sleep 1
     
     # Start service
-    ssh "$SSH_USER@$PI_HOST" "cd $REMOTE_DIR/build && \
+    ssh "$SSH_TARGET" "cd $REMOTE_DIR/build && \
         nohup ./wallbox_control_v4 </dev/null >/tmp/wallbox.log 2>&1 &"
     
     sleep 3
     
     # Check if running
-    if ssh "$SSH_USER@$PI_HOST" "pgrep wallbox_control" &> /dev/null; then
-        PID=$(ssh "$SSH_USER@$PI_HOST" "pgrep wallbox_control")
+    if ssh "$SSH_TARGET" "pgrep wallbox_control" &> /dev/null; then
+        PID=$(ssh "$SSH_TARGET" "pgrep wallbox_control")
         log "Wallbox service started (PID: $PID)"
     else
         warn "Wallbox may not have started. Check logs with:"
-        echo "    ssh $SSH_USER@$PI_HOST 'tail -50 /tmp/wallbox.log'"
+        echo "    ssh $SSH_TARGET 'tail -50 /tmp/wallbox.log'"
         return 1
     fi
 }
@@ -439,12 +487,12 @@ test_cp_signal() {
     
     if [ "$BUILD_MODE" = "production" ]; then
         log "Production mode - CP signal reading from hardware GPIO pin"
-        ssh "$SSH_USER@$PI_HOST" "grep -i 'HardwareCpSignalReader' /tmp/wallbox.log" && \
+        ssh "$SSH_TARGET" "grep -i 'HardwareCpSignalReader' /tmp/wallbox.log" && \
             log "Hardware CP reader initialized" || \
             warn "CP reader may not be initialized"
     else
         log "Development mode - CP signal via simulator"
-        ssh "$SSH_USER@$PI_HOST" "grep -i 'SimulatorCpSignalReader' /tmp/wallbox.log" && \
+        ssh "$SSH_TARGET" "grep -i 'SimulatorCpSignalReader' /tmp/wallbox.log" && \
             log "Simulator CP reader initialized" || \
             warn "CP reader may not be initialized"
     fi
@@ -456,7 +504,7 @@ print_summary() {
     echo "  Deployment Complete!"
     echo "======================================"
     echo ""
-    echo "Remote: $SSH_USER@$PI_HOST"
+    echo "Remote: $SSH_TARGET"
     echo "Directory: $REMOTE_DIR"
     echo "Mode: $BUILD_MODE"
     echo ""
@@ -471,19 +519,19 @@ print_summary() {
     echo "    curl http://$PI_HOST:8080/api/status"
     echo ""
     echo "  View logs:"
-    echo "    ssh $SSH_USER@$PI_HOST 'tail -f /tmp/wallbox.log'"
+    echo "    ssh $SSH_TARGET 'tail -f /tmp/wallbox.log'"
     echo ""
     echo "  Check process:"
-    echo "    ssh $SSH_USER@$PI_HOST 'ps aux | grep wallbox_control'"
+    echo "    ssh $SSH_TARGET 'ps aux | grep wallbox_control'"
     echo ""
     echo "  Stop service:"
-    echo "    ssh $SSH_USER@$PI_HOST 'pkill wallbox_control'"
+    echo "    ssh $SSH_TARGET 'pkill wallbox_control'"
     echo ""
     echo "  Restart service:"
-    echo "    ssh $SSH_USER@$PI_HOST 'cd $REMOTE_DIR/build && nohup ./wallbox_control_v4 </dev/null >/tmp/wallbox.log 2>&1 &'"
+    echo "    ssh $SSH_TARGET 'cd $REMOTE_DIR/build && nohup ./wallbox_control_v4 </dev/null >/tmp/wallbox.log 2>&1 &'"
     echo ""
     echo "  Enable systemd service:"
-    echo "    ssh $SSH_USER@$PI_HOST 'sudo systemctl enable wallbox && sudo systemctl start wallbox'"
+    echo "    ssh $SSH_TARGET 'sudo systemctl enable wallbox && sudo systemctl start wallbox'"
     echo ""
     
     if [ "$BUILD_MODE" = "development" ]; then

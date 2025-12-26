@@ -2,6 +2,7 @@
 #include <iostream>
 #include <sstream>
 #include <cstring>
+#include <cerrno>
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -36,9 +37,18 @@ namespace Wallbox
             return false;
         }
 
-        // Allow address reuse
+        // Allow address reuse (helps with TIME_WAIT state)
         int opt = 1;
-        setsockopt(m_serverSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+        if (setsockopt(m_serverSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
+        {
+            std::cerr << "Warning: Failed to set SO_REUSEADDR: " << strerror(errno) << std::endl;
+        }
+#ifdef SO_REUSEPORT
+        if (setsockopt(m_serverSocket, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt)) < 0)
+        {
+            std::cerr << "Warning: Failed to set SO_REUSEPORT: " << strerror(errno) << std::endl;
+        }
+#endif
 
         // Bind to port
         sockaddr_in serverAddr{};
@@ -48,7 +58,7 @@ namespace Wallbox
 
         if (bind(m_serverSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0)
         {
-            std::cerr << "Failed to bind HTTP server to port " << m_port << std::endl;
+            std::cerr << "Failed to bind HTTP server to port " << m_port << ": " << strerror(errno) << std::endl;
             close(m_serverSocket);
             m_serverSocket = -1;
             return false;

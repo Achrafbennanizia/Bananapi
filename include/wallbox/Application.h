@@ -58,9 +58,10 @@ namespace Wallbox
          * @brief Initialize the application
          * @param interactiveMode If true, skip HTTP API server initialization (unless dualMode is true)
          * @param dualMode If true, start both API server and interactive terminal
+         * @param configFile Path to the configuration file (default: config/development.json)
          * @return true if successful
          */
-        bool initialize(bool interactiveMode = false, bool dualMode = false)
+        bool initialize(bool interactiveMode = false, bool dualMode = false, const std::string &configFile = "config/development.json")
         {
             m_interactiveMode = interactiveMode;
             m_dualMode = dualMode;
@@ -70,8 +71,8 @@ namespace Wallbox
             std::cout << "==================================================" << std::endl;
 
             // Load configuration from file first, then override with environment
-            std::cout << "Loading configuration from config.json..." << std::endl;
-            m_config.loadFromFile("config.json");
+            std::cout << "Loading configuration from " << configFile << "..." << std::endl;
+            m_config.loadFromFile(configFile);
             m_config.loadFromEnvironment();
 
             displayConfiguration();

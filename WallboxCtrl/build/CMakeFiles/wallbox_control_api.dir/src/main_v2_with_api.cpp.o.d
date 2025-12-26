@@ -768,7 +768,7 @@ CMakeFiles/wallbox_control_api.dir/src/main_v2_with_api.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/cstdarg \
   /Users/achraf/pro/PJMT/WallboxCtrl/include/ChargingStateMachine.h \
   /Users/achraf/pro/PJMT/WallboxCtrl/include/ICpSignalReader.h \
-  /Users/achraf/pro/PJMT/WallboxCtrl/include/../../LibPubWallbox/IsoStackCtrlProtocol.h \
+  /Users/achraf/pro/PJMT/WallboxCtrl/../external/LibPubWallbox/IsoStackCtrlProtocol.h \
   /Users/achraf/pro/PJMT/WallboxCtrl/include/StubGpioController.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/iostream \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/istream \

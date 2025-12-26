@@ -98,6 +98,8 @@ namespace Wallbox
         // LED control
         void setLedState(int pin, bool on);
         void showIdleLeds();
+        void showConnectedLeds();
+        void showReadyLeds();
         void showChargingLeds();
         void showErrorLeds();
         void showPausedLeds();

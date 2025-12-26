@@ -15,9 +15,9 @@ INC_DIR = include
 BUILD_DIR = build
 CONFIG_DIR = config
 
-# Source files for wallbox_control_v3 (main target with CP Signal System)
+# Source files for wallbox_control_v4 (main target with CP Signal System)
 WALLBOX_SOURCES = \
-	$(SRC_DIR)/main_v3.cpp \
+	$(SRC_DIR)/main_v4.cpp \
 	$(SRC_DIR)/HttpApiServer.cpp \
 	$(SRC_DIR)/UdpCommunicator.cpp \
 	$(SRC_DIR)/WallboxController.cpp \

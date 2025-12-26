@@ -768,7 +768,7 @@ CMakeFiles/wallbox_control_v2.dir/src/WallboxController.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/cstdarg \
   /Users/achraf/pro/PJMT/WallboxCtrl/include/ChargingStateMachine.h \
   /Users/achraf/pro/PJMT/WallboxCtrl/include/ICpSignalReader.h \
-  /Users/achraf/pro/PJMT/WallboxCtrl/include/../../LibPubWallbox/IsoStackCtrlProtocol.h \
+  /Users/achraf/pro/PJMT/WallboxCtrl/../external/LibPubWallbox/IsoStackCtrlProtocol.h \
   /Users/achraf/pro/PJMT/WallboxCtrl/include/Configuration.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/fstream \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/path.h \
@@ -794,7 +794,6 @@ CMakeFiles/wallbox_control_v2.dir/src/WallboxController.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/map \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__tree \
   /Users/achraf/pro/PJMT/WallboxCtrl/include/CpSignalReaderFactory.h \
-  /Users/achraf/pro/PJMT/WallboxCtrl/src/../../LibPubWallbox/IsoStackCtrlProtocol.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/thread \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__thread/this_thread.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__thread/thread.h \

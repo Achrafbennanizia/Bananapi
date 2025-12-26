@@ -264,8 +264,9 @@ namespace Wallbox
     bool WallboxController::enableWallbox()
     {
         m_wallboxEnabled = true;
-        std::cout << "\n[WALLBOX] 🟢 Wallbox ENABLED - Ready for charging" << std::endl;
+        std::cout << "\n[WALLBOX] 🟢 Wallbox ENABLED - Relay ON by default" << std::endl;
         std::cout << "> " << std::flush;
+        setRelayState(true); // Relay ON when wallbox enabled
         updateLeds();
         return true;
     }
@@ -280,7 +281,8 @@ namespace Wallbox
         }
 
         m_wallboxEnabled = false;
-        std::cout << "\n[WALLBOX] 🔴 Wallbox DISABLED - All charging commands blocked" << std::endl;
+        setRelayState(false); // Relay OFF when wallbox disabled
+        std::cout << "\n[WALLBOX] 🔴 Wallbox DISABLED - Relay OFF" << std::endl;
         std::cout << "> " << std::flush;
         updateLeds();
         return true;
@@ -289,8 +291,9 @@ namespace Wallbox
     bool WallboxController::setRelayState(bool enabled)
     {
         PinValue value = enabled ? PinValue::HIGH : PinValue::LOW;
+        auto &config = Configuration::getInstance();
 
-        if (!m_gpio->digitalWrite(Configuration::Pins::RELAY_ENABLE, value))
+        if (!m_gpio->digitalWrite(config.getRelayPin(), value))
         {
             std::cerr << "Failed to set relay state" << std::endl;
             return false;
@@ -318,31 +321,49 @@ namespace Wallbox
 
     void WallboxController::setupGpio()
     {
+        auto &config = Configuration::getInstance();
+
         // Configure output pins
-        m_gpio->setPinMode(Configuration::Pins::RELAY_ENABLE, PinMode::OUTPUT);
-        m_gpio->setPinMode(Configuration::Pins::LED_GREEN, PinMode::OUTPUT);
-        m_gpio->setPinMode(Configuration::Pins::LED_YELLOW, PinMode::OUTPUT);
-        m_gpio->setPinMode(Configuration::Pins::LED_RED, PinMode::OUTPUT);
+        m_gpio->setPinMode(config.getRelayPin(), PinMode::OUTPUT);
+        m_gpio->setPinMode(config.getLedGreenPin(), PinMode::OUTPUT);
+        m_gpio->setPinMode(config.getLedYellowPin(), PinMode::OUTPUT);
+        m_gpio->setPinMode(config.getLedRedPin(), PinMode::OUTPUT);
 
-        // Configure input pins
-        m_gpio->setPinMode(Configuration::Pins::BUTTON, PinMode::INPUT);
+        // Configure input pins (button uses CP pin)
+        m_gpio->setPinMode(config.getButtonPin(), PinMode::INPUT);
 
-        // Initialize outputs to OFF
-        m_gpio->digitalWrite(Configuration::Pins::RELAY_ENABLE, PinValue::LOW);
-        m_gpio->digitalWrite(Configuration::Pins::LED_GREEN, PinValue::LOW);
-        m_gpio->digitalWrite(Configuration::Pins::LED_YELLOW, PinValue::LOW);
-        m_gpio->digitalWrite(Configuration::Pins::LED_RED, PinValue::LOW);
+        // Initialize LEDs to OFF
+        m_gpio->digitalWrite(config.getLedGreenPin(), PinValue::LOW);
+        m_gpio->digitalWrite(config.getLedYellowPin(), PinValue::LOW);
+        m_gpio->digitalWrite(config.getLedRedPin(), PinValue::LOW);
+
+        // Relay ON by default when wallbox is enabled
+        m_gpio->digitalWrite(config.getRelayPin(), m_wallboxEnabled ? PinValue::HIGH : PinValue::LOW);
+        m_relayEnabled = m_wallboxEnabled;
     }
 
     void WallboxController::updateLeds()
     {
+        auto &config = Configuration::getInstance();
+
         if (!m_wallboxEnabled)
         {
-            // All LEDs off when disabled
-            setLedState(Configuration::Pins::LED_GREEN, false);
-            setLedState(Configuration::Pins::LED_YELLOW, false);
-            setLedState(Configuration::Pins::LED_RED, false);
+            // Wallbox disabled: Red ON, others OFF, Relay OFF
+            setLedState(config.getLedGreenPin(), false);
+            setLedState(config.getLedYellowPin(), false);
+            setLedState(config.getLedRedPin(), true); // Red ON when disabled
+            setRelayState(false);                     // Relay OFF when disabled
             return;
+        }
+
+        // Wallbox enabled: Yellow always ON, Relay always ON
+        setLedState(config.getLedYellowPin(), true); // Yellow ON = wallbox enabled
+        setLedState(config.getLedRedPin(), false);   // Red OFF
+
+        // Ensure relay is ON when wallbox is enabled (default state)
+        if (!m_relayEnabled)
+        {
+            setRelayState(true);
         }
 
         switch (m_stateMachine->getCurrentState())
@@ -351,13 +372,17 @@ namespace Wallbox
             showErrorLeds(); // OFF state shows as error (no power)
             break;
         case ChargingState::IDLE:
-            showIdleLeds();
+            showIdleLeds(); // No car connected
             break;
         case ChargingState::CONNECTED:
         case ChargingState::IDENTIFICATION:
+            showConnectedLeds(); // Car connected, Green ON
+            break;
         case ChargingState::READY:
+            showReadyLeds(); // Ready mode, Green blinking
+            break;
         case ChargingState::CHARGING:
-            showChargingLeds();
+            showChargingLeds(); // Charging, Green ON solid
             break;
         case ChargingState::STOP:
         case ChargingState::FINISHED:
@@ -802,30 +827,62 @@ namespace Wallbox
 
     void WallboxController::showIdleLeds()
     {
-        setLedState(Configuration::Pins::LED_GREEN, true);   // Green ON
-        setLedState(Configuration::Pins::LED_YELLOW, false); // Yellow OFF
-        setLedState(Configuration::Pins::LED_RED, false);    // Red OFF
+        auto &config = Configuration::getInstance();
+        // Idle: Yellow ON (enabled), Green OFF (no car), Red OFF
+        setLedState(config.getLedGreenPin(), false); // Green OFF - no car
+        setLedState(config.getLedYellowPin(), true); // Yellow ON - wallbox enabled
+        setLedState(config.getLedRedPin(), false);   // Red OFF
+    }
+
+    void WallboxController::showConnectedLeds()
+    {
+        auto &config = Configuration::getInstance();
+        // Connected: Yellow ON (enabled), Green BLINK (car connected), Red OFF
+        static bool greenState = false;
+        greenState = !greenState;
+        setLedState(config.getLedGreenPin(), greenState); // Green BLINKING - car connected
+        setLedState(config.getLedYellowPin(), true);      // Yellow ON - wallbox enabled
+        setLedState(config.getLedRedPin(), false);        // Red OFF
+    }
+
+    void WallboxController::showReadyLeds()
+    {
+        auto &config = Configuration::getInstance();
+        // Ready: Yellow ON (enabled), Green BLINK (ready to charge), Red OFF
+        static bool greenState = false;
+        greenState = !greenState;
+        setLedState(config.getLedGreenPin(), greenState); // Green BLINKING
+        setLedState(config.getLedYellowPin(), true);      // Yellow ON - wallbox enabled
+        setLedState(config.getLedRedPin(), false);        // Red OFF
     }
 
     void WallboxController::showChargingLeds()
     {
-        setLedState(Configuration::Pins::LED_GREEN, false); // Green OFF
-        setLedState(Configuration::Pins::LED_YELLOW, true); // Yellow ON
-        setLedState(Configuration::Pins::LED_RED, false);   // Red OFF
+        auto &config = Configuration::getInstance();
+        // Charging: Yellow ON (enabled), Green ON (charging active), Red OFF
+        setLedState(config.getLedGreenPin(), true);  // Green ON - charging
+        setLedState(config.getLedYellowPin(), true); // Yellow ON - wallbox enabled
+        setLedState(config.getLedRedPin(), false);   // Red OFF
     }
 
     void WallboxController::showErrorLeds()
     {
-        setLedState(Configuration::Pins::LED_GREEN, false);  // Green OFF
-        setLedState(Configuration::Pins::LED_YELLOW, false); // Yellow OFF
-        setLedState(Configuration::Pins::LED_RED, true);     // Red ON
+        auto &config = Configuration::getInstance();
+        // Error: Yellow OFF, Green OFF, Red ON
+        setLedState(config.getLedGreenPin(), false);  // Green OFF
+        setLedState(config.getLedYellowPin(), false); // Yellow OFF
+        setLedState(config.getLedRedPin(), true);     // Red ON
     }
 
     void WallboxController::showPausedLeds()
     {
-        setLedState(Configuration::Pins::LED_GREEN, false); // Green OFF
-        setLedState(Configuration::Pins::LED_YELLOW, true); // Yellow ON (blinking could be implemented)
-        setLedState(Configuration::Pins::LED_RED, true);    // Red ON
+        auto &config = Configuration::getInstance();
+        // Paused: Yellow ON, Green BLINK, Red OFF
+        static bool greenState = false;
+        greenState = !greenState;
+        setLedState(config.getLedGreenPin(), greenState); // Green BLINKING
+        setLedState(config.getLedYellowPin(), true);      // Yellow ON
+        setLedState(config.getLedRedPin(), false);        // Red OFF
     }
 
 } // namespace Wallbox

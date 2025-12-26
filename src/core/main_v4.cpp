@@ -82,13 +82,14 @@ void signalHandler(int signal)
  */
 int main(int argc, char *argv[])
 {
-    // Check for mode flags
+    // Check for mode flags and config file
     bool interactiveMode = false;
     bool dualMode = false;
+    std::string configFile = "config/development.json"; // Default config
 
-    if (argc > 1)
+    for (int i = 1; i < argc; ++i)
     {
-        std::string arg(argv[1]);
+        std::string arg(argv[i]);
         if (arg == "--interactive" || arg == "-i")
         {
             interactiveMode = true;
@@ -97,6 +98,22 @@ int main(int argc, char *argv[])
         {
             dualMode = true;
             interactiveMode = false; // Dual mode will handle both
+        }
+        else if (arg == "production" || arg == "prod")
+        {
+            configFile = "config/production.json";
+        }
+        else if (arg == "development" || arg == "dev")
+        {
+            configFile = "config/development.json";
+        }
+        else if (arg == "test")
+        {
+            configFile = "config/test.json";
+        }
+        else if (arg.find(".json") != std::string::npos)
+        {
+            configFile = arg; // Custom config file path
         }
     }
 
@@ -109,6 +126,7 @@ int main(int argc, char *argv[])
     else
     {
         logMessage("INFO", "Wallbox Controller v4.0 starting...");
+        logMessage("INFO", "Config file: " + configFile);
         logMessage("INFO", interactiveMode ? "Mode: Interactive Terminal" : "Mode: HTTP API Server");
         logMessage("INFO", "Log file: /tmp/wallbox_main.log");
     }
@@ -123,8 +141,8 @@ int main(int argc, char *argv[])
         g_application = std::make_unique<Application>();
         logMessage("INFO", "Application instance created");
 
-        // Initialize (pass mode flags)
-        if (!g_application->initialize(interactiveMode, dualMode))
+        // Initialize (pass mode flags and config file)
+        if (!g_application->initialize(interactiveMode, dualMode, configFile))
         {
             logMessage("ERROR", "Failed to initialize application");
             std::cerr << "Failed to initialize application" << std::endl;

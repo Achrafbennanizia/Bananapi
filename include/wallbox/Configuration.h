@@ -96,27 +96,32 @@ namespace Wallbox
         std::string getLogLevel() const { return m_logLevel; }
 
         // Legacy GPIO Pins struct for backward compatibility
+        // Updated for BananaPi M5 sysfs GPIO numbers
         struct Pins
         {
-            static constexpr int RELAY_ENABLE = 4;
-            static constexpr int LED_GREEN = 17;
-            static constexpr int LED_YELLOW = 27;
-            static constexpr int LED_RED = 22;
-            static constexpr int BUTTON = 23;
+            static constexpr int RELAY_ENABLE = 586; // Physical Pin 21
+            static constexpr int LED_GREEN = 587;    // Physical Pin 24
+            static constexpr int LED_YELLOW = 590;   // Physical Pin 10
+            static constexpr int LED_RED = 579;      // Physical Pin 22
+            static constexpr int BUTTON = 588;       // Physical Pin 23
         };
 
         // CP (Control Pilot) Pin - for IEC 61851-1 signal reading
-        static constexpr int CP_PIN = 7; // GPIO pin for CP signal (ADC capable)
+        static constexpr int CP_PIN = 585; // GPIO pin for CP signal (Physical Pin 19)
 
         // Load configuration from environment or defaults
+        // Note: Environment variables OVERRIDE config file settings
         void loadFromEnvironment()
         {
-            // Mode
+            // Mode - only override if WALLBOX_MODE is explicitly set
             const char *modeEnv = std::getenv("WALLBOX_MODE");
-            std::string modeStr = modeEnv ? std::string(modeEnv) : "dev";
-            m_mode = (modeStr == "prod" || modeStr == "production")
-                         ? Mode::PRODUCTION
-                         : Mode::DEVELOPMENT;
+            if (modeEnv)
+            {
+                std::string modeStr(modeEnv);
+                m_mode = (modeStr == "prod" || modeStr == "production")
+                             ? Mode::PRODUCTION
+                             : Mode::DEVELOPMENT;
+            }
 
             // Ports (can be overridden by env vars)
             const char *apiPortEnv = std::getenv("WALLBOX_API_PORT");

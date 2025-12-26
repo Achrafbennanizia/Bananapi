@@ -218,19 +218,19 @@ wallbox-portable-deploy/
        ├─→ METHOD 1: Remote Deployment (Recommended)
        │   ┌────────────────────────────────────────┐
        │   │ Developer Machine                      │
-       │   │  ./scripts/deploy.sh 192.168.1.100   │
+       │   │  ./scripts/deploy.sh 192.168.1.100     │
        │   └────────────┬───────────────────────────┘
        │                │
        │   ┌────────────▼───────────────────────────┐
-       │   │ 1. Package entire directory           │
-       │   │ 2. Transfer via SSH/SCP               │
-       │   │ 3. Extract on Pi                      │
-       │   │ 4. Run install.sh remotely            │
-       │   │ 5. Build project                      │
-       │   │ 6. Create systemd service             │
-       │   │ 7. Start wallbox                      │
-       │   │ 8. Run tests                          │
-       │   └───────────────────────────────────────┘
+       │   │ 1. Package entire directory            │
+       │   │ 2. Transfer via SSH/SCP                │
+       │   │ 3. Extract on Pi                       │
+       │   │ 4. Run install.sh remotely             │
+       │   │ 5. Build project                       │
+       │   │ 6. Create systemd service              │
+       │   │ 7. Start wallbox                       │
+       │   │ 8. Run tests                           │
+       │   └──────────────────────────────────────-─┘
        │
        └─→ METHOD 2: Local Installation
            ┌────────────────────────────────────────┐
@@ -239,10 +239,10 @@ wallbox-portable-deploy/
            └────────────┬───────────────────────────┘
                         │
            ┌────────────▼───────────────────────────┐
-           │ 1. Detect platform (Pi/Banana/Orange) │
-           │ 2. Install system dependencies        │
+           │ 1. Detect platform (Pi/Banana/Orange)  │
+           │ 2. Install system dependencies         │
            │ 3. Build with CMake or Make            │
-           │ 4. Install to /opt/wallbox            │
+           │ 4. Install to /opt/wallbox             │
            │ 5. Create systemd service              │
            │ 6. Enable auto-start                   │
            │ 7. Start service                       │
@@ -282,7 +282,7 @@ Internet
 
 ```
 ┌──────────────────────────────────────────────────┐
-│     systemd: wallbox.service (PID 1234)         │
+│     systemd: wallbox.service (PID 1234)          │
 └──────────────┬───────────────────────────────────┘
                │
     ┌──────────▼─────────────────────────┐
@@ -319,13 +319,13 @@ Internet
 │            WHY TWO BUILD SYSTEMS?                  │
 ├────────────────────────────────────────────────────┤
 │                                                    │
-│  CMake (Modern, Recommended)                      │
+│  CMake (Modern, Recommended)                       │
 │  ✅ Cross-platform                                │
 │  ✅ Better dependency management                  │
 │  ✅ IDE support (CLion, VS Code)                  │
 │  ✅ Out-of-source builds                          │
 │  ✅ Advanced features                             │
-│                                                    │
+│                                                   │
 │  Makefile (Traditional, Fallback)                 │
 │  ✅ No build tool required                        │
 │  ✅ Simple, transparent                           │
