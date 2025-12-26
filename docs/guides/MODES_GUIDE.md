@@ -36,7 +36,7 @@ This script will:
 **Terminal 1 - Start Simulator:**
 
 ```bash
-cd WallboxCtrl/build
+cd build/bin
 ./simulator
 ```
 
@@ -44,14 +44,14 @@ cd WallboxCtrl/build
 
 ```bash
 export WALLBOX_MODE=dev
-cd WallboxCtrl/build
+cd build/bin
 ./wallbox_control_api
 ```
 
 **Terminal 3 - Start React App:**
 
 ```bash
-cd wallbox-react-app
+cd web/react-app
 npm install  # First time only
 npm start
 ```
@@ -118,7 +118,7 @@ The script will:
 
 ```bash
 export WALLBOX_MODE=prod
-cd WallboxCtrl/build
+cd build/bin
 sudo ./wallbox_control_api
 ```
 
@@ -133,7 +133,7 @@ sudo ./wallbox_control_api
 
 ```bash
 # On your computer (not Banana Pi):
-cd wallbox-react-app
+cd web/react-app
 # Edit src/api/wallboxApi.js:
 # Change: const API_BASE_URL = 'http://192.168.1.xxx:8080';
 npm start
@@ -204,7 +204,7 @@ WALLBOX_MODE=prod ./wallbox_control_api
 ./start-dev.sh
 
 # Then in another terminal:
-cd wallbox-react-app && npm start
+cd web/react-app && npm start
 
 # Open browser: http://localhost:3000
 ```
@@ -331,7 +331,7 @@ Before running in production mode:
 
 ### Development:
 
-1. ✅ Install React app dependencies: `cd wallbox-react-app && npm install`
+1. ✅ Install React app dependencies: `cd web/react-app && npm install`
 2. ✅ Start dev environment: `./start-dev.sh`
 3. ✅ Start React app: `npm start` in wallbox-react-app folder
 4. ✅ Test all features in simulator

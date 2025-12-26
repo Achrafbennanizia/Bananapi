@@ -1,0 +1,27 @@
+docs/doxygen/html/
+build/
+*.o
+*.a
+*.so
+*.dylib
+*.exe
+*.out
+.DS_Store
+.vscode/
+.idea/
+cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+compile_commands.json
+*.log
+*.tmp
+/bin/
+/lib/
+*.swp
+*.swo
+*~
+
+# External libraries
+external/LibPubWallbox/

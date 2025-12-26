@@ -1,0 +1,27 @@
+{
+  "mode": "development",
+  "network": {
+    "udp_listen_port": 50010,
+    "udp_send_port": 50011,
+    "udp_send_address": "127.0.0.1",
+    "api_port": 8080
+  },
+  "gpio_pins": {
+    "relay_enable": 586,
+    "led_green": 587,
+    "led_yellow": 590,
+    "led_red": 579,
+    "button": 588,
+    "cp_pin": 585
+  },
+  "charging": {
+    "max_current_amps": 16,
+    "voltage": 230,
+    "timeout_seconds": 300
+  },
+  "logging": {
+    "level": "info",
+    "file": "/tmp/wallbox_v3.log",
+    "simulator_file": "/tmp/wallbox_simulator.log"
+  }
+}

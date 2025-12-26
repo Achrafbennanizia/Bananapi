@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/Users/achraf/pro/PJMT/WallboxCtrl/include -I/Users/achraf/pro/PJMT/WallboxCtrl/../LibPubWallbox
+CXX_INCLUDES = -I/Users/achraf/pro/PJMT/WallboxCtrl/include -I/Users/achraf/pro/PJMT/WallboxCtrl/../external/LibPubWallbox
 
 CXX_FLAGSarm64 = -std=c++14 -arch arm64 -Wall -Wextra -Wpedantic
 

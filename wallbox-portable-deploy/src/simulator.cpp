@@ -225,6 +225,8 @@ void recv_cmd(int sock)
         return; // falscher Typ
     }
 
+    log_msg("UDP_RX", std::string("Received ") + std::to_string(n) + " bytes from wallbox");
+
     // Display wallbox feedback without storing state
     static bool prevEnableState = true;
     static bool prevRelayState = false;
@@ -235,37 +237,37 @@ void recv_cmd(int sock)
 
     msgCount++;
 
-    // Show error/status messages when wallbox state changes
+    // Display and log important wallbox state changes
     if (wallboxEnable != prevEnableState)
     {
         if (!wallboxEnable)
         {
-            std::cout << "\n[WALLBOX FEEDBACK] 🔴 Wallbox is now DISABLED - Commands may be rejected" << std::endl;
+            std::cout << "\n[WALLBOX] 🔴 DISABLED" << std::endl;
             std::cout << "> " << std::flush;
         }
         else
         {
-            std::cout << "\n[WALLBOX FEEDBACK] 🟢 Wallbox is now ENABLED - Ready to accept commands" << std::endl;
+            std::cout << "\n[WALLBOX] 🟢 ENABLED" << std::endl;
             std::cout << "> " << std::flush;
         }
+        log_msg("WALLBOX", std::string("Wallbox enable changed to ") + (wallboxEnable ? "ENABLED" : "DISABLED"));
         prevEnableState = wallboxEnable;
-        log_msg("FEEDBACK", std::string("Wallbox enable changed to ") + (wallboxEnable ? "true" : "false"));
     }
 
     if (wallboxRelay != prevRelayState)
     {
         if (wallboxRelay)
         {
-            std::cout << "\n[WALLBOX FEEDBACK] ⚡ Main contactor activated" << std::endl;
+            std::cout << "\n[WALLBOX] ⚡ Contactor ON" << std::endl;
             std::cout << "> " << std::flush;
         }
         else
         {
-            std::cout << "\n[WALLBOX FEEDBACK] 🔌 Main contactor deactivated" << std::endl;
+            std::cout << "\n[WALLBOX] 🔌 Contactor OFF" << std::endl;
             std::cout << "> " << std::flush;
         }
+        log_msg("WALLBOX", std::string("Main contactor changed to ") + (wallboxRelay ? "ON" : "OFF"));
         prevRelayState = wallboxRelay;
-        log_msg("FEEDBACK", std::string("Wallbox relay changed to ") + (wallboxRelay ? "ON" : "OFF"));
     }
 
     // Periodic debug logging
@@ -278,14 +280,10 @@ void recv_cmd(int sock)
 // ---------- Senden: stSeIsoStackState ----------
 void send_state(int sock, const sockaddr_in &dst)
 {
-    // Detect state changes and notify
+    // Detect state changes and log to file only
     if (g_chargingState != g_prevChargingState)
     {
-        std::cout << "\n[SIMULATOR] 📊 State transition: "
-                  << enIsoChargingState_toString(g_prevChargingState)
-                  << " → "
-                  << enIsoChargingState_toString(g_chargingState) << std::endl;
-        std::cout << "> " << std::flush;
+        log_msg("STATE", std::string("Transition: ") + enIsoChargingState_toString(g_prevChargingState) + " → " + enIsoChargingState_toString(g_chargingState));
         g_prevChargingState = g_chargingState;
     }
 
@@ -315,7 +313,13 @@ void send_state(int sock, const sockaddr_in &dst)
                        sizeof(dst));
     if (n < 0)
     {
-        perror("sendto");
+        log_msg("ERROR", std::string("sendto failed: ") + strerror(errno));
+    }
+    else
+    {
+        log_msg("UDP_TX", std::string("Sent state=") + enIsoChargingState_toString(g_chargingState) +
+                              ", contactor=" + (g_mainContactorCmd ? "ON" : "OFF") +
+                              ", " + std::to_string(n) + " bytes");
     }
 }
 
@@ -378,43 +382,37 @@ void process_command(const std::string &cmd)
     if (cmd == "on")
     {
         g_mainContactorCmd = true;
-        std::cout << "✓ Main contactor turned ON" << std::endl;
-        std::cout << "[SIMULATOR → WALLBOX] Sending contactor ON command" << std::endl;
+        std::cout << "✓ Main contactor ON" << std::endl;
         log_msg("CMD", "Main contactor ON");
     }
     else if (cmd == "off")
     {
         g_mainContactorCmd = false;
-        std::cout << "✓ Main contactor turned OFF" << std::endl;
-        std::cout << "[SIMULATOR → WALLBOX] Sending contactor OFF command" << std::endl;
+        std::cout << "✓ Main contactor OFF" << std::endl;
         log_msg("CMD", "Main contactor OFF");
     }
     else if (cmd == "idle")
     {
         g_chargingState = enIsoChargingState::idle;
-        std::cout << "✓ Charging state changed to: IDLE (Vehicle plugged, no charging)" << std::endl;
-        std::cout << "[SIMULATOR → WALLBOX] Sending state: IDLE" << std::endl;
+        std::cout << "✓ State: IDLE" << std::endl;
         log_msg("CMD", "State: IDLE");
     }
     else if (cmd == "ready")
     {
         g_chargingState = enIsoChargingState::ready;
-        std::cout << "✓ Charging state changed to: READY (Vehicle ready to charge)" << std::endl;
-        std::cout << "[SIMULATOR → WALLBOX] Sending state: READY" << std::endl;
+        std::cout << "✓ State: READY" << std::endl;
         log_msg("CMD", "State: READY");
     }
     else if (cmd == "charge")
     {
         g_chargingState = enIsoChargingState::charging;
-        std::cout << "✓ Charging state changed to: CHARGING (Power transfer active)" << std::endl;
-        std::cout << "[SIMULATOR → WALLBOX] Sending state: CHARGING" << std::endl;
+        std::cout << "✓ State: CHARGING" << std::endl;
         log_msg("CMD", "State: CHARGING");
     }
     else if (cmd == "stop")
     {
         g_chargingState = enIsoChargingState::stop;
-        std::cout << "✓ Charging state changed to: STOP (Stopping charge session)" << std::endl;
-        std::cout << "[SIMULATOR → WALLBOX] Sending state: STOP" << std::endl;
+        std::cout << "✓ State: STOP" << std::endl;
         log_msg("CMD", "State: STOP");
     }
     else if (cmd == "getudp")

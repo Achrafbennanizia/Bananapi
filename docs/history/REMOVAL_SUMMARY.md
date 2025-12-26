@@ -149,7 +149,7 @@ If you were using the old features:
 
 ## Files Modified
 
-- `/Users/achraf/pro/PJMT/WallboxCtrl/src/simulator.cpp`
+- `<PROJECT_ROOT>/WallboxCtrl/src/simulator.cpp`
   - Main changes
   - 180+ lines removed
   - Simplified logic

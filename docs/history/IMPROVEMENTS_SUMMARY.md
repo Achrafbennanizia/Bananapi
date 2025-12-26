@@ -121,7 +121,7 @@ g_application->shutdown();
 ./start-dev.sh
 
 # Or manually
-WALLBOX_MODE=dev ./WallboxCtrl/build/wallbox_control_v3
+WALLBOX_MODE=dev ./build/bin/wallbox_control_v3
 ```
 
 ### Production Mode
@@ -131,7 +131,7 @@ WALLBOX_MODE=dev ./WallboxCtrl/build/wallbox_control_v3
 sudo ./start-prod.sh
 
 # Or manually
-WALLBOX_MODE=prod ./WallboxCtrl/build/wallbox_control_v3
+WALLBOX_MODE=prod ./build/bin/wallbox_control_v3
 ```
 
 ## 📚 Available Executables

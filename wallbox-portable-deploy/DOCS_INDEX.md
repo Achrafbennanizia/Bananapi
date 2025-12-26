@@ -3,7 +3,7 @@
 **Package:** Wallbox Controller C++14 Portable Edition  
 **Version:** 1.0  
 **Created:** December 12, 2024  
-**Location:** `/Users/achraf/pro/PJMT/wallbox-portable-deploy/`
+**Location:** `<PROJECT_ROOT>/wallbox-portable-deploy/`
 
 ---
 
@@ -222,28 +222,28 @@ wallbox-portable-deploy/
 ### Deploy to Pi (One Command)
 
 ```bash
-cd /Users/achraf/pro/PJMT/wallbox-portable-deploy
-./scripts/deploy.sh 192.168.178.34 root
+cd <PROJECT_ROOT>/wallbox-portable-deploy
+./scripts/deploy.sh <API_HOST> root
 ```
 
 ### Test Locally (Before Deployment)
 
 ```bash
-cd /Users/achraf/pro/PJMT/wallbox-portable-deploy
+cd <PROJECT_ROOT>/wallbox-portable-deploy
 ./scripts/test-local.sh
 ```
 
 ### Test Remotely (After Deployment)
 
 ```bash
-./scripts/test-remote.sh 192.168.178.34
+./scripts/test-remote.sh <API_HOST>
 ```
 
 ### Manual Install (On Pi)
 
 ```bash
 # Copy to Pi first, then:
-ssh root@192.168.178.34
+ssh root@<API_HOST>
 cd wallbox-portable-deploy
 sudo ./scripts/install.sh
 ```
@@ -251,13 +251,13 @@ sudo ./scripts/install.sh
 ### Test API
 
 ```bash
-curl http://192.168.178.34:8080/api/status
+curl http://<API_HOST>:8080/api/status
 ```
 
 ### View Logs
 
 ```bash
-ssh root@192.168.178.34 'journalctl -u wallbox -f'
+ssh root@<API_HOST> 'journalctl -u wallbox -f'
 ```
 
 ---
@@ -298,23 +298,23 @@ When ready to deploy:
 **Pre-deployment:**
 
 - [ ] Pi has network connection
-- [ ] Pi accessible via SSH: `ssh root@192.168.178.34`
+- [ ] Pi accessible via SSH: `ssh root@<API_HOST>`
 - [ ] Ports 8080, 50010, 50011 available
 - [ ] You have sudo/root privileges
 
 **Deployment:**
 
-- [ ] Run: `./scripts/deploy.sh 192.168.178.34 root`
+- [ ] Run: `./scripts/deploy.sh <API_HOST> root`
 - [ ] Wait for completion (~5-10 minutes)
 - [ ] Check for errors in output
 
 **Post-deployment:**
 
-- [ ] Run: `./scripts/test-remote.sh 192.168.178.34`
-- [ ] Test API: `curl http://192.168.178.34:8080/api/status`
-- [ ] Check service: `ssh root@192.168.178.34 'systemctl status wallbox'`
-- [ ] View logs: `ssh root@192.168.178.34 'journalctl -u wallbox -n 20'`
-- [ ] Enable auto-start: `ssh root@192.168.178.34 'systemctl enable wallbox'`
+- [ ] Run: `./scripts/test-remote.sh <API_HOST>`
+- [ ] Test API: `curl http://<API_HOST>:8080/api/status`
+- [ ] Check service: `ssh root@<API_HOST> 'systemctl status wallbox'`
+- [ ] View logs: `ssh root@<API_HOST> 'journalctl -u wallbox -n 20'`
+- [ ] Enable auto-start: `ssh root@<API_HOST> 'systemctl enable wallbox'`
 
 ---
 
@@ -325,7 +325,7 @@ When ready to deploy:
 **Solution:** Check SSH connection
 
 ```bash
-ssh root@192.168.178.34 'echo OK'
+ssh root@<API_HOST> 'echo OK'
 ```
 
 ### Issue: Service won't start
@@ -333,7 +333,7 @@ ssh root@192.168.178.34 'echo OK'
 **Solution:** Check logs
 
 ```bash
-ssh root@192.168.178.34 'journalctl -u wallbox -n 50'
+ssh root@<API_HOST> 'journalctl -u wallbox -n 50'
 ```
 
 ### Issue: API not responding
@@ -341,8 +341,8 @@ ssh root@192.168.178.34 'journalctl -u wallbox -n 50'
 **Solution:** Check firewall
 
 ```bash
-ssh root@192.168.178.34 'ufw allow 8080/tcp'
-curl http://192.168.178.34:8080/api/status
+ssh root@<API_HOST> 'ufw allow 8080/tcp'
+curl http://<API_HOST>:8080/api/status
 ```
 
 ### Issue: UDP not working
@@ -350,7 +350,7 @@ curl http://192.168.178.34:8080/api/status
 **Solution:** Check ports
 
 ```bash
-ssh root@192.168.178.34 'netstat -ulpn | grep 50010'
+ssh root@<API_HOST> 'netstat -ulpn | grep 50010'
 ```
 
 **More troubleshooting:** See README.md (Troubleshooting section)
@@ -384,11 +384,11 @@ ssh root@192.168.178.34 'netstat -ulpn | grep 50010'
 
 ## 🎉 You're Ready!
 
-Everything is prepared for deployment. When your Banana Pi (192.168.178.34) is online:
+Everything is prepared for deployment. When your Banana Pi (<API_HOST>) is online:
 
 ```bash
-cd /Users/achraf/pro/PJMT/wallbox-portable-deploy
-./scripts/deploy.sh 192.168.178.34 root
+cd <PROJECT_ROOT>/wallbox-portable-deploy
+./scripts/deploy.sh <API_HOST> root
 ```
 
 **That's it!** The rest is automated. 🚀

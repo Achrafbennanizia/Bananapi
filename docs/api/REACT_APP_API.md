@@ -646,7 +646,7 @@ Access-Control-Allow-Headers: Content-Type, Authorization
 ## Running the API Server
 
 ```bash
-cd WallboxCtrl/build
+cd build/bin
 ./wallbox_control_api
 ```
 

@@ -1,6 +1,6 @@
 CMakeFiles/wallbox_control.dir/src/IsoStackCtrlProtocol_impl.cpp.o: \
   /Users/achraf/pro/PJMT/WallboxCtrl/src/IsoStackCtrlProtocol_impl.cpp \
-  /Users/achraf/pro/PJMT/WallboxCtrl/src/../../LibPubWallbox/IsoStackCtrlProtocol.h \
+  /Users/achraf/pro/PJMT/WallboxCtrl/../external/LibPubWallbox/IsoStackCtrlProtocol.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/cstdint \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config_site \

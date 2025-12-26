@@ -4,15 +4,46 @@
 # Compatible with: Raspberry Pi, Banana Pi, Orange Pi, and other ARM SBCs
 #
 # Version: 4.1 (with CP Signal System)
-# Date: December 13, 2025
+# Date: December 14, 2025
 
 set -e
+
+# Parse options first
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -h|--help)
+            SHOW_HELP=1
+            shift
+            ;;
+        -m|--mode)
+            BUILD_MODE="$2"
+            shift 2
+            ;;
+        -i|--interactive)
+            INTERACTIVE=1
+            shift
+            ;;
+        --systemd)
+            SETUP_SYSTEMD=1
+            shift
+            ;;
+        -*)
+            echo "Unknown option: $1"
+            SHOW_HELP=1
+            shift
+            ;;
+        *)
+            shift
+            ;;
+    esac
+done
 
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
+CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 # Configuration
@@ -21,6 +52,122 @@ BUILD_MODE="${BUILD_MODE:-production}"
 LOG_FILE="/tmp/wallbox_install.log"
 
 # Functions
+show_help() {
+    cat << EOF
+${CYAN}╔════════════════════════════════════════════════════════════╗
+║        Wallbox Controller - Installation Script          ║
+║                      Version 4.1                           ║
+╚════════════════════════════════════════════════════════════╝${NC}
+
+${GREEN}USAGE:${NC}
+  $0 [options]
+
+${GREEN}OPTIONS:${NC}
+  -h, --help           Show this help message
+  -m, --mode <mode>    Build mode: production, development, or debug
+  -i, --interactive    Interactive mode selection
+  --systemd            Setup systemd service (requires sudo)
+
+${GREEN}BUILD MODES:${NC}
+  ${CYAN}production${NC}     - Optimized build (-O3), no debug symbols
+                     - Compiler: -O3 -DNDEBUG -s
+                     - Binary size: ~270 KB (wallbox), ~115 KB (simulator)
+                     - Best performance, minimal logging
+                     - Default mode for production deployment
+
+  ${YELLOW}development${NC}    - Debug symbols (-g), detailed logging
+                     - Compiler: -g -O0
+                     - Binary size: ~500 KB (with debug info)
+                     - Verbose output for troubleshooting
+                     - Retains function names and line numbers
+                     - Fast iteration during development
+
+  ${RED}debug${NC}          - Maximum debug info, all checks enabled
+                     - Compiler: -g -O0 -fsanitize=address
+                     - AddressSanitizer for memory errors
+                     - Very verbose logging
+                     - Slowest execution, largest binaries
+                     - Best for finding bugs and memory issues
+
+${GREEN}ENVIRONMENT VARIABLES:${NC}
+  INSTALL_DIR          Installation directory (default: ~/wallbox-src)
+  BUILD_MODE           Build mode (default: production)
+
+${GREEN}EXAMPLES:${NC}
+  # Basic installation (production mode)
+  $0
+
+  # Interactive mode selection
+  $0 --interactive
+
+  # Development mode
+  $0 --mode development
+
+  # Debug mode with systemd
+  $0 --mode debug --systemd
+
+  # Custom installation directory
+  INSTALL_DIR=/opt/wallbox $0
+
+  # Environment variable mode
+  BUILD_MODE=development $0
+
+${GREEN}FEATURES:${NC}
+  ✓ Automatic platform detection (Raspberry Pi, Banana Pi, Orange Pi)
+  ✓ Dependency checking and auto-installation
+  ✓ CMake and Make build support
+  ✓ Binary size optimization
+  ✓ Optional systemd service creation
+  ✓ Comprehensive build logging
+
+${GREEN}SUPPORTED PLATFORMS:${NC}
+  ✓ Raspberry Pi (all models)
+  ✓ Banana Pi
+  ✓ Orange Pi
+  ✓ Other ARM-based SBCs
+  ✓ x86_64 Linux
+  ✓ macOS (development)
+
+EOF
+    exit 0
+}
+
+select_mode() {
+    echo -e "\n${CYAN}╔════════════════════════════════════════╗"
+    echo -e "║      Select Build Mode                   ║"
+    echo -e "╚════════════════════════════════════════╝${NC}\n"
+    
+    echo -e "${GREEN}Available modes:${NC}"
+    echo -e "  ${CYAN}1)${NC} ${GREEN}production${NC}  - Optimized, small binaries (recommended)"
+    echo -e "  ${CYAN}2)${NC} ${YELLOW}development${NC} - Debug symbols, verbose logging"
+    echo -e "  ${CYAN}3)${NC} ${RED}debug${NC}       - Maximum debug info, sanitizers\n"
+    
+    while true; do
+        read -p "$(echo -e "${CYAN}Enter choice [1-3]:${NC} ")" choice
+        case $choice in
+            1)
+                BUILD_MODE="production"
+                echo -e "${GREEN}✓ Selected: production mode${NC}"
+                break
+                ;;
+            2)
+                BUILD_MODE="development"
+                echo -e "${YELLOW}✓ Selected: development mode${NC}"
+                break
+                ;;
+            3)
+                BUILD_MODE="debug"
+                echo -e "${RED}✓ Selected: debug mode${NC}"
+                break
+                ;;
+            *)
+                echo -e "${RED}Invalid choice. Please enter 1, 2, or 3.${NC}"
+                ;;
+        esac
+    done
+    echo ""
+}
+
 log() {
     echo -e "${GREEN}[INFO]${NC} $1" | tee -a "$LOG_FILE"
 }
@@ -369,6 +516,28 @@ print_summary() {
 
 # Main installation process
 main() {
+    # Show help if requested
+    if [ -n "$SHOW_HELP" ]; then
+        show_help
+    fi
+    
+    # Interactive mode selection
+    if [ -n "$INTERACTIVE" ]; then
+        select_mode
+    fi
+    
+    # Validate build mode
+    case $BUILD_MODE in
+        production|development|debug)
+            ;;
+        *)
+            warn "Invalid build mode: $BUILD_MODE"
+            warn "Valid modes: production, development, debug"
+            warn "Defaulting to production mode"
+            BUILD_MODE="production"
+            ;;
+    esac
+    
     echo "======================================"
     echo "  Wallbox Controller Installation"
     echo "  Version 4.1 (CP Signal System)"

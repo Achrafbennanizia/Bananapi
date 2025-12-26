@@ -1,0 +1,433 @@
+# Complete System Setup - Quick Start Guide
+
+## 📝 About This Guide
+
+This guide uses placeholders for environment-specific values. Before using any commands, replace them with your actual values:
+
+| Placeholder      | Description                                         | Example                      |
+| ---------------- | --------------------------------------------------- | ---------------------------- |
+| `<API_HOST>`     | IP address of your Banana Pi / target device        | `192.168.1.100`              |
+| `<SIM_HOST>`     | IP address where simulator runs (usually localhost) | `localhost` or `127.0.0.1`   |
+| `<PROJECT_ROOT>` | Full path to project directory                      | `/home/user/wallbox-project` |
+| `<TARGET_IP>`    | General IP address placeholder                      | `192.168.1.50`               |
+
+**Example substitution:**
+
+```bash
+# Documentation shows:
+curl http://<API_HOST>:8080/api/status
+
+# You would use:
+curl http://192.168.1.100:8080/api/status
+```
+
+---
+
+## 🎉 System is Running!
+
+Your complete wallbox system is now operational with all three components:
+
+### System Components
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    Complete Wallbox System                       │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  🌐 React Web App (Dev Machine)   🔧 Simulator (Dev Machine)   │
+│  http://localhost:3000             UDP Port 50011               │
+│           │                              │                       │
+│           └────────── HTTP API ──────────┘                      │
+│                          │                                       │
+│                          ↓                                       │
+│              🖥️  Target Device (<API_HOST>)                    │
+│                 Wallbox Control API                             │
+│                 Port 8080 (HTTP)                                │
+│                 Port 50010 (UDP)                                │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## Access Points
+
+### 🌐 React Web Interface
+
+**URL:** http://localhost:3000  
+**API Target:** http://<API_HOST>:8080  
+**Features:**
+
+- Real-time status monitoring
+- Start/Stop charging controls
+- Pause/Resume functionality
+- Visual state indicators
+
+### 🔧 Simulator (Development Machine)
+
+**Location:** `<PROJECT_ROOT>/build/bin/simulator`  
+**Ports:** Listen 50011, Send to <API_HOST>:50010  
+**Log:** `/tmp/wallbox_simulator.log`
+
+**Commands:**
+
+```bash
+# View simulator output
+tail -f /tmp/wallbox_simulator.log
+
+# To interact with simulator (if running in foreground):
+> setudp <API_HOST> 50011 50010  # Configure for target device
+> status                          # Check status
+> on                              # Turn contactor on
+> charge                          # Start charging
+> stop                            # Stop charging
+```
+
+### 🖥️ Wallbox API (Target Device)
+
+**IP:** <API_HOST>  
+**API Port:** 8080  
+**UDP Port:** 50010  
+**SSH:** `ssh <PI_USER>@<API_HOST>`  
+**Logs:** `/tmp/wallbox_api.out`
+
+## Management Scripts
+
+### Start Complete System
+
+```bash
+./start-complete-system.sh
+```
+
+Starts all three components in the correct order with health checks.
+
+### Check System Status
+
+```bash
+./check-system-status.sh
+```
+
+Shows real-time status of all components with visual indicators.
+
+### Stop All Components
+
+```bash
+./stop-all.sh
+```
+
+Cleanly stops wallbox, simulator, and React app.
+
+### Test SSH Connection
+
+```bash
+./test-ssh-connection.sh
+```
+
+Tests passwordless SSH connection to Banana Pi.
+
+## API Endpoints
+
+### GET /api/status
+
+Get current wallbox status
+
+```bash
+curl http://<API_HOST>:8080/api/status
+```
+
+Response:
+
+```json
+{
+  "state": "IDLE",
+  "wallboxEnabled": true,
+  "relayEnabled": false,
+  "charging": false,
+  "timestamp": 1765407780
+}
+```
+
+### POST /api/charging/start
+
+Start charging session
+
+```bash
+curl -X POST http://<API_HOST>:8080/api/charging/start
+```
+
+### POST /api/charging/stop
+
+Stop charging session
+
+```bash
+curl -X POST http://<API_HOST>:8080/api/charging/stop
+```
+
+### POST /api/charging/pause
+
+Pause charging
+
+```bash
+curl -X POST http://<API_HOST>:8080/api/charging/pause
+```
+
+### POST /api/charging/resume
+
+Resume charging
+
+```bash
+curl -X POST http://<API_HOST>:8080/api/charging/resume
+```
+
+### GET /health
+
+Health check endpoint
+
+```bash
+curl http://<API_HOST>:8080/health
+```
+
+## Quick Commands
+
+### Mac (Local)
+
+```bash
+# Check all processes
+./check-system-status.sh
+
+# View React logs
+tail -f /tmp/react_app.log
+
+# View Simulator logs
+tail -f /tmp/wallbox_simulator.log
+
+# Test API
+curl http://<API_HOST>:8080/api/status | python3 -m json.tool
+
+# Restart React only
+lsof -ti:3000 | xargs kill -9
+cd web/react-app && BROWSER=none npm start &
+```
+
+### Banana Pi (Remote)
+
+```bash
+# SSH to Banana Pi
+ssh bananapi
+
+# Check wallbox process
+ssh bananapi 'pgrep -f wallbox_control_api'
+
+# View logs
+ssh bananapi 'tail -f /tmp/wallbox_api.out'
+
+# Restart wallbox
+ssh bananapi 'killall wallbox_control_api; cd ~/wallbox-src/build && nohup ./wallbox_control_api > /tmp/wallbox_api.out 2>&1 &'
+
+# Check API locally
+ssh bananapi 'curl -s http://localhost:8080/api/status'
+```
+
+## Troubleshooting
+
+### React App Not Loading
+
+```bash
+# Check if running
+lsof -ti:3000
+
+# Check logs
+tail -f /tmp/react_app.log
+
+# Restart
+lsof -ti:3000 | xargs kill -9
+cd /path/to/project/wallbox-react-app
+BROWSER=none npm start > /tmp/react_app.log 2>&1 &
+```
+
+### API Not Responding
+
+```bash
+# Check process on Banana Pi
+ssh bananapi 'pgrep -f wallbox_control_api'
+
+# Check logs
+ssh bananapi 'tail -30 /tmp/wallbox_api.out'
+
+# Restart
+ssh bananapi 'killall wallbox_control_api; cd ~/wallbox-src/build && nohup ./wallbox_control_api > /tmp/wallbox_api.out 2>&1 &'
+```
+
+### Simulator Issues
+
+```bash
+# Check if running
+pgrep -f simulator
+
+# Check port
+lsof -i:50011
+
+# Restart
+pkill -f simulator
+cd /path/to/project/build/bin
+./simulator > /tmp/wallbox_simulator.log 2>&1 &
+```
+
+### Network Issues
+
+```bash
+# Test Banana Pi connectivity
+ping -c 3 <API_HOST>
+
+# Test API connectivity
+curl -v --max-time 3 http://<API_HOST>:8080/api/status
+
+# Check your Mac's IP
+ipconfig getifaddr en0
+```
+
+## Development Workflow
+
+### Making Changes to React App
+
+```bash
+cd /path/to/project/wallbox-react-app
+
+# Edit files in src/
+# Changes auto-reload in browser
+
+# Check console for errors
+tail -f /tmp/react_app.log
+```
+
+### Making Changes to Wallbox Code
+
+```bash
+# Edit locally
+cd /path/to/project/WallboxCtrl/src
+
+# Sync to Banana Pi
+rsync -avz /path/to/project/WallboxCtrl/ bananapi:~/wallbox-src/
+
+# Rebuild on Banana Pi
+ssh bananapi 'cd ~/wallbox-src/build && make wallbox_control_api'
+
+# Restart
+ssh bananapi 'killall wallbox_control_api; cd ~/wallbox-src/build && nohup ./wallbox_control_api > /tmp/wallbox_api.out 2>&1 &'
+```
+
+### Making Changes to Simulator
+
+```bash
+# Edit simulator
+cd /path/to/project/WallboxCtrl/src
+
+# Rebuild
+cd ../build && make simulator
+
+# Restart
+pkill -f simulator
+./simulator > /tmp/wallbox_simulator.log 2>&1 &
+```
+
+## Configuration Files
+
+### React App Environment
+
+**File:** `/path/to/project/web/react-app/.env`
+
+```env
+REACT_APP_API_BASE_URL=http://<API_HOST>:8080
+```
+
+### Wallbox Configuration
+
+**File:** `~/wallbox-src/build/config.json` (on Banana Pi)
+
+```json
+{
+  "mode": "development",
+  "network": {
+    "udp_listen_port": 50010,
+    "udp_send_port": 50011,
+    "udp_send_address": "<API_HOST>",
+    "api_port": 8080
+  }
+}
+```
+
+### SSH Configuration
+
+**File:** `~/.ssh/config`
+
+```ssh-config
+Host bananapi
+    HostName <API_HOST>
+    User root
+    IdentityFile ~/.ssh/bananapi_key
+```
+
+## System Architecture
+
+### Data Flow
+
+1. **User** → React Web App (localhost:3000)
+2. **React App** → HTTP API (<API_HOST>:8080)
+3. **Wallbox API** ↔ Simulator (UDP 50010/50011)
+4. **Wallbox** → GPIO Control (Simulated in dev mode)
+
+### State Management
+
+- **IDLE**: Ready, no charging
+- **READY**: Vehicle connected, ready to charge
+- **CHARGING**: Active charging session
+- **PAUSED**: Charging paused
+- **STOPPED**: Charging stopped
+- **ERROR**: Error state
+
+## Next Steps
+
+1. **Open Web Interface**
+
+   ```bash
+   open http://localhost:3000
+   ```
+
+2. **Test Charging Cycle**
+
+   - Click "Start Charging" in web interface
+   - Watch state change to CHARGING
+   - Check simulator logs for UDP messages
+   - Click "Stop Charging"
+
+3. **Monitor System**
+
+   ```bash
+   # Watch all logs
+   ./check-system-status.sh
+
+   # Or individual components
+   tail -f /tmp/react_app.log
+   tail -f /tmp/wallbox_simulator.log
+   ssh bananapi 'tail -f /tmp/wallbox_api.out'
+   ```
+
+## Useful Links
+
+- **React App:** http://localhost:3000
+- **API Status:** http://<API_HOST>:8080/api/status
+- **API Health:** http://<API_HOST>:8080/health
+- **Banana Pi SSH:** `ssh bananapi`
+
+## Support Scripts Location
+
+All management scripts are in `/path/to/project/`:
+
+- `start-complete-system.sh` - Start everything
+- `check-system-status.sh` - Check status
+- `stop-all.sh` - Stop everything
+- `test-ssh-connection.sh` - Test SSH
+
+---
+
+**System Status:** ✅ All components operational  
+**Last Updated:** December 10, 2024  
+**Version:** Complete System v1.0

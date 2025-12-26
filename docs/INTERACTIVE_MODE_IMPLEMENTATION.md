@@ -74,7 +74,7 @@ Initially pointed to v4 (simple relay control), but user clarified:
 
 ### 1. Modified Files
 
-#### File: `/Users/achraf/pro/PJMT/WallboxCtrl/src/main_v3.cpp`
+#### File: `<PROJECT_ROOT>/WallboxCtrl/src/main_v3.cpp`
 
 **Changes Made:**
 
@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
 
 ---
 
-#### File: `/Users/achraf/pro/PJMT/WallboxCtrl/include/Application.h`
+#### File: `<PROJECT_ROOT>/WallboxCtrl/include/Application.h`
 
 **Changes Made:**
 
@@ -180,7 +180,7 @@ private:
 
 ---
 
-### 2. Created Script: `/Users/achraf/pro/PJMT/connect-wallbox-terminal.sh`
+### 2. Created Script: `<PROJECT_ROOT>/connect-wallbox-terminal.sh`
 
 ```bash
 #!/bin/bash
@@ -229,7 +229,7 @@ ssh bananapi 'cat ~/wallbox-src/src/main_v3.cpp | grep "Check for interactive"'
 
 **Root Cause:**
 
-- Modified files on Mac: `/Users/achraf/pro/PJMT/WallboxCtrl/src/main_v3.cpp`
+- Modified files on Mac: `<PROJECT_ROOT>/WallboxCtrl/src/main_v3.cpp`
 - Files never synced to Banana Pi: `~/wallbox-src/src/main_v3.cpp`
 - Binary compiled from old unmodified source
 
@@ -238,7 +238,7 @@ ssh bananapi 'cat ~/wallbox-src/src/main_v3.cpp | grep "Check for interactive"'
 ```bash
 # Explicit rsync of modified source file
 rsync -avz -e "ssh -i ~/.ssh/bananapi_key" \
-  /Users/achraf/pro/PJMT/WallboxCtrl/src/main_v3.cpp \
+  <PROJECT_ROOT>/WallboxCtrl/src/main_v3.cpp \
   bananapi:~/wallbox-src/src/
 
 # Verify file contents after sync
@@ -422,7 +422,7 @@ cd ~/wallbox-src/build
 **Symptom:**
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/build
+cd <PROJECT_ROOT>/build/bin
 ./simulator
 # Error: bind: Address already in use
 ```
@@ -461,7 +461,7 @@ kill -9 87141
 
 # Method 3: Combined kill and restart
 lsof -i :50011 | grep -v COMMAND | awk '{print $2}' | xargs kill -9 2>/dev/null; sleep 1
-cd /Users/achraf/pro/PJMT/WallboxCtrl/build && ./simulator
+cd <PROJECT_ROOT>/build/bin && ./simulator
 ```
 
 **Verification:**
@@ -512,7 +512,7 @@ cleanup_ports
 ```bash
 # Simulator sending to localhost instead of Banana Pi
 Sending to: 127.0.0.1:50010
-# Expected: Sending to: 192.168.178.34:50010
+# Expected: Sending to: <API_HOST>:50010
 ```
 
 **Investigation:**
@@ -529,7 +529,7 @@ echo "getudp" | ./simulator
 **Root Cause:**
 
 - Simulator default configuration sends UDP to localhost (127.0.0.1)
-- Wallbox running on Banana Pi at 192.168.178.34
+- Wallbox running on Banana Pi at <API_HOST>
 - UDP messages never reaching remote wallbox
 - No network communication between Mac and Banana Pi simulator/wallbox
 
@@ -537,11 +537,11 @@ echo "getudp" | ./simulator
 
 ```bash
 # Step 1: Reconfigure simulator to send to Banana Pi
-cd /Users/achraf/pro/PJMT/WallboxCtrl/build
-echo "setudp 192.168.178.34 50011 50010" | ./simulator
+cd <PROJECT_ROOT>/build/bin
+echo "setudp <API_HOST> 50011 50010" | ./simulator
 
 # Step 2: Test UDP messaging with commands
-(echo "setudp 192.168.178.34 50011 50010";
+(echo "setudp <API_HOST> 50011 50010";
  sleep 1;
  echo "on";
  sleep 2;
@@ -555,7 +555,7 @@ echo "setudp 192.168.178.34 50011 50010" | ./simulator
 **Test Results:**
 
 ```
-✓ UDP configuration updated to: 192.168.178.34 50011 -> 50010
+✓ UDP configuration updated to: <API_HOST> 50011 -> 50010
 ✓ Main contactor turned ON
 [SIMULATOR → WALLBOX] Sending contactor ON command
 ✓ Charging state changed to: CHARGING (Power transfer active)
@@ -564,7 +564,7 @@ echo "setudp 192.168.178.34 50011 50010" | ./simulator
 --- Current Status ---
 Main Contactor: ON
 Charging State: charging (Power transfer active)
-UDP Address: 192.168.178.34
+UDP Address: <API_HOST>
 UDP In Port: 50011
 UDP Out Port: 50010
 ```
@@ -574,7 +574,7 @@ UDP Out Port: 50010
 ```bash
 # Check simulator logs
 tail -20 /tmp/wallbox_simulator.log
-# [2025-12-11 17:37:39.115] [CMD] UDP config changed: 192.168.178.34 50011 -> 50010
+# [2025-12-11 17:37:39.115] [CMD] UDP config changed: <API_HOST> 50011 -> 50010
 # [2025-12-11 17:37:40.086] [CMD] Main contactor ON
 # [2025-12-11 17:37:43.123] [CMD] State: CHARGING
 
@@ -587,13 +587,13 @@ ssh bananapi 'lsof -i :50010'
 **Network Configuration:**
 
 ```
-Mac (192.168.178.23):
-├── Simulator sends to: 192.168.178.34:50010
+Mac (<SIM_HOST>):
+├── Simulator sends to: <API_HOST>:50010
 └── Simulator listens on: *:50011
 
-Banana Pi (192.168.178.34):
+Banana Pi (<API_HOST>):
 ├── Wallbox listens on: *:50010
-└── Wallbox sends to: 192.168.178.23:50011
+└── Wallbox sends to: <SIM_HOST>:50011
 
 Router: fritz.box (192.168.178.x subnet)
 ```
@@ -690,7 +690,7 @@ Session Energy: 0.0 kWh
 
 ```bash
 ssh bananapi 'cd ~/wallbox-src/build && timeout 2 ./wallbox_control_v3 &'
-curl http://192.168.178.34:8080/health
+curl http://<API_HOST>:8080/health
 ```
 
 **Expected Output:**
@@ -724,8 +724,8 @@ curl http://192.168.178.34:8080/health
 ### Test 5: UDP Communication Mac to Banana Pi
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/build
-(echo "setudp 192.168.178.34 50011 50010";
+cd <PROJECT_ROOT>/build/bin
+(echo "setudp <API_HOST> 50011 50010";
  sleep 1;
  echo "on";
  sleep 2;
@@ -739,7 +739,7 @@ cd /Users/achraf/pro/PJMT/WallboxCtrl/build
 **Expected Output:**
 
 ```
-✓ UDP configuration updated to: 192.168.178.34 50011 -> 50010
+✓ UDP configuration updated to: <API_HOST> 50011 -> 50010
 ✓ Main contactor turned ON
 [SIMULATOR → WALLBOX] Sending contactor ON command
 ✓ Charging state changed to: CHARGING (Power transfer active)
@@ -748,7 +748,7 @@ cd /Users/achraf/pro/PJMT/WallboxCtrl/build
 --- Current Status ---
 Main Contactor: ON
 Charging State: charging (Power transfer active)
-UDP Address: 192.168.178.34
+UDP Address: <API_HOST>
 UDP In Port: 50011
 UDP Out Port: 50010
 ```
@@ -767,7 +767,7 @@ UDP Out Port: 50010
 ## File Structure After Implementation
 
 ```
-/Users/achraf/pro/PJMT/
+<PROJECT_ROOT>/
 ├── connect-wallbox-terminal.sh          # NEW: Interactive connection script
 ├── WallboxCtrl/
 │   ├── src/
@@ -779,7 +779,7 @@ UDP Out Port: 50010
 └── docs/
     └── INTERACTIVE_MODE_IMPLEMENTATION.md  # THIS DOCUMENT
 
-Banana Pi (192.168.178.34):
+Banana Pi (<API_HOST>):
 /root/wallbox-src/
 ├── src/
 │   └── main_v3.cpp                      # SYNCED: From Mac
@@ -798,7 +798,7 @@ Banana Pi (192.168.178.34):
 #### Option 1: Using Connection Script (Recommended)
 
 ```bash
-cd /Users/achraf/pro/PJMT
+cd <PROJECT_ROOT>
 ./connect-wallbox-terminal.sh
 ```
 
@@ -843,8 +843,8 @@ cd ~/wallbox-src/build
 
 Then access via:
 
-- Health check: `http://192.168.178.34:8080/health`
-- Status: `http://192.168.178.34:8080/api/status`
+- Health check: `http://<API_HOST>:8080/health`
+- Status: `http://<API_HOST>:8080/api/status`
 - React app: `http://localhost:3000` (on Mac)
 
 ---
@@ -1127,8 +1127,8 @@ ssh bananapi 'cd ~/wallbox-src/build && make clean && cmake .. && make wallbox_c
 lsof -i :50011 | grep -v COMMAND | awk '{print $2}' | xargs kill -9 2>/dev/null
 
 # Start simulator and test
-cd /Users/achraf/pro/PJMT/WallboxCtrl/build
-(echo "setudp 192.168.178.34 50011 50010";
+cd <PROJECT_ROOT>/build/bin
+(echo "setudp <API_HOST> 50011 50010";
  sleep 1;
  echo "on";
  sleep 2;

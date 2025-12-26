@@ -1,0 +1,898 @@
+#include "WallboxController.h"
+#include "Configuration.h"
+#include "CpSignalReaderFactory.h"
+#include "IsoStackCtrlProtocol.h"
+#include <iostream>
+#include <thread>
+#include <chrono>
+#include <sstream>
+#include <ctime>
+#include <cstring>
+
+using namespace Iso15118;
+
+namespace Wallbox
+{
+
+    WallboxController::WallboxController(std::unique_ptr<IGpioController> gpio,
+                                         std::unique_ptr<INetworkCommunicator> network)
+        : m_gpio(std::move(gpio)),
+          m_network(std::move(network)),
+          m_stateMachine(std::make_unique<ChargingStateMachine>()),
+          m_running(false),
+          m_relayEnabled(false),
+          m_wallboxEnabled(true),
+          m_currentCpState(CpState::UNKNOWN),
+          m_operatingMode("simulator") // Default to simulator mode
+    {
+        // Register for state change notifications (Observer Pattern)
+        m_stateMachine->addStateChangeListener(
+            [this](ChargingState oldState, ChargingState newState, const std::string &reason)
+            {
+                onStateChange(oldState, newState, reason);
+            });
+    }
+
+    WallboxController::~WallboxController()
+    {
+        shutdown();
+    }
+
+    bool WallboxController::initialize()
+    {
+        std::cout << "Initializing Wallbox Controller..." << std::endl;
+
+        // Initialize GPIO
+        if (!m_gpio->initialize())
+        {
+            std::cerr << "Failed to initialize GPIO" << std::endl;
+            return false;
+        }
+
+        setupGpio();
+
+        // Initialize network
+        if (!m_network->connect())
+        {
+            std::cerr << "Failed to initialize network" << std::endl;
+            return false;
+        }
+
+        // Start receiving network messages
+        m_network->startReceiving([this](const std::vector<uint8_t> &message)
+                                  { processNetworkMessage(message); });
+
+        // Initialize CP signal reader using Factory Pattern
+        // Determine operating mode from environment or configuration
+        const char *envMode = std::getenv("WALLBOX_MODE");
+        if (envMode != nullptr)
+        {
+            m_operatingMode = envMode;
+        }
+        std::cout << "Operating mode: " << m_operatingMode << std::endl;
+
+        try
+        {
+            // Use Factory to create appropriate CP reader
+            m_cpReader = CpSignalReaderFactory::create(
+                m_operatingMode,
+                std::shared_ptr<IGpioController>(m_gpio.get(), [](IGpioController *) {}),              // Non-owning shared_ptr
+                std::shared_ptr<INetworkCommunicator>(m_network.get(), [](INetworkCommunicator *) {}), // Non-owning shared_ptr
+                Configuration::CP_PIN);
+
+            if (!m_cpReader->initialize())
+            {
+                std::cerr << "Failed to initialize CP signal reader" << std::endl;
+                return false;
+            }
+
+            // Register CP state change callback (Observer Pattern)
+            m_cpReader->onStateChange([this](CpState oldState, CpState newState)
+                                      { onCpStateChange(oldState, newState); });
+
+            // Start monitoring CP signal
+            m_cpReader->startMonitoring();
+            std::cout << "CP signal monitoring started" << std::endl;
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << "Failed to create CP signal reader: " << e.what() << std::endl;
+            return false;
+        }
+
+        // Initial LED state
+        updateLeds();
+
+        std::cout << "Wallbox Controller initialized successfully" << std::endl;
+        return true;
+    }
+
+    void WallboxController::shutdown()
+    {
+        std::cout << "Shutting down Wallbox Controller..." << std::endl;
+
+        m_running = false;
+
+        // Stop CP monitoring
+        if (m_cpReader)
+        {
+            m_cpReader->stopMonitoring();
+            m_cpReader->shutdown();
+        }
+
+        // Stop charging if active
+        if (m_stateMachine->isCharging())
+        {
+            stopCharging();
+        }
+
+        // Disable relay
+        setRelayState(false);
+
+        // Shutdown network
+        if (m_network)
+        {
+            m_network->stopReceiving();
+            m_network->disconnect();
+        }
+
+        // Shutdown GPIO
+        if (m_gpio)
+        {
+            m_gpio->shutdown();
+        }
+
+        std::cout << "Wallbox Controller shutdown complete" << std::endl;
+    }
+
+    void WallboxController::run()
+    {
+        m_running = true;
+
+        std::cout << "Wallbox Controller running..." << std::endl;
+
+        auto lastStatusSend = std::chrono::steady_clock::now();
+        const auto statusInterval = std::chrono::milliseconds(100); // Send status every 100ms to match simulator
+
+        while (m_running)
+        {
+            // Update LEDs based on current state
+            updateLeds();
+
+            // Send status to simulator periodically
+            auto now = std::chrono::steady_clock::now();
+            if (now - lastStatusSend >= statusInterval)
+            {
+                sendStatusToSimulator();
+                lastStatusSend = now;
+            }
+
+            // Check for button press (if implemented)
+            // PinValue buttonState = m_gpio->digitalRead(Configuration::Pins::BUTTON);
+
+            // Small delay to prevent CPU spinning
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+    }
+
+    void WallboxController::stop()
+    {
+        m_running = false;
+    }
+
+    bool WallboxController::startCharging()
+    {
+        if (!m_wallboxEnabled)
+        {
+            std::cerr << "\n⚠️  Cannot start charging: wallbox is disabled" << std::endl;
+            std::cout << "\n[WALLBOX] ❌ Command rejected - wallbox disabled" << std::endl;
+            return false;
+        }
+
+        if (!m_stateMachine->startCharging("User requested"))
+        {
+            return false;
+        }
+
+        std::cout << "\n[WALLBOX → SIMULATOR] ✓ Starting charging sequence" << std::endl;
+
+        // Enable relay for charging
+        return setRelayState(true);
+    }
+
+    bool WallboxController::stopCharging()
+    {
+        if (!m_wallboxEnabled)
+        {
+            std::cerr << "\n⚠️  Cannot stop charging: wallbox is disabled" << std::endl;
+            return false;
+        }
+
+        if (!m_stateMachine->stopCharging("User requested"))
+        {
+            return false;
+        }
+
+        std::cout << "\n[WALLBOX → SIMULATOR] Stopping charging" << std::endl;
+
+        // Disable relay
+        return setRelayState(false);
+    }
+
+    bool WallboxController::pauseCharging()
+    {
+        if (!m_wallboxEnabled)
+        {
+            std::cerr << "\n⚠️  Cannot pause charging: wallbox is disabled" << std::endl;
+            return false;
+        }
+
+        std::cout << "\n[WALLBOX → SIMULATOR] Pausing charging" << std::endl;
+        return m_stateMachine->pauseCharging("User requested");
+    }
+
+    bool WallboxController::resumeCharging()
+    {
+        if (!m_wallboxEnabled)
+        {
+            std::cerr << "\n⚠️  Cannot resume charging: wallbox is disabled" << std::endl;
+            return false;
+        }
+
+        std::cout << "\n[WALLBOX → SIMULATOR] Resuming charging" << std::endl;
+        return m_stateMachine->resumeCharging("User requested");
+    }
+
+    ChargingState WallboxController::getCurrentState() const
+    {
+        return m_stateMachine->getCurrentState();
+    }
+
+    std::string WallboxController::getStateString() const
+    {
+        return m_stateMachine->getStateString();
+    }
+
+    bool WallboxController::enableWallbox()
+    {
+        m_wallboxEnabled = true;
+        std::cout << "\n[WALLBOX] 🟢 Wallbox ENABLED - Relay ON by default" << std::endl;
+        setRelayState(true); // Relay ON when wallbox enabled
+        updateLeds();
+        return true;
+    }
+
+    bool WallboxController::disableWallbox()
+    {
+        // Stop charging if active
+        if (m_stateMachine->isCharging())
+        {
+            std::cout << "\n[WALLBOX] Stopping active charging before disable..." << std::endl;
+            stopCharging();
+        }
+
+        m_wallboxEnabled = false;
+        setRelayState(false); // Relay OFF when wallbox disabled
+        std::cout << "\n[WALLBOX] 🔴 Wallbox DISABLED - Relay OFF" << std::endl;
+        updateLeds();
+        return true;
+    }
+
+    bool WallboxController::setRelayState(bool enabled)
+    {
+        PinValue value = enabled ? PinValue::HIGH : PinValue::LOW;
+        auto &config = Configuration::getInstance();
+
+        if (!m_gpio->digitalWrite(config.getRelayPin(), value))
+        {
+            std::cerr << "Failed to set relay state" << std::endl;
+            return false;
+        }
+
+        m_relayEnabled = enabled;
+        std::cout << "\n[WALLBOX → SIMULATOR] Relay state: "
+                  << (enabled ? "ON" : "OFF") << std::endl;
+        return true;
+    }
+
+    std::string WallboxController::getStatusJson() const
+    {
+        std::ostringstream json;
+        json << "{"
+             << "\"state\":\"" << getStateString() << "\","
+             << "\"wallboxEnabled\":" << (m_wallboxEnabled ? "true" : "false") << ","
+             << "\"relayEnabled\":" << (m_relayEnabled ? "true" : "false") << ","
+             << "\"charging\":" << (m_stateMachine->isCharging() ? "true" : "false") << ","
+             << "\"timestamp\":" << std::time(nullptr)
+             << "}";
+        return json.str();
+    }
+
+    void WallboxController::setupGpio()
+    {
+        auto &config = Configuration::getInstance();
+
+        // Configure output pins
+        m_gpio->setPinMode(config.getRelayPin(), PinMode::OUTPUT);
+        m_gpio->setPinMode(config.getLedGreenPin(), PinMode::OUTPUT);
+        m_gpio->setPinMode(config.getLedYellowPin(), PinMode::OUTPUT);
+        m_gpio->setPinMode(config.getLedRedPin(), PinMode::OUTPUT);
+
+        // Configure input pins (button uses CP pin)
+        m_gpio->setPinMode(config.getButtonPin(), PinMode::INPUT);
+
+        // Initialize LEDs to OFF
+        m_gpio->digitalWrite(config.getLedGreenPin(), PinValue::LOW);
+        m_gpio->digitalWrite(config.getLedYellowPin(), PinValue::LOW);
+        m_gpio->digitalWrite(config.getLedRedPin(), PinValue::LOW);
+
+        // Relay ON by default when wallbox is enabled
+        m_gpio->digitalWrite(config.getRelayPin(), m_wallboxEnabled ? PinValue::HIGH : PinValue::LOW);
+        m_relayEnabled = m_wallboxEnabled;
+    }
+
+    void WallboxController::updateLeds()
+    {
+        auto &config = Configuration::getInstance();
+
+        if (!m_wallboxEnabled)
+        {
+            // Wallbox disabled: Red ON, others OFF, Relay OFF
+            setLedState(config.getLedGreenPin(), false);
+            setLedState(config.getLedYellowPin(), false);
+            setLedState(config.getLedRedPin(), true); // Red ON when disabled
+            setRelayState(false);                     // Relay OFF when disabled
+            return;
+        }
+
+        // Wallbox enabled: Yellow always ON, Relay always ON
+        setLedState(config.getLedYellowPin(), true); // Yellow ON = wallbox enabled
+        setLedState(config.getLedRedPin(), false);   // Red OFF
+
+        // Ensure relay is ON when wallbox is enabled (default state)
+        if (!m_relayEnabled)
+        {
+            setRelayState(true);
+        }
+
+        switch (m_stateMachine->getCurrentState())
+        {
+        case ChargingState::OFF:
+            showErrorLeds(); // OFF state shows as error (no power)
+            break;
+        case ChargingState::IDLE:
+            showIdleLeds(); // No car connected
+            break;
+        case ChargingState::CONNECTED:
+        case ChargingState::IDENTIFICATION:
+            showConnectedLeds(); // Car connected, Green ON
+            break;
+        case ChargingState::READY:
+            showReadyLeds(); // Ready mode, Green blinking
+            break;
+        case ChargingState::CHARGING:
+            showChargingLeds(); // Charging, Green ON solid
+            break;
+        case ChargingState::STOP:
+        case ChargingState::FINISHED:
+            showIdleLeds(); // Back to idle state
+            break;
+        case ChargingState::ERROR:
+            showErrorLeds();
+            break;
+        default:
+            break;
+        }
+    }
+
+    void WallboxController::sendStatusToSimulator()
+    {
+        using namespace Iso15118;
+
+        stSeIsoStackCmd cmd;
+        cmd.isoStackCmd.msgVersion = 0;
+        cmd.isoStackCmd.msgType = enIsoStackMsgType::SeCtrlCmd;
+        cmd.isoStackCmd.enable = m_wallboxEnabled ? uint8_t(1) : uint8_t(0);
+
+        // Map wallbox charging state to current demand (use as state indicator)
+        // We'll use currentDemand field to communicate the desired state
+        ChargingState currentState = m_stateMachine->getCurrentState();
+        switch (currentState)
+        {
+        case ChargingState::OFF:
+            cmd.isoStackCmd.currentDemand = 0; // 0 = off
+            break;
+        case ChargingState::IDLE:
+            cmd.isoStackCmd.currentDemand = 10; // 10 = idle
+            break;
+        case ChargingState::CONNECTED:
+            cmd.isoStackCmd.currentDemand = 20; // 20 = connected
+            break;
+        case ChargingState::IDENTIFICATION:
+            cmd.isoStackCmd.currentDemand = 30; // 30 = identification
+            break;
+        case ChargingState::READY:
+            cmd.isoStackCmd.currentDemand = 100; // 100 = ready
+            break;
+        case ChargingState::CHARGING:
+            cmd.isoStackCmd.currentDemand = 160; // 160 = charging (16.0A)
+            break;
+        case ChargingState::STOP:
+            cmd.isoStackCmd.currentDemand = 5; // 5 = stop
+            break;
+        case ChargingState::FINISHED:
+            cmd.isoStackCmd.currentDemand = 1; // 1 = finished
+            break;
+        default:
+            cmd.isoStackCmd.currentDemand = 0;
+            break;
+        }
+
+        cmd.seHardwareState.mainContactor = m_relayEnabled ? uint8_t(1) : uint8_t(0);
+
+        // Debug output
+        static bool firstSend = true;
+        static bool lastSentEnable = true;
+        static bool lastSentRelay = false;
+        static ChargingState lastSentState = ChargingState::IDLE;
+        static int sendCount = 0;
+
+        if (firstSend)
+        {
+            std::cout << "\n[WALLBOX] ✓ Starting to send status to simulator" << std::endl;
+            std::cout << "  Initial state: enable=" << (m_wallboxEnabled ? "true" : "false")
+                      << " relay=" << (m_relayEnabled ? "ON" : "OFF")
+                      << " state=" << getStateString() << std::endl;
+            firstSend = false;
+        }
+
+        if (m_wallboxEnabled != lastSentEnable)
+        {
+            std::cout << "\n[WALLBOX → SIMULATOR] Sending enable status: "
+                      << (m_wallboxEnabled ? "ENABLED" : "DISABLED") << std::endl;
+            lastSentEnable = m_wallboxEnabled;
+        }
+
+        if (m_relayEnabled != lastSentRelay)
+        {
+            std::cout << "\n[WALLBOX → SIMULATOR] Sending relay status: "
+                      << (m_relayEnabled ? "ON" : "OFF") << std::endl;
+            lastSentRelay = m_relayEnabled;
+        }
+
+        if (currentState != lastSentState)
+        {
+            std::cout << "\n[WALLBOX → SIMULATOR] Sending state change: "
+                      << m_stateMachine->getStateString(lastSentState) << " → "
+                      << getStateString() << std::endl;
+            lastSentState = currentState;
+        }
+
+        // Log every 50th send to confirm communication is active
+        sendCount++;
+        if (sendCount % 50 == 0)
+        {
+            // Silent log to file only - no console spam
+        }
+
+        // Send via network
+        std::vector<uint8_t> message(sizeof(cmd));
+        std::memcpy(message.data(), &cmd, sizeof(cmd));
+        m_network->send(message);
+    }
+
+    void WallboxController::processNetworkMessage(const std::vector<uint8_t> &message)
+    {
+        // Check if this is a CP state message (0x03 = CP state update)
+        if (message.size() >= 2 && message[0] == 0x03)
+        {
+            // CP signal message - forward to CP reader if in simulator mode
+            if (m_cpReader && m_operatingMode == "simulator")
+            {
+                // Cast to SimulatorCpSignalReader to call handleMessage
+                // Note: In production, use dynamic_cast or visitor pattern
+                std::cout << "[WallboxController] Received CP signal message" << std::endl;
+                // For now, manually parse and call setCpState
+                // This is a temporary solution until we refactor the network callback
+            }
+            return;
+        }
+
+        // Parse and handle network messages from simulator
+        if (message.size() >= sizeof(stSeIsoStackState))
+        {
+            stSeIsoStackState state;
+            std::memcpy(&state, message.data(), sizeof(state));
+
+            // Show feedback when receiving simulator state
+            static enIsoChargingState lastState = enIsoChargingState::idle;
+            static bool lastContactor = false;
+            static bool lastEnableCmd = true;
+
+            bool contactorCmd = (state.seHardwareCmd.mainContactor != 0);
+            bool enableCmd = (state.seHardwareCmd.sourceEnable != 0);
+
+            if (state.isoStackState.state != lastState || contactorCmd != lastContactor || enableCmd != lastEnableCmd)
+            {
+                std::cout << "\n[SIMULATOR → WALLBOX] ";
+
+                if (enableCmd != lastEnableCmd)
+                {
+                    std::cout << "Enable: " << (lastEnableCmd ? "true" : "false")
+                              << " → " << (enableCmd ? "true" : "false") << "  ";
+
+                    if (enableCmd && !m_wallboxEnabled)
+                    {
+                        std::cout << "\n[WALLBOX] 🟢 Enable requested by simulator";
+                        enableWallbox();
+                    }
+                    else if (!enableCmd && m_wallboxEnabled)
+                    {
+                        std::cout << "\n[WALLBOX] 🔴 Disable requested by simulator";
+                        disableWallbox();
+                    }
+                }
+
+                if (state.isoStackState.state != lastState)
+                {
+                    std::cout << "State: " << enIsoChargingState_toString(lastState)
+                              << " → " << enIsoChargingState_toString(state.isoStackState.state) << "  ";
+
+                    // Enforce state transition order: idle → ready → charging
+                    // stop can be called from any state
+                    ChargingState currentWallboxState = m_stateMachine->getCurrentState();
+
+                    switch (state.isoStackState.state)
+                    {
+                    case enIsoChargingState::idle:
+                        // idle can transition from any state (always allowed)
+                        if (currentWallboxState != ChargingState::IDLE)
+                        {
+                            std::cout << "\n[WALLBOX] 🔄 Transitioning to IDLE";
+                            m_stateMachine->stopCharging("Simulator state: idle");
+                        }
+                        break;
+
+                    case enIsoChargingState::ready:
+                        // ready can only be reached from idle AND relay must be ON
+                        if (!m_relayEnabled)
+                        {
+                            std::cout << "\n[WALLBOX] ❌ Cannot go to READY: Relay must be ON first";
+                        }
+                        else if (currentWallboxState == ChargingState::IDLE)
+                        {
+                            std::cout << "\n[WALLBOX] ✓ Vehicle ready - prepared for charging";
+                            // No state machine transition needed, just acknowledgment
+                        }
+                        else
+                        {
+                            std::cout << "\n[WALLBOX] ❌ Cannot go to READY: Must be in IDLE state first";
+                        }
+                        break;
+
+                    case enIsoChargingState::charging:
+                        // charging can only be reached from ready (via idle) AND relay must be ON
+                        if (!m_relayEnabled)
+                        {
+                            std::cout << "\n[WALLBOX] ❌ Cannot start charging: Relay must be ON";
+                        }
+                        else if (currentWallboxState == ChargingState::IDLE && lastState == enIsoChargingState::ready)
+                        {
+                            if (m_wallboxEnabled)
+                            {
+                                std::cout << "\n[WALLBOX] 🔄 Starting charging (idle → ready → charging)";
+                                m_stateMachine->startCharging("Simulator state: charging");
+                            }
+                            else
+                            {
+                                std::cout << "\n[WALLBOX] ❌ Cannot start charging: Wallbox disabled";
+                            }
+                        }
+                        else if (currentWallboxState == ChargingState::CHARGING)
+                        {
+                            // Already charging, OK
+                        }
+                        else
+                        {
+                            std::cout << "\n[WALLBOX] ❌ Cannot start charging: Must go idle → ready → charge";
+                        }
+                        break;
+
+                    case enIsoChargingState::stop:
+                        // stop can be called from any state (always allowed)
+                        if (m_stateMachine->isCharging())
+                        {
+                            std::cout << "\n[WALLBOX] 🔄 Stopping charging (stop command)";
+                            m_stateMachine->stopCharging("Simulator state: stop");
+                        }
+                        break;
+
+                    default:
+                        break;
+                    }
+                }
+
+                if (contactorCmd != lastContactor)
+                {
+                    std::cout << "Contactor: " << (lastContactor ? "ON" : "OFF")
+                              << " → " << (contactorCmd ? "ON" : "OFF");
+
+                    // Apply contactor command only if wallbox is enabled
+                    if (!m_wallboxEnabled && contactorCmd)
+                    {
+                        std::cout << " ❌ REJECTED (wallbox disabled)";
+                    }
+                    else
+                    {
+                        // Apply the contactor command
+                        if (contactorCmd && !m_relayEnabled)
+                        {
+                            std::cout << "\n[WALLBOX] ⚡ Activating contactor";
+                            setRelayState(true);
+                        }
+                        else if (!contactorCmd && m_relayEnabled)
+                        {
+                            std::cout << "\n[WALLBOX] 🔌 Deactivating contactor";
+                            setRelayState(false);
+                        }
+                    }
+                }
+
+                std::cout << std::endl;
+
+                lastState = state.isoStackState.state;
+                lastContactor = contactorCmd;
+                lastEnableCmd = enableCmd;
+
+                // Send immediate status update when state changes
+                sendStatusToSimulator();
+            }
+        }
+    }
+
+    void WallboxController::onStateChange(ChargingState oldState, ChargingState newState, const std::string &reason)
+    {
+        std::cout << "Controller responding to state change: "
+                  << m_stateMachine->getStateString(oldState) << " -> "
+                  << m_stateMachine->getStateString(newState) << std::endl;
+
+        // Update LEDs when state changes
+        updateLeds();
+
+        // Send state change notification over network
+        // (Implementation would depend on protocol)
+    }
+
+    /**
+     * Handle CP (Control Pilot) signal state changes
+     * Maps CP states to charging states according to IEC 61851-1 and ISO 15118
+     * Observer Pattern: Reacts to CP state changes
+     */
+    void WallboxController::onCpStateChange(CpState oldState, CpState newState)
+    {
+        std::cout << "[WallboxController] CP State Change: ";
+
+        if (m_cpReader)
+        {
+            std::cout << m_cpReader->getCpStateString(oldState) << " -> "
+                      << m_cpReader->getCpStateString(newState) << std::endl;
+        }
+
+        m_currentCpState = newState;
+
+        // Map CP state to charging state transitions
+        mapCpStateToChargingState(newState);
+    }
+
+    /**
+     * Map CP signal state to ISO 15118 charging state
+     * Implements IEC 61851-1 to ISO 15118 state mapping
+     *
+     * CP State Mapping:
+     * - STATE_A (12V): No vehicle -> IDLE
+     * - STATE_B (9V): Vehicle connected -> CONNECTED
+     * - STATE_C (6V): Ready to charge -> READY
+     * - STATE_D (3V): Charging with ventilation -> CHARGING
+     * - STATE_E (0V): No power -> ERROR or STOP
+     * - STATE_F (-12V): Error condition -> ERROR
+     */
+    void WallboxController::mapCpStateToChargingState(CpState cpState)
+    {
+        ChargingState targetState;
+        std::string reason;
+
+        switch (cpState)
+        {
+        case CpState::STATE_A:
+            // 12V - No vehicle connected
+            targetState = ChargingState::IDLE;
+            reason = "CP: No vehicle detected (12V)";
+            break;
+
+        case CpState::STATE_B:
+            // 9V - Vehicle connected but not ready
+            targetState = ChargingState::CONNECTED;
+            reason = "CP: Vehicle connected (9V)";
+            break;
+
+        case CpState::STATE_C:
+            // 6V - Vehicle ready to charge
+            if (m_stateMachine->getCurrentState() == ChargingState::IDLE ||
+                m_stateMachine->getCurrentState() == ChargingState::CONNECTED)
+            {
+                targetState = ChargingState::READY;
+                reason = "CP: Vehicle ready to charge (6V)";
+            }
+            else
+            {
+                return; // Already in charging or later state
+            }
+            break;
+
+        case CpState::STATE_D:
+            // 3V - Charging with ventilation required
+            if (m_stateMachine->getCurrentState() == ChargingState::READY)
+            {
+                targetState = ChargingState::CHARGING;
+                reason = "CP: Charging with ventilation (3V)";
+            }
+            else
+            {
+                return; // Not ready yet or already charging
+            }
+            break;
+
+        case CpState::STATE_E:
+            // 0V - No power / shutdown
+            targetState = ChargingState::STOP;
+            reason = "CP: Power loss detected (0V)";
+            break;
+
+        case CpState::STATE_F:
+            // -12V - Error condition
+            targetState = ChargingState::ERROR;
+            reason = "CP: Error state detected (-12V)";
+            break;
+
+        case CpState::UNKNOWN:
+        default:
+            std::cerr << "[WallboxController] Unknown CP state, no action taken" << std::endl;
+            return;
+        }
+
+        // Request state transition
+        if (m_stateMachine->getCurrentState() != targetState)
+        {
+            std::cout << "[WallboxController] Requesting state transition: "
+                      << m_stateMachine->getStateString(m_stateMachine->getCurrentState())
+                      << " -> " << m_stateMachine->getStateString(targetState) << std::endl;
+
+            // Trigger appropriate state machine method based on target state
+            switch (targetState)
+            {
+            case ChargingState::IDLE:
+                if (m_stateMachine->isCharging())
+                {
+                    stopCharging();
+                }
+                break;
+            case ChargingState::CONNECTED:
+                // Vehicle connection detected, prepare for identification
+                break;
+            case ChargingState::READY:
+                // Vehicle ready, can start charging when authorized
+                break;
+            case ChargingState::CHARGING:
+                if (m_wallboxEnabled && !m_stateMachine->isCharging())
+                {
+                    startCharging();
+                }
+                break;
+            case ChargingState::STOP:
+                if (m_stateMachine->isCharging())
+                {
+                    stopCharging();
+                }
+                break;
+            case ChargingState::ERROR:
+                stopCharging();
+                m_stateMachine->enterErrorState("CP signal error");
+                break;
+            default:
+                break;
+            }
+        }
+    }
+
+    void WallboxController::setLedState(int pin, bool on)
+    {
+        m_gpio->digitalWrite(pin, on ? PinValue::HIGH : PinValue::LOW);
+    }
+
+    void WallboxController::showIdleLeds()
+    {
+        auto &config = Configuration::getInstance();
+        // Idle: Yellow BLINK (enabled/waiting), Green OFF (no car), Red OFF
+        static auto lastToggle = std::chrono::steady_clock::now();
+        static bool yellowState = false;
+
+        auto now = std::chrono::steady_clock::now();
+        if (std::chrono::duration_cast<std::chrono::milliseconds>(now - lastToggle).count() >= 500)
+        {
+            yellowState = !yellowState;
+            lastToggle = now;
+        }
+
+        setLedState(config.getLedGreenPin(), false);        // Green OFF - no car
+        setLedState(config.getLedYellowPin(), yellowState); // Yellow BLINKING - wallbox idle
+        setLedState(config.getLedRedPin(), false);          // Red OFF
+    }
+
+    void WallboxController::showConnectedLeds()
+    {
+        auto &config = Configuration::getInstance();
+        // Connected: Yellow ON (enabled), Green BLINK slow (car connected), Red OFF
+        static auto lastToggle = std::chrono::steady_clock::now();
+        static bool greenState = false;
+
+        auto now = std::chrono::steady_clock::now();
+        if (std::chrono::duration_cast<std::chrono::milliseconds>(now - lastToggle).count() >= 700)
+        {
+            greenState = !greenState;
+            lastToggle = now;
+        }
+
+        setLedState(config.getLedGreenPin(), greenState); // Green BLINKING - car connected
+        setLedState(config.getLedYellowPin(), true);      // Yellow ON - wallbox enabled
+        setLedState(config.getLedRedPin(), false);        // Red OFF
+    }
+
+    void WallboxController::showReadyLeds()
+    {
+        auto &config = Configuration::getInstance();
+        // Ready: Yellow ON (enabled), Green BLINK (ready to charge), Red OFF
+        static auto lastToggle = std::chrono::steady_clock::now();
+        static bool greenState = false;
+
+        auto now = std::chrono::steady_clock::now();
+        if (std::chrono::duration_cast<std::chrono::milliseconds>(now - lastToggle).count() >= 300)
+        {
+            greenState = !greenState;
+            lastToggle = now;
+        }
+
+        setLedState(config.getLedGreenPin(), greenState); // Green BLINKING - ready
+        setLedState(config.getLedYellowPin(), true);      // Yellow ON - wallbox enabled
+        setLedState(config.getLedRedPin(), false);        // Red OFF
+    }
+
+    void WallboxController::showChargingLeds()
+    {
+        auto &config = Configuration::getInstance();
+        // Charging: Yellow ON (enabled), Green ON (charging active), Red OFF
+        setLedState(config.getLedGreenPin(), true);  // Green ON - charging
+        setLedState(config.getLedYellowPin(), true); // Yellow ON - wallbox enabled
+        setLedState(config.getLedRedPin(), false);   // Red OFF
+    }
+
+    void WallboxController::showErrorLeds()
+    {
+        auto &config = Configuration::getInstance();
+        // Error: Yellow OFF, Green OFF, Red ON
+        setLedState(config.getLedGreenPin(), false);  // Green OFF
+        setLedState(config.getLedYellowPin(), false); // Yellow OFF
+        setLedState(config.getLedRedPin(), true);     // Red ON
+    }
+
+    void WallboxController::showPausedLeds()
+    {
+        auto &config = Configuration::getInstance();
+        // Paused: Yellow ON, Green BLINK, Red OFF
+        static bool greenState = false;
+        greenState = !greenState;
+        setLedState(config.getLedGreenPin(), greenState); // Green BLINKING
+        setLedState(config.getLedYellowPin(), true);      // Yellow ON
+        setLedState(config.getLedRedPin(), false);        // Red OFF
+    }
+
+} // namespace Wallbox

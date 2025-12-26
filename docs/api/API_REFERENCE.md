@@ -1,9 +1,10 @@
 # API Reference
 
-Complete API documentation for the ISO 15118 Wallbox Control System.
+Complete API documentation for the ISO 15118 Wallbox Control System v4.0.
 
 ## Table of Contents
 
+- [HTTP REST API](#http-rest-api)
 - [Protocol Overview](#protocol-overview)
 - [Data Structures](#data-structures)
 - [Enumerations](#enumerations)
@@ -11,6 +12,47 @@ Complete API documentation for the ISO 15118 Wallbox Control System.
 - [Network Protocol](#network-protocol)
 - [Function Reference](#function-reference)
 - [Examples](#examples)
+
+## HTTP REST API
+
+**Available in**: wallbox_control_v4 (Latest)
+
+The v4.0 controller provides a full HTTP REST API on port 8080 for remote control and monitoring.
+
+### Endpoints
+
+#### Health & Status
+
+- `GET /api/health` - System health check
+- `GET /api/status` - Complete system status
+- `GET /api/state` - Current charging state
+
+#### Wallbox Control
+
+- `POST /api/enable` - Enable wallbox
+- `POST /api/disable` - Disable wallbox
+
+#### Charging Control
+
+- `POST /api/start` - Start charging
+- `POST /api/stop` - Stop charging
+- `POST /api/pause` - Pause charging
+- `POST /api/resume` - Resume charging
+
+### Example Usage
+
+```bash
+# Check system status
+curl http://localhost:8080/api/status
+
+# Enable wallbox
+curl -X POST http://localhost:8080/api/enable
+
+# Start charging
+curl -X POST http://localhost:8080/api/start
+```
+
+---
 
 ## Protocol Overview
 
@@ -340,7 +382,7 @@ const int UDP_OUT_PORT_SIMULATOR = 50010; // Simulator sends
 
 // IP addresses
 const char* LOCALHOST = "127.0.0.1";      // Local testing
-const char* REMOTE_IP = "192.168.1.100";  // Remote deployment
+const char* REMOTE_IP = "<REMOTE_API_HOST>";  // Remote deployment
 ```
 
 ### Message Transmission
@@ -583,6 +625,6 @@ while (running) {
 ## See Also
 
 - [Main README](README.md)
-- [Installation Guide](INSTALLATION.md)
+- [Installation Guide](INSTALLATION_GUIDE.md)
 - [User Guide](WallboxCtrl/README.md)
 - [ISO 15118 Standard](https://www.iso.org/standard/55366.html)

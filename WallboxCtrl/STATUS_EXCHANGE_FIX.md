@@ -164,11 +164,11 @@ void recv_cmd(int sock)
 
 ```bash
 # Terminal 1
-cd /Users/achraf/pro/PJMT/WallboxCtrl/build
+cd <PROJECT_ROOT>/WallboxCtrl/build
 ./simulator
 
 # Terminal 2 (in a new terminal)
-cd /Users/achraf/pro/PJMT/WallboxCtrl/build
+cd <PROJECT_ROOT>/WallboxCtrl/build
 ./wallbox_control_v3
 ```
 
@@ -375,7 +375,7 @@ tail -f /tmp/wallbox_v3.log /tmp/wallbox_simulator.log
 
 ## Files Modified
 
-1. `/Users/achraf/pro/PJMT/WallboxCtrl/src/WallboxController.cpp`
+1. `<PROJECT_ROOT>/WallboxCtrl/src/WallboxController.cpp`
 
    - Reduced status interval: 500ms → 100ms
    - Added state synchronization logic
@@ -384,7 +384,7 @@ tail -f /tmp/wallbox_v3.log /tmp/wallbox_simulator.log
    - **Added state change notifications to simulator** (NEW)
    - **Added debug logging for state transmission** (NEW)
 
-2. `/Users/achraf/pro/PJMT/WallboxCtrl/src/simulator.cpp`
+2. `<PROJECT_ROOT>/WallboxCtrl/src/simulator.cpp`
 
    - Added contactor-relay synchronization
    - Added auto-transition to IDLE on relay OFF
@@ -395,7 +395,7 @@ tail -f /tmp/wallbox_v3.log /tmp/wallbox_simulator.log
    - **Added automatic state synchronization with wallbox** (NEW)
    - **Added state sync request notifications** (NEW)
 
-3. **Created: `/Users/achraf/pro/PJMT/WallboxCtrl/test_state_sync.sh`** (NEW)
+3. **Created: `<PROJECT_ROOT>/WallboxCtrl/test_state_sync.sh`** (NEW)
    - Test script for state synchronization
    - Demonstrates bidirectional control
    - Instructions for testing all scenarios
@@ -403,7 +403,7 @@ tail -f /tmp/wallbox_v3.log /tmp/wallbox_simulator.log
 ## Build and Deploy
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/build
+cd <PROJECT_ROOT>/WallboxCtrl/build
 cmake ..
 make
 ```

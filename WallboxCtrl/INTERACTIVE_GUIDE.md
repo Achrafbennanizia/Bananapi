@@ -19,21 +19,21 @@ Both programs now support **interactive terminal commands** while maintaining **
 **Terminal 1 - Wallbox Control:**
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/src
+cd <PROJECT_ROOT>/WallboxCtrl/src
 ./wallbox_ctrl
 ```
 
 **Terminal 2 - ISO Simulator:**
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/src
+cd <PROJECT_ROOT>/WallboxCtrl/src
 ./simulator
 ```
 
 ### Option 2: Using Test Script
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl
+cd <PROJECT_ROOT>/WallboxCtrl
 ./test_interactive.sh
 ```
 
@@ -146,7 +146,7 @@ lsof -i :50011
 ## Building
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/src
+cd <PROJECT_ROOT>/WallboxCtrl/src
 
 # Build wallbox control
 g++ -std=c++17 -O2 main.cpp IsoStackCtrlProtocol_impl.cpp -o wallbox_ctrl

@@ -370,14 +370,14 @@ New Files:
 ### Running v1.0 (Legacy)
 
 ```bash
-cd WallboxCtrl/build
+cd build/bin
 ./wallbox_control
 ```
 
 ### Running v2.0 (SOLID)
 
 ```bash
-cd WallboxCtrl/build
+cd build/bin
 ./wallbox_control_v2
 ```
 

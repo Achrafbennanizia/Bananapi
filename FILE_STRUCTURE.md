@@ -14,7 +14,7 @@ PJMT/
 ├── 📚 Documentation Layer (docs/)
 ├── 🎯 Application Layer (WallboxCtrl/)
 ├── 🔌 Protocol Layer (LibPubWallbox/)
-├── 🌐 Presentation Layer (wallbox-react-app/)
+├── 🌐 Presentation Layer (web/react-app/)
 ├── 🛠️ Infrastructure Layer (scripts/, env/)
 └── 📄 Root Configuration Files
 ```
@@ -31,21 +31,23 @@ PJMT/
 ├── 📄 QUICK_START.md                    # 5-minute setup guide
 ├── 📄 INTERACTIVE_MODE.md               # Interactive commands guide
 ├── 📄 FILE_STRUCTURE.md                 # This file
+├── 📄 CONTRIBUTING.md                   # Contribution guidelines
 ├── 📄 .gitattributes                    # Git LFS and line ending config
 │
 ├── 📂 docs/                             # 📚 Documentation Layer
-│   ├── 📄 DOCS_INDEX.md                # Documentation navigation hub
+│   ├── 📄 README.md                    # Documentation navigation hub
 │   │
 │   ├── 📂 architecture/                # System Design & Patterns
+│   │   ├── README.md                   # Architecture documentation index
 │   │   ├── ARCHITECTURE_V3.md          # ⭐ Current architecture (v3.0)
 │   │   ├── ARCHITECTURE_VISUAL.md      # Visual diagrams
 │   │   ├── CLEAN_ARCHITECTURE.md       # ⭐ Clean architecture guide
-│   │   ├── SOLID_DESIGN_PATTERNS.md    # ⭐ 7 design patterns
-│   │   ├── ARCHITECTURE_IMPROVEMENTS.md # Architecture improvements log
-│   │   └── ARCHITECTURE.md             # Legacy architecture (v1.0)
+│   │   └── SOLID_DESIGN_PATTERNS.md    # ⭐ Design patterns
 │   │
 │   ├── 📂 guides/                      # User & Developer Guides
-│   │   ├── INSTALLATION.md             # Setup instructions
+│   │   ├── README.md                   # Guides index
+│   │   ├── INSTALLATION_GUIDE.md       # ⭐ Complete installation guide
+│   │   ├── INSTALLATION.md             # Legacy installation (historical)
 │   │   ├── DEVELOPMENT.md              # Development workflow
 │   │   ├── MODES_GUIDE.md              # Development vs Production
 │   │   └── MIGRATION.md                # Version migration guide
@@ -84,7 +86,8 @@ PJMT/
 │   │   └── SimpleWallboxController.h   # Legacy - v1.0 controller
 │   │
 │   ├── 📂 src/                         # Implementation files
-│   │   ├── main_v3.cpp                 # v3.0 entry point (current)
+│   │   ├── main_v4.cpp                 # ⭐ v4.0 entry point (LATEST)
+│   │   ├── main_v3.cpp                 # v3.0 simplified
 │   │   ├── main_v2_with_api.cpp        # v2.0 with API
 │   │   ├── main_v2.cpp                 # v2.0 SOLID version
 │   │   ├── main.cpp                    # v1.0 legacy
@@ -99,13 +102,17 @@ PJMT/
 │   │   └── IsoStackCtrlProtocol_impl.cpp # Protocol implementation
 │   │
 │   ├── 📂 build/                       # Build artifacts (gitignored)
-│   │   ├── wallbox_control_v3          # ⭐ Current version (v3.0)
+│   │   ├── wallbox_control_v4          # ⭐ v4.0 LATEST (full features)
+│   │   ├── wallbox_control_v3          # v3.0 Simplified
 │   │   ├── wallbox_control_v2          # v2.0 SOLID
 │   │   ├── wallbox_control_api         # v2.0 with API
 │   │   ├── wallbox_control             # v1.0 legacy
 │   │   ├── simulator                   # ISO 15118 simulator
 │   │   ├── config.json                 # Runtime configuration
 │   │   └── [CMake files]              # Build system files
+│   │
+│   │   # Note: In v4.1+ unified build, executables are in /build/bin/
+│   │   # and libraries in /build/lib/ at project root level.
 │   │
 │   ├── 📂 tests/                       # Unit & integration tests
 │   │   └── [test files]
@@ -149,7 +156,7 @@ PJMT/
 │   │
 │   └── 📂 Dox/                         # Doxygen documentation
 │
-├── 📂 wallbox-react-app/                # 🌐 Presentation Layer (React)
+├── 📂 web/react-app/                # 🌐 Presentation Layer (React)
 │   ├── 📂 public/
 │   │   └── index.html                  # HTML template
 │   │
@@ -219,8 +226,8 @@ PJMT/
 
 **Key Files:**
 
-- `main_v3.cpp` - ⭐ **Current production version**
-- `wallbox_control_v3` - ⭐ **Current executable**
+- `main_v4.cpp` - ⭐ **Current production version (LATEST)**
+- `wallbox_control_v4` - ⭐ **Current executable**
 - `simulator` - ISO 15118 test simulator
 
 ### 🔌 Protocol Layer (`LibPubWallbox/`)
@@ -231,7 +238,7 @@ PJMT/
 - Independent library (can be used by other projects)
 - Minimal dependencies on application layer
 
-### 🌐 Presentation Layer (`wallbox-react-app/`)
+### 🌐 Presentation Layer (`web/react-app/`)
 
 **Purpose**: User interface and visualization
 
@@ -283,8 +290,9 @@ WallboxCtrl/
 │   ├── IGpioController.h       # Strategy interface
 │   └── INetworkCommunicator.h  # Strategy interface
 │
-└── src/                        # 🔨 Implementations
-    ├── main_v3.cpp             # ⭐ Current entry point
+├── src/                        # 🔨 Implementations
+    ├── main_v4.cpp             # ⭐ v4.0 LATEST entry point
+    ├── main_v3.cpp             # v3.0 simplified
     ├── WallboxController.cpp   # Main logic
     └── simulator.cpp           # Test simulator
 ```
@@ -292,11 +300,12 @@ WallboxCtrl/
 ### Executable Files
 
 ```
-WallboxCtrl/build/
-├── wallbox_control_v3          # ⭐ Current version (recommended)
-├── wallbox_control_v2          # Legacy v2.0
-├── wallbox_control_api         # Legacy v2.0 with API
-├── wallbox_control             # Legacy v1.0
+build/bin/
+├── wallbox_control_v4          # ⭐ v4.0 LATEST (recommended)
+├── wallbox_control_v3          # v3.0 Simplified
+├── wallbox_control_v2          # v2.0 SOLID
+├── wallbox_control_api         # v2.0 with API
+├── wallbox_control             # v1.0 Legacy
 └── simulator                   # ISO 15118 simulator
 ```
 
@@ -309,13 +318,13 @@ WallboxCtrl/build/
 1. **Start**: `README.md` → Overview
 2. **Setup**: `docs/guides/INSTALLATION.md` → Get running
 3. **Learn**: `docs/architecture/ARCHITECTURE_V3.md` → Understand system
-4. **Code**: `WallboxCtrl/src/main_v3.cpp` → See entry point
+4. **Code**: `WallboxCtrl/src/main_v4.cpp` → See v4.0 entry point
 
 ### For Frontend Developers
 
 1. **API**: `docs/api/API_REFERENCE.md` → All endpoints
 2. **Integration**: `docs/api/REACT_APP_API.md` → React integration
-3. **Examples**: `wallbox-react-app/src/api/wallboxApi.js` → Client code
+3. **Examples**: `web/react-app/src/api/wallboxApi.js` → Client code
 
 ### For System Architects
 
@@ -381,7 +390,7 @@ React App → HTTP API → WallboxController
 
 - **Headers**: `PascalCase.h` (e.g., `WallboxController.h`)
 - **Sources**: `PascalCase.cpp` (e.g., `WallboxController.cpp`)
-- **Executables**: `snake_case` (e.g., `wallbox_control_v3`)
+- **Executables**: `snake_case` (e.g., `wallbox_control_v4`)
 - **Scripts**: `kebab-case.sh` (e.g., `start-dev.sh`)
 - **Docs**: `SCREAMING_SNAKE_CASE.md` (e.g., `README.md`)
 
@@ -407,17 +416,17 @@ React App → HTTP API → WallboxController
 | Start developing        | `docs/guides/INSTALLATION.md`          |
 | Understand architecture | `docs/architecture/ARCHITECTURE_V3.md` |
 | API endpoints           | `docs/api/API_REFERENCE.md`            |
-| Run simulator           | `WallboxCtrl/build/simulator`          |
-| Run wallbox             | `WallboxCtrl/build/wallbox_control_v3` |
+| Run simulator           | `build/bin/simulator`                  |
+| Run wallbox             | `build/bin/wallbox_control_v3`         |
 | Configure system        | `WallboxCtrl/config.json`              |
-| Web interface           | `wallbox-react-app/src/App.js`         |
+| Web interface           | `web/react-app/src/App.js`             |
 
 ### By Role
 
 | Role         | Key Files                           |
 | ------------ | ----------------------------------- |
 | Backend Dev  | `WallboxCtrl/src/*.cpp`             |
-| Frontend Dev | `wallbox-react-app/src/*.js`        |
+| Frontend Dev | `web/react-app/src/*.js`            |
 | Architect    | `docs/architecture/*.md`            |
 | QA/Tester    | `WallboxCtrl/test*.sh`, `simulator` |
 | DevOps       | `scripts/*.sh`, `env/*`             |
@@ -470,7 +479,7 @@ React App → HTTP API → WallboxController
 ### Ignored Files (`.gitignore`)
 
 ```
-WallboxCtrl/build/          # Build artifacts
+build/bin/          # Build artifacts
 node_modules/               # npm dependencies
 .DS_Store                   # macOS files
 *.o, *.a                    # Compiled objects
@@ -522,7 +531,7 @@ node_modules/               # npm dependencies
 │ ├── tests/ # Unit tests
 │ └── CMakeLists.txt
 │
-├── 📂 wallbox-react-app/ # React web interface
+├── 📂 web/react-app/ # React web interface
 │ ├── src/
 │ ├── public/
 │ └── package.json

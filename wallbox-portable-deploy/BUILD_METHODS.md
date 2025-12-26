@@ -187,7 +187,7 @@ make
 
 ```bash
 # Automated deployment uses CMake
-./scripts/deploy.sh 192.168.178.34 root
+./scripts/deploy.sh <API_HOST> root
 
 # On the Pi, the script runs:
 # cd ~/wallbox-control

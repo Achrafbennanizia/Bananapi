@@ -140,7 +140,7 @@ sudo ufw allow 50011/udp
 ```
 Bananapi/
 ├── README.md              # Main documentation
-├── INSTALLATION.md        # Setup guide
+├── INSTALLATION_GUIDE.md        # Setup guide
 ├── API_REFERENCE.md       # Protocol details
 ├── DEVELOPMENT.md         # Dev guide
 ├── CHANGELOG.md           # Version history
@@ -204,7 +204,7 @@ cd build && cmake .. && make
 ## Getting Help
 
 📖 Full docs: `README.md`
-🔧 Installation: `INSTALLATION.md`
+🔧 Installation: `INSTALLATION_GUIDE.md`
 📡 API: `API_REFERENCE.md`
 👨‍💻 Development: `DEVELOPMENT.md`
 📋 History: `CHANGELOG.md`

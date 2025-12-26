@@ -257,7 +257,7 @@ The simulator displays these feedback messages based on wallbox responses:
 
 ## Files Modified
 
-- `/Users/achraf/pro/PJMT/WallboxCtrl/src/simulator.cpp`
+- `<PROJECT_ROOT>/WallboxCtrl/src/simulator.cpp`
   - Removed wallbox status variables (global state)
   - Enhanced recv_cmd() function with feedback display
   - Added local static variables for change detection only
@@ -268,7 +268,7 @@ The simulator displays these feedback messages based on wallbox responses:
 ## Build
 
 ```bash
-cd /Users/achraf/pro/PJMT/WallboxCtrl/build
+cd <PROJECT_ROOT>/build/bin
 make simulator
 ```
 

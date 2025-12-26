@@ -114,7 +114,7 @@ PJMT/
 │   └── LibPubWallbox/
 │
 ├── 🌐 Presentation Layer           # User interface
-│   └── wallbox-react-app/
+│   └── web/react-app/
 │
 ├── 🛠️ Infrastructure Layer         # Deployment & scripts
 │   ├── scripts/
@@ -137,7 +137,7 @@ docs/
 │   └── SOLID_DESIGN_PATTERNS.md    # Pattern reference
 │
 ├── guides/                         # 📖 User guides
-│   ├── INSTALLATION.md             # Setup
+│   ├── INSTALLATION_GUIDE.md             # Setup
 │   ├── DEVELOPMENT.md              # Development workflow
 │   ├── MODES_GUIDE.md              # Dev vs Production
 │   └── MIGRATION.md                # Version migration
@@ -239,12 +239,12 @@ LibPubWallbox/
 - ✅ Clear protocol implementation
 - ✅ Self-contained with dependencies
 
-### Presentation Layer (`wallbox-react-app/`)
+### Presentation Layer (`web/react-app/`)
 
 **Purpose**: Modern web interface for wallbox control
 
 ```
-wallbox-react-app/
+web/react-app/
 ├── public/
 │   └── index.html                  # HTML template
 │
