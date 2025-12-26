@@ -263,8 +263,8 @@ GPIO Pins used:
 
 @section license License
 
-Copyright © 2025 Wallbox Control System Project
+Copyright © 2025 Achraf Bennani
 
-@author Wallbox Development Team
+@author Achraf Bennani
 @version 4.0
 @date December 2025

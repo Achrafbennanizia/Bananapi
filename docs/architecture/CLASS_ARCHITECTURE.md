@@ -1634,6 +1634,6 @@ TEST(CpReader, StateChangeNotification) {
 ---
 
 **Document Version:** 1.0  
-**Last Updated:** December 13, 2025  
-**Author:** Wallbox Development Team  
+**Last Updated:** December 26, 2025  
+**Author:** Achraf Bennani  
 **Status:** Complete ✅

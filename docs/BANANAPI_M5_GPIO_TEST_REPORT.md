@@ -461,5 +461,5 @@ The wallbox controller is now fully operational on BananaPi M5 with real GPIO ha
 ---
 
 **Report Generated:** December 26, 2025  
-**Author:** Automated Test Suite  
+**Author:** Achraf Bennani  
 **Version:** 1.0

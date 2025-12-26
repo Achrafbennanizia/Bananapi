@@ -3,7 +3,7 @@
 **Date:** December 26, 2025  
 **Device:** BananaPi M5 (Armbian 25.5.1)  
 **Project:** PJMT Wallbox Controller  
-**Author:** Development Team
+**Author:** Achraf Bennani
 
 ---
 

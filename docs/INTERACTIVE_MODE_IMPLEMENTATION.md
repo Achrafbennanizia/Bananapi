@@ -1159,8 +1159,8 @@ ssh bananapi 'lsof -i :8080 | grep -v COMMAND | awk "{print \$2}" | xargs kill -
 ---
 
 **Document Version**: 1.1  
-**Last Updated**: December 11, 2025  
-**Author**: Implementation by GitHub Copilot (Claude Sonnet 4.5)  
+**Last Updated**: December 26, 2025  
+**Author**: Achraf Bennani  
 **Project**: PJMT Wallbox Control System
 
 **Changelog v1.1:**

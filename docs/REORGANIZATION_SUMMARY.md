@@ -365,6 +365,6 @@ The project now follows best practices and is ready for:
 
 ---
 
-_Generated: December 14, 2024_  
-_Author: GitHub Copilot_  
+_Generated: December 26, 2025_  
+_Author: Achraf Bennani_  
 _Version: 4.1.0_

@@ -1,9 +1,9 @@
 # CP Signal Reading System Implementation Report
 
-**Date**: December 13, 2025  
+**Date**: December 26, 2025  
 **Project**: PJMT Wallbox Controller  
 **Version**: 4.1  
-**Author**: System Architecture Team
+**Author**: Achraf Bennani
 
 ---
 
